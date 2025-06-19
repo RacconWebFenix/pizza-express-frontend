@@ -1,0 +1,43 @@
+Resumo do Projeto: pizza-express-frontend
+Data: 19 de junho de 2025
+
+Stack principal:
+- Next.js 15 (App Router)
+- TypeScript
+- Chakra UI (com integração de ColorMode e Toaster customizados)
+- next-themes para gerenciamento de tema (dark/light)
+- React 19
+- Estrutura modular de componentes
+
+Estrutura de pastas:
+- app/: páginas, layout e estilos globais
+  - layout.tsx: Usa Provider para Chakra e temas
+  - page.tsx: Página inicial padrão Next.js
+  - globals.css, page.module.css: estilos globais e de página
+- components/ui/: componentes utilitários
+  - provider.tsx: Provider do Chakra + ColorModeProvider
+  - color-mode.tsx: Hooks e componentes para tema
+  - toaster.tsx: Sistema de notificações (toasts)
+  - tooltip.tsx: Tooltip customizado
+- public/: assets SVG
+- Configurações: package.json, tsconfig.json, next.config.mjs/ts
+
+Principais dependências:
+- @chakra-ui/react, @emotion/react, next, next-themes, react, react-dom, react-icons
+- Dev: @types/*, typescript
+
+Scripts:
+- dev, build, start, lint
+
+Funcionalidades prontas:
+- Suporte a tema claro/escuro
+- Sistema de notificações (toaster)
+- Tooltips customizados
+- Página inicial padrão editável
+
+Observações:
+- Não utiliza Tailwind CSS
+- Estrutura pronta para expansão modular
+- Pronto para deploy em Vercel
+
+Use este resumo como contexto para futuras criações, integrações ou modificações neste projeto.
