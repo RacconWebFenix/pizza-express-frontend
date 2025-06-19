@@ -1,43 +1,56 @@
-Resumo do Projeto: pizza-express-frontend
-Data: 19 de junho de 2025
+Resumo do Projeto Fullstack: pizza-express
+Data: 19 de junho de 2025 (atualizado)
 
+---
+FRONTEND
+---
 Stack principal:
 - Next.js 15 (App Router)
 - TypeScript
-- Chakra UI (com integração de ColorMode e Toaster customizados)
-- next-themes para gerenciamento de tema (dark/light)
+- Chakra UI (ColorMode, Toaster customizados)
+- next-themes para tema dark/light
 - React 19
-- Estrutura modular de componentes
 
 Estrutura de pastas:
-- app/: páginas, layout e estilos globais
-  - layout.tsx: Usa Provider para Chakra e temas
-  - page.tsx: Página inicial padrão Next.js
-  - globals.css, page.module.css: estilos globais e de página
-- components/ui/: componentes utilitários
-  - provider.tsx: Provider do Chakra + ColorModeProvider
-  - color-mode.tsx: Hooks e componentes para tema
-  - toaster.tsx: Sistema de notificações (toasts)
-  - tooltip.tsx: Tooltip customizado
-- public/: assets SVG
+- app/: páginas, layout, estilos globais
+- components/ui/: Provider, ColorMode, Toaster, Tooltip
+- public/: SVGs
 - Configurações: package.json, tsconfig.json, next.config.mjs/ts
 
-Principais dependências:
-- @chakra-ui/react, @emotion/react, next, next-themes, react, react-dom, react-icons
-- Dev: @types/*, typescript
-
-Scripts:
-- dev, build, start, lint
-
 Funcionalidades prontas:
-- Suporte a tema claro/escuro
-- Sistema de notificações (toaster)
+- Tema claro/escuro
+- Notificações (toaster)
 - Tooltips customizados
-- Página inicial padrão editável
-
-Observações:
-- Não utiliza Tailwind CSS
-- Estrutura pronta para expansão modular
 - Pronto para deploy em Vercel
 
-Use este resumo como contexto para futuras criações, integrações ou modificações neste projeto.
+---
+BACKEND
+---
+API REST para pizzaria (NestJS, Prisma, PostgreSQL)
+
+Tecnologias:
+- Node.js + NestJS
+- Prisma ORM + PostgreSQL
+- class-validator
+- JWT (autenticação)
+- Jest + Supertest (e2e)
+- GitHub Actions (CI/CD)
+
+Estrutura:
+- src/: auth, clientes, entregadores, pizzas, pedidos
+- prisma/: migrations, schema, seed
+- test/: testes e2e
+
+Funcionalidades:
+- CRUD completo (clientes, entregadores, pizzas, pedidos)
+- Autenticação JWT
+- Documentação Swagger em /api
+- Testes e2e automatizados
+
+---
+Integração Frontend + Backend:
+- Frontend consome endpoints REST do backend
+- Autenticação JWT para rotas protegidas
+- Fluxo de pedidos, cadastro, etc, via HTTP
+
+Use este resumo como contexto para futuras criações, integrações ou modificações neste projeto fullstack.

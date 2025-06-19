@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pizza Express - Fullstack
 
-## Getting Started
+Este repositório contém o frontend (Next.js + Chakra UI) e está integrado ao backend (NestJS + Prisma + PostgreSQL) para gestão de pizzaria.
 
-First, run the development server:
+## Frontend
+- **Framework:** Next.js 15 (App Router)
+- **Linguagem:** TypeScript
+- **UI:** Chakra UI (com ColorMode e Toaster customizados)
+- **Gerenciamento de tema:** next-themes
+- **Outros:** React 19, react-icons
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Estrutura
+- `app/`: páginas, layout e estilos globais
+- `components/ui/`: componentes utilitários (Provider, ColorMode, Toaster, Tooltip)
+- `public/`: assets SVG
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Funcionalidades
+- Suporte a tema claro/escuro
+- Sistema de notificações (toaster)
+- Tooltips customizados
+- Pronto para deploy em Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend
+- **Framework:** NestJS
+- **ORM:** Prisma
+- **Banco:** PostgreSQL
+- **Validação:** class-validator
+- **Autenticação:** JWT
+- **Testes:** Jest + Supertest (e2e)
+- **CI/CD:** GitHub Actions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Estrutura
+- `src/`: código principal (auth, clientes, entregadores, pizzas, pedidos)
+- `prisma/`: migrations, schema e seed
+- `test/`: testes e2e
 
-## Learn More
+### Funcionalidades
+- CRUD de clientes, entregadores, pizzas e pedidos
+- Autenticação JWT (login, registro, rotas protegidas)
+- Documentação Swagger em `/api`
+- Testes automatizados e2e
 
-To learn more about Next.js, take a look at the following resources:
+## Integração
+- O frontend consome os endpoints REST do backend.
+- Autenticação JWT para rotas protegidas.
+- Fluxo de pedidos, cadastro de clientes, pizzas e entregadores via chamadas HTTP.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Como rodar localmente
+1. Clone este repositório e o backend.
+2. Instale as dependências: `npm install`
+3. Inicie o backend conforme instruções do repositório backend.
+4. Inicie o frontend: `npm run dev`
+5. Acesse [http://localhost:3000](http://localhost:3000)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Observações
+- Não utiliza Tailwind CSS
+- Estrutura pronta para expansão modular
+- Veja o arquivo `RESUMO_PROJETO.txt` para detalhes técnicos completos.
