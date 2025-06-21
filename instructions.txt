@@ -1,56 +1,46 @@
 # Instruções do Projeto Pizza Express Frontend
 
-## Linting
-- Para rodar o lint, utilize o comando `npm run lint`. Este comando utiliza o script configurado no `package.json` que é otimizado para projetos Next.js.
-- O comando `npx eslint .` pode gerar erros porque executa o ESLint diretamente, sem utilizar as configurações específicas do Next.js definidas no `.eslintrc.json`.
+## Estrutura de Pastas
+- `app/`: Contém os arquivos principais do App Router do Next.js, incluindo `layout.tsx` e `page.tsx`.
+- `components/`: Contém componentes reutilizáveis, como `TestChakra` e `ui/provider.tsx`.
+- `public/`: Contém arquivos estáticos, como imagens e ícones.
+- `__tests__/`: Contém os arquivos de teste, como `sample.test.js`.
 
-## Scripts disponíveis
+## Configuração do Ambiente
+
+### Dependências
+- React e React DOM versão 19.
+- Next.js versão 15.3.4.
+- TypeScript versão 5 e suas definições de tipo.
+- ESLint versão 9 configurado para Next.js.
+- Jest versão 29 para execução dos testes.
+- @testing-library/react versão 13 para testes de componentes React.
+- @testing-library/jest-dom versão 5 para matchers adicionais em testes.
+- jest-environment-jsdom versão 29 para simulação do DOM em testes.
+- Chakra UI e dependências relacionadas:
+  - `@chakra-ui/react`
+  - `@emotion/react`
+  - `@emotion/styled`
+  - `framer-motion`
+  - `next-themes`
+
+### Scripts Disponíveis
 - `npm run dev`: Inicia o servidor de desenvolvimento utilizando o Turbopack.
 - `npm run build`: Realiza o build do projeto.
 - `npm run start`: Inicia o servidor de produção.
 - `npm run lint`: Executa o linting do código.
 - `npm run test`: Executa os testes utilizando o Jest.
 
-## Dependências
-- React e React DOM versão 19.
-- Next.js versão 15.3.4.
-- TypeScript versão 5 e suas definições de tipo.
-- ESLint versão 9 e configuração para Next.js.
-- Jest versão 29 para execução dos testes.
-- @testing-library/react versão 13 para testes de componentes React.
-- @testing-library/jest-dom versão 5 para matchers adicionais em testes.
-- jest-environment-jsdom versão 29 para simulação do DOM em testes.
-
-## Testes
-- O ambiente de testes foi configurado utilizando Jest.
-- Para rodar os testes, utilize o comando `npm run test`. Este comando executa o Jest com as configurações definidas.
-- Um teste de exemplo foi criado em `__tests__/sample.test.js` para validar o ambiente.
-- O ambiente está funcional e todos os testes passam.
-
-## Configurações adicionais
-- Babel configurado com os presets `@babel/preset-env` e `@babel/preset-react`.
-- ESLint configurado para Next.js.
-- Testes utilizam o ambiente `jest-environment-jsdom` para simular o DOM.
+## Teste do Chakra UI
+- Foi criado o componente `TestChakra` em `components/TestChakra.tsx` para verificar o funcionamento do Chakra UI.
+- O componente foi adicionado à página inicial (`app/page.tsx`) para facilitar o teste visual.
+- Para testar, inicie o servidor de desenvolvimento com `npm run dev` e acesse a página inicial.
 
 ## Configuração de Testes
+- O ambiente de testes foi configurado utilizando Jest com suporte a TypeScript e JSX.
+- Utilize `npm run test` para executar os testes.
+- Um teste de exemplo foi criado em `__tests__/sample.test.js`.
 
-### Caminho Percorrido
-1. Inicialmente, configuramos o Jest com suporte a Babel para transformar arquivos JSX e TypeScript.
-2. Removemos o Babel para garantir compatibilidade com o Turbopack, ajustando o Jest para usar CommonJS.
-3. Enfrentamos erros de sintaxe relacionados ao uso de `import` no Jest.
-4. Pesquisamos na documentação oficial do Jest e confirmamos que o suporte a ESM é experimental e instável.
-5. Ajustamos o Jest para usar `ts-jest` como transformador, garantindo suporte a TypeScript e JSX.
-6. Configuramos o ESLint para permitir o uso de `require()` nos arquivos de teste.
-7. Validamos os testes com sucesso após ajustar o Jest para usar CommonJS e corrigir as configurações do ESLint.
-
-### Comando para Testes
-- Utilize `npm run test` para executar os testes com Jest configurado para CommonJS e `ts-jest`.
-
-## Atualizações Recentes
-
-### Testes
-- O pacote `@testing-library/react` foi atualizado para a versão mais recente para resolver o aviso de depreciação relacionado ao uso do método `act`.
-- O teste de exemplo em `__tests__/sample.test.js` foi ajustado para importar `act` diretamente do pacote `react`, garantindo compatibilidade com as versões mais recentes.
-
-### Linting
-- O linter foi executado e não encontrou nenhum aviso ou erro. O código está conforme as regras definidas.
+## Linting
+- Para rodar o lint, utilize o comando `npm run lint`. Este comando utiliza o script configurado no `package.json` que é otimizado para projetos Next.js.
+- O comando `npx eslint .` pode gerar erros porque executa o ESLint diretamente, sem utilizar as configurações específicas do Next.js definidas no `.eslintrc.json`.
