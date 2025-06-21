@@ -31,3 +31,17 @@
 - Babel configurado com os presets `@babel/preset-env` e `@babel/preset-react`.
 - ESLint configurado para Next.js.
 - Testes utilizam o ambiente `jest-environment-jsdom` para simular o DOM.
+
+## Configuração de Testes
+
+### Caminho Percorrido
+1. Inicialmente, configuramos o Jest com suporte a Babel para transformar arquivos JSX e TypeScript.
+2. Removemos o Babel para garantir compatibilidade com o Turbopack, ajustando o Jest para usar CommonJS.
+3. Enfrentamos erros de sintaxe relacionados ao uso de `import` no Jest.
+4. Pesquisamos na documentação oficial do Jest e confirmamos que o suporte a ESM é experimental e instável.
+5. Ajustamos o Jest para usar `ts-jest` como transformador, garantindo suporte a TypeScript e JSX.
+6. Configuramos o ESLint para permitir o uso de `require()` nos arquivos de teste.
+7. Validamos os testes com sucesso após ajustar o Jest para usar CommonJS e corrigir as configurações do ESLint.
+
+### Comando para Testes
+- Utilize `npm run test` para executar os testes com Jest configurado para CommonJS e `ts-jest`.

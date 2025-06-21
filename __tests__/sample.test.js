@@ -1,9 +1,8 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
+const React = require("react");
+const { render, screen } = require("@testing-library/react");
 
 test("renders a sample test", () => {
-  render(<div>Hello, Jest!</div>);
+  render(React.createElement("div", null, "Hello, Jest!"));
   const element = screen.getByText("Hello, Jest!");
   expect(element).toBeInTheDocument();
 });
