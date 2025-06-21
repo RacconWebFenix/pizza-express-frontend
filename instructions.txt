@@ -44,3 +44,6 @@
 ## Linting
 - Para rodar o lint, utilize o comando `npm run lint`. Este comando utiliza o script configurado no `package.json` que é otimizado para projetos Next.js.
 - O comando `npx eslint .` pode gerar erros porque executa o ESLint diretamente, sem utilizar as configurações específicas do Next.js definidas no `.eslintrc.json`.
+
+## Repositório Backend
+- O repositório do backend do projeto está disponível em [Pizza Express Backend](https://github.com/RacconWebFenix/pizza-express-backend).
