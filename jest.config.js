@@ -1,11 +1,11 @@
 module.exports = {
-  testEnvironment: "jest-environment-jsdom",
-  testEnvironmentOptions: {
-    customExportConditions: ["browser"],
-  },
+  preset: "ts-jest/presets/js-with-ts",
+  testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-  transform: {
-    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "<rootDir>/tsconfig.json" }],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
   },
-  extensionsToTreatAsEsm: [".ts", ".tsx"],
+  transform: {
+    "^.+.(ts|tsx|js|jsx)$": "ts-jest",
+  },
 };
