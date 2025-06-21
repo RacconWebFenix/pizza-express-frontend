@@ -1,0 +1,17 @@
+# Instruções do Projeto Pizza Express Frontend
+
+## Linting
+- Para rodar o lint, utilize o comando `npm run lint`. Este comando utiliza o script configurado no `package.json` que é otimizado para projetos Next.js.
+- O comando `npx eslint .` pode gerar erros porque executa o ESLint diretamente, sem utilizar as configurações específicas do Next.js definidas no `.eslintrc.json`.
+
+## Scripts disponíveis
+- `npm run dev`: Inicia o servidor de desenvolvimento utilizando o Turbopack.
+- `npm run build`: Realiza o build do projeto.
+- `npm run start`: Inicia o servidor de produção.
+- `npm run lint`: Executa o linting do código.
+
+## Dependências
+- React e React DOM versão 19.
+- Next.js versão 15.3.4.
+- TypeScript versão 5 e suas definições de tipo.
+- ESLint versão 9 e configuração para Next.js.
