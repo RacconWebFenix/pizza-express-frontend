@@ -45,3 +45,12 @@
 
 ### Comando para Testes
 - Utilize `npm run test` para executar os testes com Jest configurado para CommonJS e `ts-jest`.
+
+## Atualizações Recentes
+
+### Testes
+- O pacote `@testing-library/react` foi atualizado para a versão mais recente para resolver o aviso de depreciação relacionado ao uso do método `act`.
+- O teste de exemplo em `__tests__/sample.test.js` foi ajustado para importar `act` diretamente do pacote `react`, garantindo compatibilidade com as versões mais recentes.
+
+### Linting
+- O linter foi executado e não encontrou nenhum aviso ou erro. O código está conforme as regras definidas.
