@@ -15,6 +15,7 @@ const eslintConfig = [
     files: ["__tests__/*.test.js"],
     rules: {
       "import/no-commonjs": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 ];

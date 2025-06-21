@@ -7,4 +7,5 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "<rootDir>/tsconfig.json" }],
   },
+  extensionsToTreatAsEsm: [".ts", ".tsx"],
 };
