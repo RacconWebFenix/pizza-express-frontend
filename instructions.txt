@@ -9,9 +9,25 @@
 - `npm run build`: Realiza o build do projeto.
 - `npm run start`: Inicia o servidor de produção.
 - `npm run lint`: Executa o linting do código.
+- `npm run test`: Executa os testes utilizando o Jest.
 
 ## Dependências
 - React e React DOM versão 19.
 - Next.js versão 15.3.4.
 - TypeScript versão 5 e suas definições de tipo.
 - ESLint versão 9 e configuração para Next.js.
+- Jest versão 29 para execução dos testes.
+- @testing-library/react versão 13 para testes de componentes React.
+- @testing-library/jest-dom versão 5 para matchers adicionais em testes.
+- jest-environment-jsdom versão 29 para simulação do DOM em testes.
+
+## Testes
+- O ambiente de testes foi configurado utilizando Jest.
+- Para rodar os testes, utilize o comando `npm run test`. Este comando executa o Jest com as configurações definidas.
+- Um teste de exemplo foi criado em `__tests__/sample.test.js` para validar o ambiente.
+- O ambiente está funcional e todos os testes passam.
+
+## Configurações adicionais
+- Babel configurado com os presets `@babel/preset-env` e `@babel/preset-react`.
+- ESLint configurado para Next.js.
+- Testes utilizam o ambiente `jest-environment-jsdom` para simular o DOM.
