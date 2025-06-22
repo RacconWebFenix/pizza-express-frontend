@@ -2,9 +2,10 @@
 
 import { Box, Button, Input, Heading, VStack, Spinner } from "@chakra-ui/react";
 import { useState } from "react";
-import { useAuth } from "../../components/auth/auth-context";
+
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../components/auth/auth-context";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
