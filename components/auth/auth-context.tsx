@@ -1,8 +1,17 @@
+"use client";
+
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import Cookies from "js-cookie";
+
+interface User {
+  userId: number;
+  email: string;
+}
 
 interface AuthContextType {
   token: string | null;
-  login: (token: string) => void;
+  user: User | null;
+  login: (token: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -14,22 +23,73 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => {
+    // Inicializa o token do cookie ao montar o componente
+    if (typeof window !== "undefined") {
+      return Cookies.get("authToken") || null;
+    }
+    return null;
+  });
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = (newToken: string) => {
+  const validateToken = async (token: string): Promise<User | null> => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const userData = await response.json();
+      return userData;
+    } catch {
+      return null;
+    }
+  };
+
+  const login = async (newToken: string): Promise<boolean> => {
+    if (!newToken) {
+      return false;
+    }
+
+    // Validar o token com a rota /me
+    const userData = await validateToken(newToken);
+
+    if (!userData) {
+      return false;
+    }
+
+    // Se o token é válido, salva o usuário e o token
+    setUser(userData);
     setToken(newToken);
-    localStorage.setItem("authToken", newToken);
+
+    // Define o cookie com configurações específicas
+    Cookies.set("authToken", newToken, {
+      expires: 1, // 1 dia
+      path: "/", // Disponível em todo o site
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return true;
   };
 
   const logout = () => {
     setToken(null);
-    localStorage.removeItem("authToken");
+    setUser(null);
+    Cookies.remove("authToken", { path: "/" });
   };
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!token && !!user;
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, isAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );

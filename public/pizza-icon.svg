@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle fill="#FFD700" cx="12" cy="12" r="11"/>
+        <circle fill="#D84315" cx="12" cy="12" r="9"/>
+        <circle fill="#FFA000" cx="12" cy="12" r="7"/>
+        <circle fill="#D84315" cx="8" cy="9" r="1"/>
+        <circle fill="#D84315" cx="15" cy="9" r="1"/>
+        <circle fill="#D84315" cx="12" cy="15" r="1"/>
+        <circle fill="#D84315" cx="9" cy="12" r="1"/>
+        <circle fill="#D84315" cx="15" cy="13" r="1"/>
+    </g>
+</svg>

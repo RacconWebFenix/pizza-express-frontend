@@ -1,6 +1,15 @@
+"use client";
+
 import { Box, Heading, Text, Button, Flex } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleNavigateToWelcome = () => {
+    router.push("/welcome");
+  };
+
   return (
     <Box
       bg="brand.cream"
@@ -30,6 +39,7 @@ export default function Home() {
           color="white"
           size="lg"
           _hover={{ bg: "brand.yellow" }}
+          onClick={handleNavigateToWelcome}
         >
           Ver Cardápio
         </Button>

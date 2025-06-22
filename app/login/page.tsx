@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAuth } from "../../components/auth/auth-context";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +19,7 @@ const LoginPage = () => {
 
     try {
       const response = await fetch(
-        "https://pizza-express-backend.vercel.app/auth/login",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         {
           method: "POST",
           headers: {
@@ -30,11 +29,17 @@ const LoginPage = () => {
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        login(data.token);
-        Cookies.set("authToken", data.token, { expires: 1 });
-        router.push("/welcome");
+      const responseData = await response.json();
+
+      if (response.ok && responseData.access_token) {
+        // Tenta validar o token e completar o login
+        const loginSuccess = await login(responseData.access_token);
+
+        if (loginSuccess) {
+          router.push("/welcome");
+        } else {
+          alert("Erro na validação do usuário. Por favor, tente novamente.");
+        }
       } else {
         alert(
           "Erro ao realizar login. Verifique suas credenciais e tente novamente."

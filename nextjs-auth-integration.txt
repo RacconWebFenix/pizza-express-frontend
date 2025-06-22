@@ -1,0 +1,451 @@
+# Instruções para Implementação de Autenticação JWT em Next.js 15 com App Router
+
+## Objetivo
+Integrar um frontend Next.js 15 com App Router e TypeScript para autenticar e consumir rotas protegidas por JWT de um backend NestJS.
+
+## Arquivos a Serem Criados
+
+### 1. Biblioteca de Autenticação (app/lib/auth.ts)
+```typescript
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+
+// Função para fazer login
+export async function loginUser(email: string, password: string) {
+  try {
+    const response = await fetch('http://localhost:3000/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Falha na autenticação');
+    }
+    
+    const data = await response.json();
+    
+    // Armazenar o token JWT em um cookie seguro
+    Cookies.set('auth_token', data.access_token, { 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      expires: 1 // expira em 1 dia
+    });
+    
+    return data;
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    throw error;
+  }
+}
+
+// Função para logout
+export function logoutUser() {
+  Cookies.remove('auth_token');
+}
+
+// Função para obter o token JWT atual
+export function getAuthToken() {
+  return Cookies.get('auth_token');
+}
+```
+
+### 2. Cliente API para Requisições Autenticadas (app/lib/api.ts)
+```typescript
+"use client";
+
+import { getAuthToken } from './auth';
+
+// Cliente HTTP básico para fazer requisições autenticadas
+export async function fetchWithAuth(url: string, options: RequestInit = {}) {
+  const token = getAuthToken();
+  
+  const headers = {
+    ...options.headers,
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+  
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+}
+
+// Função para obter dados do usuário autenticado
+export async function fetchUserProfile() {
+  try {
+    const response = await fetchWithAuth('http://localhost:3000/me');
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Não autenticado');
+      }
+      throw new Error('Erro ao obter perfil');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Erro ao buscar perfil de usuário:', error);
+    throw error;
+  }
+}
+
+// Função para buscar pizzas (rota protegida)
+export async function fetchPizzas() {
+  try {
+    const response = await fetchWithAuth('http://localhost:3000/pizzas');
+    
+    if (!response.ok) {
+      throw new Error('Erro ao buscar pizzas');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Erro ao buscar pizzas:', error);
+    throw error;
+  }
+}
+
+// Função para buscar entregadores (rota protegida)
+export async function fetchEntregadores() {
+  try {
+    const response = await fetchWithAuth('http://localhost:3000/entregadores');
+    
+    if (!response.ok) {
+      throw new Error('Erro ao buscar entregadores');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Erro ao buscar entregadores:', error);
+    throw error;
+  }
+}
+
+// Função para buscar pedidos (rota protegida)
+export async function fetchPedidos() {
+  try {
+    const response = await fetchWithAuth('http://localhost:3000/pedidos');
+    
+    if (!response.ok) {
+      throw new Error('Erro ao buscar pedidos');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Erro ao buscar pedidos:', error);
+    throw error;
+  }
+}
+```
+
+### 3. Página de Login (app/login/page.tsx)
+```typescript
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { loginUser } from '../lib/auth';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    
+    try {
+      await loginUser(email, password);
+      router.push('/dashboard'); // Redirecionar após login bem-sucedido
+    } catch (err) {
+      setError('Falha na autenticação. Verifique suas credenciais.');
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div>
+          <h1 className="text-2xl font-bold">Login - Pizza Express</h1>
+        </div>
+        {error && <p className="text-red-500">{error}</p>}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Senha
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+            >
+              Entrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+```
+
+### 4. Perfil do Usuário (/me) (app/profile/page.tsx)
+```typescript
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { fetchUserProfile } from '../lib/api';
+import { getAuthToken, logoutUser } from '../lib/auth';
+
+export default function ProfilePage() {
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    // Verificar se o usuário está autenticado
+    const token = getAuthToken();
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    // Buscar perfil do usuário
+    const loadProfile = async () => {
+      try {
+        const userData = await fetchUserProfile();
+        setProfile(userData);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'Não autenticado') {
+          router.push('/login');
+        } else {
+          setError('Erro ao carregar perfil');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [router]);
+
+  const handleLogout = () => {
+    logoutUser();
+    router.push('/login');
+  };
+
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+
+  return (
+    <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Perfil do Usuário</h1>
+      {profile && (
+        <div>
+          <p><strong>ID:</strong> {profile.userId}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          {/* Exiba outras informações do usuário disponíveis na resposta */}
+          
+          <button
+            onClick={handleLogout}
+            className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 5. Dashboard com Listagem de Pizzas (app/dashboard/page.tsx)
+```typescript
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { fetchPizzas } from '../lib/api';
+import { getAuthToken } from '../lib/auth';
+
+interface Pizza {
+  id: number;
+  nome: string;
+  preco: number;
+  ingredientes: string;
+}
+
+export default function DashboardPage() {
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    // Verificar se o usuário está autenticado
+    const token = getAuthToken();
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    // Buscar pizzas (rota protegida)
+    const loadPizzas = async () => {
+      try {
+        const data = await fetchPizzas();
+        setPizzas(data);
+      } catch (err) {
+        setError('Erro ao carregar pizzas');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPizzas();
+  }, [router]);
+
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Cardápio de Pizzas</h1>
+        <button
+          onClick={() => router.push('/profile')}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Ver Perfil
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {pizzas.map((pizza) => (
+          <div
+            key={pizza.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden"
+          >
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">{pizza.nome}</h2>
+              <p className="text-gray-600 mt-2">{pizza.ingredientes}</p>
+              <p className="text-lg font-bold text-red-600 mt-2">
+                R$ {pizza.preco.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### 6. Middleware para Proteção de Rotas (middleware.ts)
+```typescript
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+// Rotas que requerem autenticação
+const protectedRoutes = [
+  '/dashboard',
+  '/profile',
+  '/pedidos',
+];
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('auth_token')?.value;
+  
+  // Verificar se o usuário está tentando acessar uma rota protegida sem autenticação
+  if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+    if (!token) {
+      // Redirecionar para login se não estiver autenticado
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+  
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
+```
+
+## Dependências a Instalar
+
+```bash
+npm install js-cookie
+npm install --save-dev @types/js-cookie
+```
+
+## Instruções de Implementação:
+
+1. Criar a estrutura de arquivos conforme descrito acima
+2. Instalar as dependências necessárias
+3. Configurar o arquivo `package.json` para incluir:
+
+```json
+"dependencies": {
+  "next": "^15.0.0",
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "js-cookie": "^3.0.5"
+}
+```
+
+4. Configurar variáveis de ambiente (opcional):
+
+Criar um arquivo `.env.local` na raiz do projeto:
+```
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+## Fluxo de Autenticação:
+
+1. Usuário acessa a página de login
+2. Após autenticação bem-sucedida, o token JWT é armazenado em cookie
+3. O middleware verifica se o usuário está tentando acessar rotas protegidas 
+4. Todas as requisições às rotas protegidas incluem o token JWT no cabeçalho Authorization
+5. Se o token expirar ou for inválido, o usuário é redirecionado para a página de login
+
+## Notas Importantes:
+
+- Certifique-se de ajustar a URL da API conforme o ambiente (desenvolvimento/produção)
+- Para ambientes de produção, considere usar NextAuth.js para uma solução mais robusta
+- O backend já está configurado com rotas protegidas via JWT, incluindo `/me`, `/pizzas` e outras
+- O token JWT deve ser enviado no cabeçalho Authorization como "Bearer [token]"
