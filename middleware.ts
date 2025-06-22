@@ -9,7 +9,6 @@ export function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get("authToken")?.value;
-  console.log("Token no middleware:", token); // Debug log
 
   if (!token) {
     return NextResponse.redirect(new URL("/access-denied", request.url));
