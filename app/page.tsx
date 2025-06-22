@@ -1,7 +1,8 @@
 "use client";
 
-import { Box, Heading, Text, Button, Flex } from "@chakra-ui/react";
+import { Box, Heading, Text, Button, Flex, Icon } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
 
 export default function Home() {
   const router = useRouter();
@@ -28,11 +29,15 @@ export default function Home() {
         textAlign="center"
       >
         <Heading color="brand.red" size="2xl">
-          Bem-vindo à Pizzaria Express!
+          <Flex align="center" gap="2">
+            <Icon as={FaPizzaSlice} boxSize={8} color="brand.green" />
+            Bem-vindo à Pizzaria Express!
+          </Flex>
         </Heading>
         <Text color="brand.charcoal" fontSize="lg">
-          Descubra as melhores pizzas feitas com ingredientes frescos e direto
-          do forno a lenha.
+          Descubra as melhores pizzas feitas com ingredientes frescos{" "}
+          <Icon as={FaLeaf} boxSize={5} color="brand.green" /> e direto do forno
+          a lenha <Icon as={FaFire} boxSize={5} color="brand.yellow" />.
         </Text>
         <Button
           bg="brand.green"

@@ -43,8 +43,12 @@ const WelcomePage = () => {
   }, []);
 
   const handleLogout = () => {
-    logout();
-    router.push("/login");
+    // Limpa o token ou estado de autenticação
+    document.cookie =
+      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Redireciona para a página inicial
+    router.push("/");
   };
 
   return (

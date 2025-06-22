@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   // Páginas públicas que não precisam de autenticação
-  const publicPages = ["/login", "/access-denied"];
+  const publicPages = ["/", "/login", "/access-denied"];
   if (publicPages.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
@@ -19,14 +19,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public files)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
 };
