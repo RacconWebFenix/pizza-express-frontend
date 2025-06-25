@@ -2,10 +2,10 @@
 
 import { Box, Button, Input, Heading, VStack, Spinner } from "@chakra-ui/react";
 import { useState } from "react";
-
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../components/auth/auth-context";
+import Link from "next/link";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -37,7 +37,7 @@ const LoginPage = () => {
         const loginSuccess = await login(responseData.access_token);
 
         if (loginSuccess) {
-          router.push("/");
+          router.push("/cardapio");
         } else {
           alert("Erro na validação do usuário. Por favor, tente novamente.");
         }
@@ -54,68 +54,112 @@ const LoginPage = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
+    <Box
+      bg="brand.light"
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
     >
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-        bgGradient="linear(to-br, brand.primary, brand.accent)"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        {loading ? (
-          <Spinner size="xl" color="brand.accent" />
-        ) : (
-          <VStack
-            as="form"
-            onSubmit={handleSubmit}
-            gap={4}
-            bg="white"
-            p={8}
-            borderRadius="lg"
-            boxShadow="lg"
-            maxWidth="400px"
-            w="full"
-          >
-            <Heading color="brand.primary">Pizza Express</Heading>
-            <Box>
-              <label>Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Digite seu email"
-                bg="brand.cream"
-                color="brand.dark"
-              />
-            </Box>
-            <Box>
-              <label>Senha</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Digite sua senha"
-                bg="brand.cream"
-                color="brand.dark"
-              />
-            </Box>
-            <Button
-              type="submit"
-              bg="brand.accent"
-              color="white"
-              width="full"
-              _hover={{ bg: "brand.primary" }}
+        <Box
+          bg="white"
+          p={8}
+          rounded="lg"
+          shadow="md"
+          borderTop="4px"
+          borderTopColor="brand.primary"
+        >
+          {loading ? (
+            <VStack gap={6}>
+              <Spinner size="xl" color="brand.primary" />
+              <Heading color="brand.primary" size="md">
+                Fazendo login...
+              </Heading>
+            </VStack>
+          ) : (
+            <VStack
+              as="form"
+              onSubmit={handleSubmit}
+              gap={6}
+              align="stretch"
+              maxWidth="400px"
+              w="full"
             >
-              Entrar
-            </Button>
-          </VStack>
-        )}
-      </Box>
-    </motion.div>
+              <Heading color="brand.primary" textAlign="center">
+                Pizza Express
+              </Heading>
+              
+              <Box>
+                <Box color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  Email
+                </Box>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Digite seu email"
+                  bg="brand.cream"
+                  color="brand.dark"
+                  border="1px"
+                  borderColor="gray.300"
+                  _focus={{
+                    borderColor: "brand.primary",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
+                  }}
+                  required
+                />
+              </Box>
+              
+              <Box>
+                <Box color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  Senha
+                </Box>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Digite sua senha"
+                  bg="brand.cream"
+                  color="brand.dark"
+                  border="1px"
+                  borderColor="gray.300"
+                  _focus={{
+                    borderColor: "brand.primary",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
+                  }}
+                  required
+                />
+              </Box>
+              
+              <Button
+                type="submit"
+                bg="brand.accent"
+                color="white"
+                width="full"
+                _hover={{ bg: "brand.primary" }}
+                disabled={loading}
+              >
+                Entrar
+              </Button>
+              
+              <Box textAlign="center">
+                <Link href="/register">
+                  <Button variant="ghost" color="brand.primary">
+                    Não tem uma conta? Registre-se
+                  </Button>
+                </Link>
+              </Box>
+            </VStack>
+          )}
+        </Box>
+      </motion.div>
+    </Box>
   );
 };
 

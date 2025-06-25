@@ -74,25 +74,38 @@ export default function Header() {
         </HStack>
 
         {/* User Info & Logout - Desktop */}
-        <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
-          {user && (
+        {user ? (
+          <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
             <Box color="brand.medium" fontSize="sm">
               Olá, {user.email.split("@")[0]}!
             </Box>
-          )}
-          <Button
-            size="sm"
-            colorScheme="gray"
-            variant="outline"
-            color="brand.medium"
-            borderColor="brand.medium"
-            _hover={{ bg: "brand.light", borderColor: "brand.primary" }}
-            onClick={handleLogout}
-          >
-            <Icon as={FaSignOutAlt} mr={2} />
-            Sair
-          </Button>
-        </Flex>
+            <Button
+              size="sm"
+              colorScheme="gray"
+              variant="outline"
+              color="brand.medium"
+              borderColor="brand.medium"
+              _hover={{ bg: "brand.light", borderColor: "brand.primary" }}
+              onClick={handleLogout}
+            >
+              <Icon as={FaSignOutAlt} mr={2} />
+              Sair
+            </Button>
+          </Flex>
+        ) : (
+          <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
+            <Button
+              size="sm"
+              variant="solid"
+              bg="brand.primary"
+              color="white"
+              _hover={{ bg: "brand.accent" }}
+              onClick={() => router.push("/login")}
+            >
+              Entrar
+            </Button>
+          </Flex>
+        )}
 
         {/* Mobile Menu Button */}
         <IconButton
@@ -142,22 +155,38 @@ export default function Header() {
               </Box>
             )}
 
-            {/* Logout Button */}
-            <Button
-              colorScheme="gray"
-              variant="outline"
-              color="brand.medium"
-              borderColor="brand.medium"
-              _hover={{ bg: "brand.light", borderColor: "brand.primary" }}
-              onClick={() => {
-                handleLogout();
-                closeMobileMenu();
-              }}
-              justifyContent="flex-start"
-            >
-              <Icon as={FaSignOutAlt} mr={2} />
-              Sair
-            </Button>
+            {/* Login/Logout Button */}
+            {user ? (
+              <Button
+                colorScheme="gray"
+                variant="outline"
+                color="brand.medium"
+                borderColor="brand.medium"
+                _hover={{ bg: "brand.light", borderColor: "brand.primary" }}
+                onClick={() => {
+                  handleLogout();
+                  closeMobileMenu();
+                }}
+                justifyContent="flex-start"
+              >
+                <Icon as={FaSignOutAlt} mr={2} />
+                Sair
+              </Button>
+            ) : (
+              <Button
+                variant="solid"
+                bg="brand.primary"
+                color="white"
+                _hover={{ bg: "brand.accent" }}
+                onClick={() => {
+                  router.push("/login");
+                  closeMobileMenu();
+                }}
+                justifyContent="flex-start"
+              >
+                Entrar
+              </Button>
+            )}
           </VStack>
         </Box>
       )}

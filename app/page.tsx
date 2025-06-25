@@ -13,13 +13,38 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
+import { useAuth } from "@/components/auth/auth-context";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Redireciona usuários logados para o cardápio
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push("/cardapio");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   const handleNavigateToWelcome = () => {
     router.push("/cardapio");
   };
+
+  // Mostra loading enquanto verifica autenticação
+  if (isLoading) {
+    return (
+      <Box
+        bg="brand.light"
+        minH="100vh"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text>Carregando...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
