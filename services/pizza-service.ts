@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
+import { mockPizzas } from "@/mock/pizzas";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const USE_MOCK_DATA = process.env.NODE_ENV === "development" && !API_URL;
 
 interface ApiError {
   message: string;
@@ -8,6 +10,13 @@ interface ApiError {
 }
 
 export const getPizzas = async () => {
+  // Usar dados mockados em desenvolvimento quando não há API configurada
+  if (USE_MOCK_DATA) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(mockPizzas), 500); // Simula delay da API
+    });
+  }
+
   const token = Cookies.get("authToken");
 
   if (!token) {

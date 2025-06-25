@@ -1,0 +1,78 @@
+import { Pizza } from "../types";
+
+export const mockPizzas: Pizza[] = [
+  {
+    id: "1",
+    nome: "Pizza Margherita",
+    descricao:
+      "Molho de tomate, mozzarella, manjericão fresco e azeite de oliva",
+    preco: 32.9,
+    categoria: "Clássicas",
+    disponivel: true,
+    imagem: "/images/margherita.jpg",
+  },
+  {
+    id: "2",
+    nome: "Pizza Pepperoni",
+    descricao: "Molho de tomate, mozzarella e pepperoni italiano",
+    preco: 38.9,
+    categoria: "Tradicionais",
+    disponivel: true,
+    imagem: "/images/pepperoni.jpg",
+  },
+  {
+    id: "3",
+    nome: "Pizza Quatri Queijos",
+    descricao: "Molho branco, mozzarella, parmesão, gorgonzola e provolone",
+    preco: 42.9,
+    categoria: "Especiais",
+    disponivel: true,
+    imagem: "/images/quattro-formaggi.jpg",
+  },
+  {
+    id: "4",
+    nome: "Pizza Calabresa",
+    descricao: "Molho de tomate, mozzarella, calabresa e cebola",
+    preco: 35.9,
+    categoria: "Tradicionais",
+    disponivel: true,
+    imagem: "/images/calabresa.jpg",
+  },
+  {
+    id: "5",
+    nome: "Pizza Portuguesa",
+    descricao: "Molho de tomate, mozzarella, presunto, ovo, cebola e azeitona",
+    preco: 39.9,
+    categoria: "Tradicionais",
+    disponivel: true,
+    imagem: "/images/portuguesa.jpg",
+  },
+  {
+    id: "6",
+    nome: "Pizza Frango com Catupiry",
+    descricao: "Molho de tomate, mozzarella, frango desfiado e catupiry",
+    preco: 41.9,
+    categoria: "Especiais",
+    disponivel: true,
+    imagem: "/images/frango-catupiry.jpg",
+  },
+  {
+    id: "7",
+    nome: "Pizza Vegetariana",
+    descricao:
+      "Molho de tomate, mozzarella, tomate, cebola, pimentão, azeitona e manjericão",
+    preco: 37.9,
+    categoria: "Vegetarianas",
+    disponivel: true,
+    imagem: "/images/vegetariana.jpg",
+  },
+  {
+    id: "8",
+    nome: "Pizza Napolitana",
+    descricao: "Molho de tomate, mozzarella, tomate, alho e manjericão",
+    preco: 34.9,
+    categoria: "Clássicas",
+    disponivel: true,
+    imagem: "/images/napolitana.jpg",
+  },
+];
