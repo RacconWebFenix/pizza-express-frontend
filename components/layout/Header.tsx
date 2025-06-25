@@ -1,6 +1,15 @@
 "use client";
 
-import { Box, Flex, Heading, Button, Icon, HStack, VStack, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Icon,
+  HStack,
+  VStack,
+  IconButton,
+} from "@chakra-ui/react";
 import { FaPizzaSlice, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../auth/auth-context";
 import { useRouter } from "next/navigation";

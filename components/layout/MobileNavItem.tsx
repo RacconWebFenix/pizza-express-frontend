@@ -9,7 +9,11 @@ interface MobileNavItemProps {
   onClick?: () => void;
 }
 
-export default function MobileNavItem({ href, label, onClick }: MobileNavItemProps) {
+export default function MobileNavItem({
+  href,
+  label,
+  onClick,
+}: MobileNavItemProps) {
   const router = useRouter();
   const pathname = usePathname();
 
