@@ -4,7 +4,7 @@ import { Box } from "@chakra-ui/react";
 export default function LoginLayout({ children }: { children: ReactNode }) {
   return (
     <Box
-      bgGradient="linear(to-br, brand.yellow, brand.red)"
+      bgGradient="linear(to-br, brand.light, brand.accent)"
       minH="100vh"
       display="flex"
       justifyContent="center"

@@ -6,13 +6,26 @@ const customConfig = defineConfig({
     tokens: {
       colors: {
         brand: {
-          red: { value: "#D92B2B" }, // Tomate, Pepperoni
-          green: { value: "#228B22" }, // Manjericão, Pesto
-          yellow: { value: "#FFC72C" }, // Queijo
-          beige: { value: "#F5DEB3" }, // Massa, Crosta
-          brown: { value: "#A0522D" }, // Forno a lenha, Crosta mais escura
-          charcoal: { value: "#36454F" }, // Lousa, Acentos escuros
-          cream: { value: "#FFFDD0" }, // Mozzarella, Fundo claro
+          // Cores principais - Profissionais e elegantes
+          primary: { value: "#1A365D" }, // Azul navy profissional
+          secondary: { value: "#2D3748" }, // Cinza escuro sofisticado
+          accent: { value: "#3182CE" }, // Azul confiança
+
+          // Cores específicas da pizzaria (uso restrito)
+          pizza: { value: "#D69E2E" }, // Dourado para elementos da pizzaria
+          fresh: { value: "#38A169" }, // Verde para ingredientes frescos
+
+          // Tons neutros profissionais
+          dark: { value: "#1A202C" }, // Quase preto elegante
+          medium: { value: "#4A5568" }, // Cinza médio
+          light: { value: "#F7FAFC" }, // Branco quente
+          cream: { value: "#FFFBF0" }, // Creme sutil
+
+          // Estados e feedback
+          success: { value: "#38A169" },
+          warning: { value: "#D69E2E" },
+          error: { value: "#E53E3E" },
+          info: { value: "#3182CE" },
         },
       },
     },

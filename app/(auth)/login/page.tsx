@@ -64,10 +64,10 @@ const LoginPage = () => {
         justifyContent="center"
         alignItems="center"
         minHeight="100vh"
-        bgGradient="linear(to-br, brand.red, brand.yellow)"
+        bgGradient="linear(to-br, brand.primary, brand.accent)"
       >
         {loading ? (
-          <Spinner size="xl" color="brand.red" />
+          <Spinner size="xl" color="brand.accent" />
         ) : (
           <VStack
             as="form"
@@ -80,7 +80,7 @@ const LoginPage = () => {
             maxWidth="400px"
             w="full"
           >
-            <Heading color="brand.red">Pizza Express</Heading>
+            <Heading color="brand.primary">Pizza Express</Heading>
             <Box>
               <label>Email</label>
               <Input
@@ -89,7 +89,7 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Digite seu email"
                 bg="brand.cream"
-                color="brand.charcoal"
+                color="brand.dark"
               />
             </Box>
             <Box>
@@ -100,10 +100,16 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Digite sua senha"
                 bg="brand.cream"
-                color="brand.charcoal"
+                color="brand.dark"
               />
             </Box>
-            <Button type="submit" colorScheme="red" width="full">
+            <Button
+              type="submit"
+              bg="brand.accent"
+              color="white"
+              width="full"
+              _hover={{ bg: "brand.primary" }}
+            >
               Entrar
             </Button>
           </VStack>

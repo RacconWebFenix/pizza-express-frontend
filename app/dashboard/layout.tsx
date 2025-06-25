@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   if (isLoading) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.red" />
+        <Spinner size="xl" color="brand.accent" />
       </Flex>
     );
   }
@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   if (!isAuthenticated || !user) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.red" />
+        <Spinner size="xl" color="brand.accent" />
       </Flex>
     );
   }

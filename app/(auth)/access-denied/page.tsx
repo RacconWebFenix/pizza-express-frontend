@@ -22,7 +22,7 @@ const AccessDeniedPage = () => {
         justifyContent="center"
         alignItems="center"
         minHeight="100vh"
-        bgGradient="linear(to-br, brand.charcoal, brand.red)"
+        bgGradient="linear(to-br, brand.secondary, brand.primary)"
         color="white"
       >
         <Flex direction="column" gap={4} textAlign="center" align="center">

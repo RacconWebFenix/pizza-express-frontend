@@ -17,9 +17,9 @@ export default function Header() {
 
   return (
     <Box
-      bg="brand.cream"
-      borderBottom="2px"
-      borderColor="brand.red"
+      bg="white"
+      borderBottom="1px"
+      borderColor="gray.200"
       boxShadow="sm"
       position="sticky"
       top="0"
@@ -35,13 +35,13 @@ export default function Header() {
       >
         {/* Logo */}
         <Heading
-          color="brand.red"
+          color="brand.primary"
           size="lg"
           cursor="pointer"
           onClick={() => router.push("/")}
         >
           <Flex align="center" gap={2}>
-            <Icon as={FaPizzaSlice} color="brand.green" />
+            <Icon as={FaPizzaSlice} color="brand.pizza" />
             Pizza Express
           </Flex>
         </Heading>
@@ -62,8 +62,11 @@ export default function Header() {
           )}
           <Button
             size="sm"
-            colorScheme="red"
+            colorScheme="gray"
             variant="outline"
+            color="brand.medium"
+            borderColor="brand.medium"
+            _hover={{ bg: "brand.light", borderColor: "brand.primary" }}
             onClick={handleLogout}
           >
             <Icon as={FaSignOutAlt} />

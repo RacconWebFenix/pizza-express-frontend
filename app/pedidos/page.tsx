@@ -25,35 +25,39 @@ const getStatusConfig = (status: string) => {
   switch (status) {
     case "preparando":
       return {
-        color: "orange",
+        color: "brand.warning",
         icon: FaClock,
         label: "Preparando",
-        bgColor: "orange.50",
-        borderColor: "orange.200",
+        bgColor: "brand.cream",
+        borderColor: "brand.pizza",
+        badgeScheme: "yellow",
       };
     case "entregue":
       return {
-        color: "green",
+        color: "brand.success",
         icon: FaCheckCircle,
         label: "Entregue",
-        bgColor: "green.50",
-        borderColor: "green.200",
+        bgColor: "#F0FDF4", // Verde muito claro
+        borderColor: "brand.fresh",
+        badgeScheme: "green",
       };
     case "cancelado":
       return {
-        color: "red",
+        color: "brand.error",
         icon: FaTimes,
         label: "Cancelado",
-        bgColor: "red.50",
-        borderColor: "red.200",
+        bgColor: "#FEF2F2", // Vermelho muito claro
+        borderColor: "brand.error",
+        badgeScheme: "red",
       };
     default:
       return {
-        color: "gray",
+        color: "brand.medium",
         icon: FaClock,
         label: "Desconhecido",
-        bgColor: "gray.50",
-        borderColor: "gray.200",
+        bgColor: "brand.light",
+        borderColor: "gray.300",
+        badgeScheme: "gray",
       };
   }
 };
@@ -63,13 +67,13 @@ export default function PedidosPage() {
     <VStack gap={8} align="stretch" w="full">
       {/* Header */}
       <Box textAlign="center" py={6}>
-        <Heading color="brand.red" size="2xl" mb={4}>
+        <Heading color="brand.primary" size="2xl" mb={4}>
           <Flex align="center" justify="center" gap={3}>
-            <Icon as={FaShoppingCart} color="brand.green" />
+            <Icon as={FaShoppingCart} color="brand.accent" />
             Meus Pedidos
           </Flex>
         </Heading>
-        <Text color="brand.charcoal" fontSize="lg">
+        <Text color="brand.medium" fontSize="lg">
           Acompanhe o status dos seus pedidos
         </Text>
         <Badge colorScheme="blue" fontSize="md" mt={2}>
@@ -87,7 +91,7 @@ export default function PedidosPage() {
           textAlign="center"
         >
           <Icon as={FaShoppingCart} boxSize={16} color="gray.300" mb={4} />
-          <Heading size="lg" color="brand.charcoal" mb={2}>
+          <Heading size="lg" color="brand.primary" mb={2}>
             Nenhum pedido encontrado
           </Heading>
           <Text color="gray.600" mb={6}>
@@ -111,75 +115,120 @@ export default function PedidosPage() {
               >
                 <Box
                   bg="white"
-                  borderRadius="xl"
-                  boxShadow="lg"
-                  border="2px"
+                  borderRadius="2xl"
+                  boxShadow="md"
+                  border="1px"
                   borderColor={statusConfig.borderColor}
                   overflow="hidden"
-                  transition="all 0.2s"
+                  transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                   _hover={{
-                    boxShadow: "xl",
-                    transform: "translateY(-2px)",
+                    boxShadow: "2xl",
+                    transform: "translateY(-4px)",
+                    borderColor: "brand.accent",
                   }}
                 >
                   {/* Header do Pedido */}
                   <Flex
                     bg={statusConfig.bgColor}
-                    p={4}
+                    p={5}
                     justify="space-between"
                     align="center"
+                    borderBottom="1px"
+                    borderColor="gray.100"
                   >
-                    <Flex align="center" gap={3}>
+                    <Flex align="center" gap={4}>
                       <Badge
-                        colorScheme={statusConfig.color}
+                        colorScheme={statusConfig.badgeScheme}
                         fontSize="sm"
-                        px={3}
-                        py={1}
+                        px={4}
+                        py={2}
                         borderRadius="full"
+                        textTransform="none"
+                        fontWeight="600"
+                        boxShadow="sm"
                       >
-                        <Icon as={statusConfig.icon} mr={1} />
+                        <Icon as={statusConfig.icon} mr={2} />
                         {statusConfig.label}
                       </Badge>
-                      <Text fontWeight="bold" color="brand.charcoal">
+                      <Text
+                        fontWeight="700"
+                        color="brand.primary"
+                        fontSize="lg"
+                      >
                         Pedido #{pedido.id}
                       </Text>
                     </Flex>
-                    <Text fontSize="sm" color="gray.600">
+                    <Text fontSize="sm" color="brand.medium" fontWeight="500">
                       {pedido.data} às {pedido.hora}
                     </Text>
                   </Flex>
 
                   {/* Conteúdo do Pedido */}
-                  <VStack p={6} align="stretch" gap={4}>
-                    <VStack align="flex-start" gap={2}>
-                      <Text fontWeight="bold" color="brand.charcoal">
+                  <VStack p={6} align="stretch" gap={5}>
+                    <VStack align="flex-start" gap={3}>
+                      <Text
+                        fontWeight="700"
+                        color="brand.primary"
+                        fontSize="md"
+                      >
                         Itens do Pedido:
                       </Text>
-                      {pedido.pizzas.map((pizza, pizzaIndex) => (
-                        <Flex key={pizzaIndex} align="center" gap={2}>
-                          <Icon
-                            as={FaShoppingCart}
-                            color="brand.green"
-                            boxSize={4}
-                          />
-                          <Text color="brand.charcoal">{pizza}</Text>
-                        </Flex>
-                      ))}
+                      <VStack align="stretch" gap={2} w="full">
+                        {pedido.pizzas.map((pizza, pizzaIndex) => (
+                          <Flex
+                            key={pizzaIndex}
+                            align="center"
+                            gap={3}
+                            p={3}
+                            bg="brand.light"
+                            borderRadius="lg"
+                            border="1px"
+                            borderColor="gray.100"
+                          >
+                            <Icon
+                              as={FaShoppingCart}
+                              color="brand.pizza"
+                              boxSize={5}
+                            />
+                            <Text color="brand.dark" fontWeight="500" flex="1">
+                              {pizza}
+                            </Text>
+                          </Flex>
+                        ))}
+                      </VStack>
                     </VStack>
 
                     <Box h="1px" bg="gray.200" w="full" />
 
-                    <Flex justify="space-between" align="center">
-                      <Text fontSize="xl" fontWeight="bold" color="brand.green">
+                    <Flex
+                      justify="space-between"
+                      align="center"
+                      flexWrap="wrap"
+                      gap={4}
+                    >
+                      <Text fontSize="2xl" fontWeight="800" color="brand.fresh">
                         Total: R$ {pedido.total.toFixed(2)}
                       </Text>
-                      <Flex gap={2}>
+                      <Flex gap={3}>
                         {pedido.status === "preparando" && (
-                          <Button size="sm" colorScheme="red" variant="outline">
+                          <Button
+                            size="md"
+                            colorScheme="red"
+                            variant="outline"
+                            borderRadius="lg"
+                            fontWeight="600"
+                          >
                             Cancelar
                           </Button>
                         )}
-                        <Button size="sm" colorScheme="blue" variant="outline">
+                        <Button
+                          size="md"
+                          bg="brand.accent"
+                          color="white"
+                          borderRadius="lg"
+                          fontWeight="600"
+                          _hover={{ bg: "brand.primary" }}
+                        >
                           Ver Detalhes
                         </Button>
                       </Flex>
@@ -193,18 +242,54 @@ export default function PedidosPage() {
       )}
 
       {/* Actions Footer */}
-      <Box bg="white" borderRadius="xl" boxShadow="lg" p={6} textAlign="center">
-        <Heading size="md" color="brand.red" mb={4}>
+      <Box
+        bg="white"
+        borderRadius="2xl"
+        boxShadow="lg"
+        p={8}
+        textAlign="center"
+        border="1px"
+        borderColor="gray.100"
+      >
+        <Heading size="lg" color="brand.primary" mb={4} fontWeight="700">
           Quer fazer um novo pedido?
         </Heading>
-        <Text color="brand.charcoal" mb={4}>
+        <Text color="brand.medium" mb={6} fontSize="lg">
           Confira nosso cardápio e escolha suas pizzas favoritas!
         </Text>
         <Flex gap={4} justify="center" wrap="wrap">
-          <Button colorScheme="green" size="lg">
+          <Button
+            bg="brand.pizza"
+            color="white"
+            size="lg"
+            borderRadius="xl"
+            px={8}
+            py={6}
+            fontSize="lg"
+            fontWeight="600"
+            _hover={{ bg: "brand.accent", transform: "translateY(-2px)" }}
+            transition="all 0.3s"
+            boxShadow="md"
+          >
             Ver Cardápio
           </Button>
-          <Button colorScheme="blue" variant="outline" size="lg">
+          <Button
+            variant="outline"
+            borderColor="brand.accent"
+            color="brand.accent"
+            size="lg"
+            borderRadius="xl"
+            px={8}
+            py={6}
+            fontSize="lg"
+            fontWeight="600"
+            _hover={{
+              bg: "brand.light",
+              transform: "translateY(-2px)",
+              borderColor: "brand.primary",
+            }}
+            transition="all 0.3s"
+          >
             Pedidos Anteriores
           </Button>
         </Flex>
