@@ -37,7 +37,7 @@ const LoginPage = () => {
         const loginSuccess = await login(responseData.access_token);
 
         if (loginSuccess) {
-          router.push("/welcome");
+          router.push("/");
         } else {
           alert("Erro na validação do usuário. Por favor, tente novamente.");
         }

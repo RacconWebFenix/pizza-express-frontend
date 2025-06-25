@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   // Páginas públicas que não precisam de autenticação
-  const publicPages = ["/", "/login", "/access-denied"];
+  const publicPages = ["/", "/login", "/access-denied", "/welcome"];
   if (publicPages.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/access-denied", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // Se tem token, permite o acesso

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import Cookies from "js-cookie";
 
 interface User {
@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (token: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,22 +32,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return null;
   });
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Valida o token existente no cookie quando o componente monta
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const existingToken = Cookies.get("authToken");
+      console.log("Initializing auth, existing token:", existingToken ? "found" : "not found");
+      
+      if (existingToken) {
+        console.log("Validating existing token...");
+        const userData = await validateToken(existingToken);
+        if (userData) {
+          console.log("Token valid, setting user:", userData);
+          setUser(userData);
+          setToken(existingToken);
+        } else {
+          console.log("Token invalid, removing cookie");
+          // Token inválido, remove o cookie
+          Cookies.remove("authToken", { path: "/" });
+          setToken(null);
+        }
+      }
+      
+      setIsLoading(false);
+      console.log("Auth initialization complete");
+    };
+
+    initializeAuth();
+  }, []);
 
   const validateToken = async (token: string): Promise<User | null> => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
+        console.warn("Token validation failed:", response.status);
         return null;
       }
 
       const userData = await response.json();
+      console.log("User validated successfully:", userData);
       return userData;
-    } catch {
+    } catch (error) {
+      console.error("Error validating token:", error);
       return null;
     }
   };
@@ -88,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ token, user, login, logout, isAuthenticated }}
+      value={{ token, user, login, logout, isAuthenticated, isLoading }}
     >
       {children}
     </AuthContext.Provider>

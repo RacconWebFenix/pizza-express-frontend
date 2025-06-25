@@ -8,7 +8,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleNavigateToWelcome = () => {
-    router.push("/welcome");
+    router.push("/cardapio");
   };
 
   return (
