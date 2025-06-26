@@ -68,11 +68,8 @@ const RegisterPage = () => {
       newErrors.confirmPassword = "Senhas não coincidem";
     }
 
-    // Validação do telefone (opcional)
-    if (formData.telefone && !/^[\d\s\-\(\)]+$/.test(formData.telefone)) {
-      newErrors.telefone =
-        "Telefone deve conter apenas números e símbolos válidos";
-    }
+    // Validação do telefone (opcional - string)
+    // O telefone é opcional, então não há validação específica se estiver vazio
 
     // Validação do endereço
     if (!formData.endereco.trim()) {
@@ -116,9 +113,9 @@ const RegisterPage = () => {
           },
           body: JSON.stringify({
             nome: formData.nome.trim(),
-            email: formData.email.toLowerCase(),
+            email: formData.email.toLowerCase().trim(),
             password: formData.password,
-            telefone: formData.telefone || undefined,
+            telefone: formData.telefone.trim() || undefined, // Opcional como string
             endereco: formData.endereco.trim(),
           }),
         }
@@ -299,7 +296,7 @@ const RegisterPage = () => {
                     type="tel"
                     value={formData.telefone}
                     onChange={handleInputChange("telefone")}
-                    placeholder="(11) 99999-9999"
+                    placeholder="(11) 99999-9999 ou texto livre"
                     bg="brand.cream"
                     border="1px"
                     borderColor={errors.telefone ? "red.300" : "gray.300"}
