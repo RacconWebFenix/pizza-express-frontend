@@ -233,9 +233,11 @@ const RegisterPage = () => {
                     value={formData.nome}
                     onChange={handleInputChange("nome")}
                     placeholder="Seu nome completo"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={errors.nome ? "red.300" : "gray.300"}
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.nome ? "red.500" : "brand.primary",
                       boxShadow: `0 0 0 1px ${
@@ -265,9 +267,11 @@ const RegisterPage = () => {
                     value={formData.email}
                     onChange={handleInputChange("email")}
                     placeholder="seu@email.com"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={errors.email ? "red.300" : "gray.300"}
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.email ? "red.500" : "brand.primary",
                       boxShadow: `0 0 0 1px ${
@@ -297,9 +301,11 @@ const RegisterPage = () => {
                     value={formData.telefone}
                     onChange={handleInputChange("telefone")}
                     placeholder="(11) 99999-9999 ou texto livre"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={errors.telefone ? "red.300" : "gray.300"}
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.telefone
                         ? "red.500"
@@ -331,9 +337,11 @@ const RegisterPage = () => {
                     value={formData.endereco}
                     onChange={handleInputChange("endereco")}
                     placeholder="Rua, número, bairro, cidade"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={errors.endereco ? "red.300" : "gray.300"}
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.endereco
                         ? "red.500"
@@ -365,9 +373,11 @@ const RegisterPage = () => {
                     value={formData.password}
                     onChange={handleInputChange("password")}
                     placeholder="Mínimo 6 caracteres"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={errors.password ? "red.300" : "gray.300"}
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.password
                         ? "red.500"
@@ -399,11 +409,13 @@ const RegisterPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange("confirmPassword")}
                     placeholder="Digite a senha novamente"
-                    bg="brand.cream"
+                    bg="white"
+                    color="brand.dark"
                     border="1px"
                     borderColor={
                       errors.confirmPassword ? "red.300" : "gray.300"
                     }
+                    _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.confirmPassword
                         ? "red.500"

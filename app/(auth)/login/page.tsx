@@ -114,10 +114,11 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Digite seu email"
-                  bg="brand.cream"
+                  bg="white"
                   color="brand.dark"
                   border="1px"
                   borderColor="gray.300"
+                  _placeholder={{ color: "gray.500" }}
                   _focus={{
                     borderColor: "brand.primary",
                     boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
@@ -140,10 +141,11 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Digite sua senha"
-                  bg="brand.cream"
+                  bg="white"
                   color="brand.dark"
                   border="1px"
                   borderColor="gray.300"
+                  _placeholder={{ color: "gray.500" }}
                   _focus={{
                     borderColor: "brand.primary",
                     boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
