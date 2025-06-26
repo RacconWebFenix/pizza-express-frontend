@@ -101,21 +101,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(userData);
     setToken(newToken);
 
-    // Define o cookie com configurações específicas
-    Cookies.set("authToken", newToken, {
+    // Define o cookie com configurações específicas para produção
+    const cookieOptions = {
       expires: 1, // 1 dia
       path: "/", // Disponível em todo o site
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-    });
+      sameSite: "lax" as const, // Menos restritivo que strict para produção
+      secure: process.env.NODE_ENV === "production", // HTTPS apenas em produção
+    };
+
+    Cookies.set("authToken", newToken, cookieOptions);
+    
+    console.log("Token saved to cookie with options:", cookieOptions);
 
     return true;
   };
 
   const logout = () => {
+    console.log("Logging out user");
     setToken(null);
     setUser(null);
-    Cookies.remove("authToken", { path: "/" });
+    
+    // Remove o cookie com as mesmas opções
+    Cookies.remove("authToken", { 
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production"
+    });
+    
+    console.log("User logged out and cookie removed");
   };
 
   const isAuthenticated = !!token && !!user;

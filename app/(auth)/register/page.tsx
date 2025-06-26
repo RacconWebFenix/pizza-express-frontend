@@ -122,7 +122,12 @@ const RegisterPage = () => {
         
         // Aguarda 2 segundos antes de redirecionar
         setTimeout(() => {
-          router.push("/login");
+          // Use window.location para garantir redirecionamento em produção
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          } else {
+            router.push("/login");
+          }
         }, 2000);
       } else {
         // Trata diferentes tipos de erro

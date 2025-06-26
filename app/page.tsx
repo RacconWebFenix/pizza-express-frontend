@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
 import { useAuth } from "@/components/auth/auth-context";
+import AuthLoading from "@/components/auth/AuthLoading";
 import { useEffect } from "react";
 
 export default function Home() {
@@ -23,7 +24,14 @@ export default function Home() {
   // Redireciona usuários logados para o cardápio
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push("/cardapio");
+      console.log("User is authenticated, redirecting to cardapio");
+      
+      // Use window.location para garantir redirecionamento em produção
+      if (typeof window !== "undefined") {
+        window.location.href = "/cardapio";
+      } else {
+        router.push("/cardapio");
+      }
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -33,17 +41,7 @@ export default function Home() {
 
   // Mostra loading enquanto verifica autenticação
   if (isLoading) {
-    return (
-      <Box
-        bg="brand.light"
-        minH="100vh"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text>Carregando...</Text>
-      </Box>
-    );
+    return <AuthLoading message="Verificando login..." />;
   }
 
   return (

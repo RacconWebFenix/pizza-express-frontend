@@ -37,7 +37,15 @@ const LoginPage = () => {
         const loginSuccess = await login(responseData.access_token);
 
         if (loginSuccess) {
-          router.push("/cardapio");
+          // Force refresh para garantir que o estado seja atualizado
+          console.log("Login successful, redirecting to cardapio");
+          
+          // Use window.location para garantir redirecionamento em produção
+          if (typeof window !== "undefined") {
+            window.location.href = "/cardapio";
+          } else {
+            router.push("/cardapio");
+          }
         } else {
           alert("Erro na validação do usuário. Por favor, tente novamente.");
         }
