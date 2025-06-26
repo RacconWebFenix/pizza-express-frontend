@@ -37,9 +37,6 @@ const LoginPage = () => {
         const loginSuccess = await login(responseData.access_token);
 
         if (loginSuccess) {
-          // Force refresh para garantir que o estado seja atualizado
-          console.log("Login successful, redirecting to cardapio");
-          
           // Use window.location para garantir redirecionamento em produção
           if (typeof window !== "undefined") {
             window.location.href = "/cardapio";
@@ -102,9 +99,14 @@ const LoginPage = () => {
               <Heading color="brand.primary" textAlign="center">
                 Pizza Express
               </Heading>
-              
+
               <Box>
-                <Box color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                <Box
+                  color="brand.medium"
+                  mb={2}
+                  fontSize="sm"
+                  fontWeight="medium"
+                >
                   Email
                 </Box>
                 <Input
@@ -123,9 +125,14 @@ const LoginPage = () => {
                   required
                 />
               </Box>
-              
+
               <Box>
-                <Box color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                <Box
+                  color="brand.medium"
+                  mb={2}
+                  fontSize="sm"
+                  fontWeight="medium"
+                >
                   Senha
                 </Box>
                 <Input
@@ -144,7 +151,7 @@ const LoginPage = () => {
                   required
                 />
               </Box>
-              
+
               <Button
                 type="submit"
                 bg="brand.accent"
@@ -155,7 +162,7 @@ const LoginPage = () => {
               >
                 Entrar
               </Button>
-              
+
               <Box textAlign="center">
                 <Link href="/register">
                   <Button variant="ghost" color="brand.primary">

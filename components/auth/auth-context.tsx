@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 import Cookies from "js-cookie";
 
 interface User {
@@ -38,25 +44,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const existingToken = Cookies.get("authToken");
-      console.log("Initializing auth, existing token:", existingToken ? "found" : "not found");
-      
+
       if (existingToken) {
-        console.log("Validating existing token...");
         const userData = await validateToken(existingToken);
         if (userData) {
-          console.log("Token valid, setting user:", userData);
           setUser(userData);
           setToken(existingToken);
         } else {
-          console.log("Token invalid, removing cookie");
           // Token inválido, remove o cookie
           Cookies.remove("authToken", { path: "/" });
           setToken(null);
         }
       }
-      
+
       setIsLoading(false);
-      console.log("Auth initialization complete");
     };
 
     initializeAuth();
@@ -72,15 +73,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (!response.ok) {
-        console.warn("Token validation failed:", response.status);
         return null;
       }
 
       const userData = await response.json();
-      console.log("User validated successfully:", userData);
       return userData;
-    } catch (error) {
-      console.error("Error validating token:", error);
+    } catch {
       return null;
     }
   };
@@ -110,25 +108,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     Cookies.set("authToken", newToken, cookieOptions);
-    
-    console.log("Token saved to cookie with options:", cookieOptions);
 
     return true;
   };
 
   const logout = () => {
-    console.log("Logging out user");
     setToken(null);
     setUser(null);
-    
+
     // Remove o cookie com as mesmas opções
-    Cookies.remove("authToken", { 
+    Cookies.remove("authToken", {
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production"
+      secure: process.env.NODE_ENV === "production",
     });
-    
-    console.log("User logged out and cookie removed");
   };
 
   const isAuthenticated = !!token && !!user;

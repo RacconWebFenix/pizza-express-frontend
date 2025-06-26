@@ -6,7 +6,9 @@ interface AuthLoadingProps {
   message?: string;
 }
 
-export default function AuthLoading({ message = "Verificando autenticação..." }: AuthLoadingProps) {
+export default function AuthLoading({
+  message = "Verificando autenticação...",
+}: AuthLoadingProps) {
   return (
     <Box
       bg="brand.light"
@@ -16,10 +18,7 @@ export default function AuthLoading({ message = "Verificando autenticação..." 
       justifyContent="center"
     >
       <VStack gap={4}>
-        <Spinner
-          size="xl"
-          color="brand.primary"
-        />
+        <Spinner size="xl" color="brand.primary" />
         <Text color="brand.medium" fontSize="lg">
           {message}
         </Text>

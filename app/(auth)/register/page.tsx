@@ -20,6 +20,7 @@ interface FormErrors {
   confirmPassword?: string;
   nome?: string;
   telefone?: string;
+  endereco?: string;
 }
 
 const RegisterPage = () => {
@@ -29,6 +30,7 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
     telefone: "",
+    endereco: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -68,22 +70,30 @@ const RegisterPage = () => {
 
     // Validação do telefone (opcional)
     if (formData.telefone && !/^[\d\s\-\(\)]+$/.test(formData.telefone)) {
-      newErrors.telefone = "Telefone deve conter apenas números e símbolos válidos";
+      newErrors.telefone =
+        "Telefone deve conter apenas números e símbolos válidos";
+    }
+
+    // Validação do endereço
+    if (!formData.endereco.trim()) {
+      newErrors.endereco = "Endereço é obrigatório";
+    } else if (formData.endereco.trim().length < 5) {
+      newErrors.endereco = "Endereço deve ter pelo menos 5 caracteres";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field: keyof typeof formData) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-    // Limpa o erro do campo quando o usuário começa a digitar
-    if (errors[field as keyof FormErrors]) {
-      setErrors({ ...errors, [field]: undefined });
-    }
-  };
+  const handleInputChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value });
+      // Limpa o erro do campo quando o usuário começa a digitar
+      if (errors[field as keyof FormErrors]) {
+        setErrors({ ...errors, [field]: undefined });
+      }
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +119,7 @@ const RegisterPage = () => {
             email: formData.email.toLowerCase(),
             password: formData.password,
             telefone: formData.telefone || undefined,
+            endereco: formData.endereco.trim(),
           }),
         }
       );
@@ -119,7 +130,7 @@ const RegisterPage = () => {
         setSuccessMessage(
           "Cadastro realizado com sucesso! Redirecionando para o login..."
         );
-        
+
         // Aguarda 2 segundos antes de redirecionar
         setTimeout(() => {
           // Use window.location para garantir redirecionamento em produção
@@ -134,9 +145,10 @@ const RegisterPage = () => {
         if (response.status === 409) {
           setErrorMessage("Este email já está cadastrado. Tente fazer login.");
         } else if (responseData.message) {
-          setErrorMessage(Array.isArray(responseData.message) 
-            ? responseData.message.join(", ") 
-            : responseData.message
+          setErrorMessage(
+            Array.isArray(responseData.message)
+              ? responseData.message.join(", ")
+              : responseData.message
           );
         } else {
           setErrorMessage("Erro ao realizar cadastro. Tente novamente.");
@@ -144,7 +156,9 @@ const RegisterPage = () => {
       }
     } catch (error) {
       console.error("Erro no cadastro:", error);
-      setErrorMessage("Erro inesperado. Por favor, tente novamente mais tarde.");
+      setErrorMessage(
+        "Erro inesperado. Por favor, tente novamente mais tarde."
+      );
     } finally {
       setLoading(false);
     }
@@ -209,7 +223,12 @@ const RegisterPage = () => {
               <VStack gap={4}>
                 {/* Nome */}
                 <Box w="full">
-                  <Text color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
                     Nome Completo
                   </Text>
                   <Input
@@ -222,7 +241,9 @@ const RegisterPage = () => {
                     borderColor={errors.nome ? "red.300" : "gray.300"}
                     _focus={{
                       borderColor: errors.nome ? "red.500" : "brand.primary",
-                      boxShadow: `0 0 0 1px ${errors.nome ? "red.500" : "brand.primary"}`,
+                      boxShadow: `0 0 0 1px ${
+                        errors.nome ? "red.500" : "brand.primary"
+                      }`,
                     }}
                   />
                   {errors.nome && (
@@ -234,7 +255,12 @@ const RegisterPage = () => {
 
                 {/* Email */}
                 <Box w="full">
-                  <Text color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
                     Email
                   </Text>
                   <Input
@@ -247,7 +273,9 @@ const RegisterPage = () => {
                     borderColor={errors.email ? "red.300" : "gray.300"}
                     _focus={{
                       borderColor: errors.email ? "red.500" : "brand.primary",
-                      boxShadow: `0 0 0 1px ${errors.email ? "red.500" : "brand.primary"}`,
+                      boxShadow: `0 0 0 1px ${
+                        errors.email ? "red.500" : "brand.primary"
+                      }`,
                     }}
                   />
                   {errors.email && (
@@ -259,7 +287,12 @@ const RegisterPage = () => {
 
                 {/* Telefone */}
                 <Box w="full">
-                  <Text color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
                     Telefone (Opcional)
                   </Text>
                   <Input
@@ -271,8 +304,12 @@ const RegisterPage = () => {
                     border="1px"
                     borderColor={errors.telefone ? "red.300" : "gray.300"}
                     _focus={{
-                      borderColor: errors.telefone ? "red.500" : "brand.primary",
-                      boxShadow: `0 0 0 1px ${errors.telefone ? "red.500" : "brand.primary"}`,
+                      borderColor: errors.telefone
+                        ? "red.500"
+                        : "brand.primary",
+                      boxShadow: `0 0 0 1px ${
+                        errors.telefone ? "red.500" : "brand.primary"
+                      }`,
                     }}
                   />
                   {errors.telefone && (
@@ -282,9 +319,48 @@ const RegisterPage = () => {
                   )}
                 </Box>
 
+                {/* Endereço */}
+                <Box w="full">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
+                    Endereço
+                  </Text>
+                  <Input
+                    type="text"
+                    value={formData.endereco}
+                    onChange={handleInputChange("endereco")}
+                    placeholder="Rua, número, bairro, cidade"
+                    bg="brand.cream"
+                    border="1px"
+                    borderColor={errors.endereco ? "red.300" : "gray.300"}
+                    _focus={{
+                      borderColor: errors.endereco
+                        ? "red.500"
+                        : "brand.primary",
+                      boxShadow: `0 0 0 1px ${
+                        errors.endereco ? "red.500" : "brand.primary"
+                      }`,
+                    }}
+                  />
+                  {errors.endereco && (
+                    <Text color="red.500" fontSize="sm" mt={1}>
+                      {errors.endereco}
+                    </Text>
+                  )}
+                </Box>
+
                 {/* Senha */}
                 <Box w="full">
-                  <Text color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
                     Senha
                   </Text>
                   <Input
@@ -296,8 +372,12 @@ const RegisterPage = () => {
                     border="1px"
                     borderColor={errors.password ? "red.300" : "gray.300"}
                     _focus={{
-                      borderColor: errors.password ? "red.500" : "brand.primary",
-                      boxShadow: `0 0 0 1px ${errors.password ? "red.500" : "brand.primary"}`,
+                      borderColor: errors.password
+                        ? "red.500"
+                        : "brand.primary",
+                      boxShadow: `0 0 0 1px ${
+                        errors.password ? "red.500" : "brand.primary"
+                      }`,
                     }}
                   />
                   {errors.password && (
@@ -309,7 +389,12 @@ const RegisterPage = () => {
 
                 {/* Confirmar Senha */}
                 <Box w="full">
-                  <Text color="brand.medium" mb={2} fontSize="sm" fontWeight="medium">
+                  <Text
+                    color="brand.medium"
+                    mb={2}
+                    fontSize="sm"
+                    fontWeight="medium"
+                  >
                     Confirmar Senha
                   </Text>
                   <Input
@@ -319,10 +404,16 @@ const RegisterPage = () => {
                     placeholder="Digite a senha novamente"
                     bg="brand.cream"
                     border="1px"
-                    borderColor={errors.confirmPassword ? "red.300" : "gray.300"}
+                    borderColor={
+                      errors.confirmPassword ? "red.300" : "gray.300"
+                    }
                     _focus={{
-                      borderColor: errors.confirmPassword ? "red.500" : "brand.primary",
-                      boxShadow: `0 0 0 1px ${errors.confirmPassword ? "red.500" : "brand.primary"}`,
+                      borderColor: errors.confirmPassword
+                        ? "red.500"
+                        : "brand.primary",
+                      boxShadow: `0 0 0 1px ${
+                        errors.confirmPassword ? "red.500" : "brand.primary"
+                      }`,
                     }}
                   />
                   {errors.confirmPassword && (
