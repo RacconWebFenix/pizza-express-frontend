@@ -21,8 +21,8 @@ export default function NavItem({ href, label }: NavItemProps) {
       size="sm"
       onClick={() => router.push(href)}
       _hover={{
-        bg: isActive ? "blue.600" : "gray.100",
-        color: isActive ? "white" : "gray.700",
+        bg: isActive ? "blue.800" : "gray.200",
+        color: isActive ? "white" : "gray.800",
       }}
     >
       {label}

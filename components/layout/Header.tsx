@@ -55,13 +55,13 @@ export default function Header() {
       >
         {/* Logo */}
         <Heading
-          color="blue.600"
+          color="blue.800"
           size="lg"
           cursor="pointer"
           onClick={() => router.push("/")}
         >
           <Flex align="center" gap={2}>
-            <Icon as={FaPizzaSlice} color="orange.400" />
+            <Icon as={FaPizzaSlice} color="orange.600" />
             Pizza Express
           </Flex>
         </Heading>
@@ -76,16 +76,16 @@ export default function Header() {
         {/* User Info & Logout - Desktop */}
         {user ? (
           <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
-            <Box color="gray.600" fontSize="sm">
+            <Box color="gray.800" fontSize="sm">
               Olá, {user.email.split("@")[0]}!
             </Box>
             <Button
               size="sm"
               colorScheme="gray"
               variant="outline"
-              color="gray.600"
-              borderColor="gray.300"
-              _hover={{ bg: "gray.50", borderColor: "blue.600" }}
+              color="gray.700"
+              borderColor="gray.400"
+              _hover={{ bg: "gray.100", borderColor: "blue.800" }}
               onClick={handleLogout}
             >
               <Icon as={FaSignOutAlt} mr={2} />
@@ -97,9 +97,9 @@ export default function Header() {
             <Button
               size="sm"
               variant="solid"
-              bg="blue.600"
+              bg="blue.800"
               color="white"
-              _hover={{ bg: "blue.500" }}
+              _hover={{ bg: "blue.700" }}
               onClick={() => router.push("/login")}
             >
               Entrar
@@ -112,7 +112,7 @@ export default function Header() {
           display={{ base: "flex", md: "none" }}
           aria-label="Abrir menu"
           variant="ghost"
-          color="blue.600"
+          color="blue.800"
           onClick={toggleMobileMenu}
           size="lg"
         >
@@ -150,7 +150,7 @@ export default function Header() {
 
             {/* User Info */}
             {user && (
-              <Box color="gray.600" fontSize="sm" py={2}>
+              <Box color="gray.800" fontSize="sm" py={2}>
                 Olá, {user.email.split("@")[0]}!
               </Box>
             )}
@@ -160,9 +160,9 @@ export default function Header() {
               <Button
                 colorScheme="gray"
                 variant="outline"
-                color="gray.600"
-                borderColor="gray.300"
-                _hover={{ bg: "gray.50", borderColor: "blue.600" }}
+                color="gray.700"
+                borderColor="gray.400"
+                _hover={{ bg: "gray.100", borderColor: "blue.800" }}
                 onClick={() => {
                   handleLogout();
                   closeMobileMenu();
@@ -175,9 +175,9 @@ export default function Header() {
             ) : (
               <Button
                 variant="solid"
-                bg="blue.600"
+                bg="blue.800"
                 color="white"
-                _hover={{ bg: "blue.500" }}
+                _hover={{ bg: "blue.700" }}
                 onClick={() => {
                   router.push("/login");
                   closeMobileMenu();

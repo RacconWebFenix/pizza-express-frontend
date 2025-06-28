@@ -78,12 +78,12 @@ const LoginPage = () => {
           rounded="lg"
           shadow="md"
           borderTop="4px"
-          borderTopColor="blue.600"
+          borderTopColor="blue.800"
         >
           {loading ? (
             <VStack gap={6}>
-              <Spinner size="xl" color="blue.600" />
-              <Heading color="blue.600" size="md">
+              <Spinner size="xl" color="blue.800" />
+              <Heading color="blue.800" size="md">
                 Fazendo login...
               </Heading>
             </VStack>
@@ -96,13 +96,13 @@ const LoginPage = () => {
               maxWidth="400px"
               w="full"
             >
-              <Heading color="blue.600" textAlign="center">
+              <Heading color="blue.800" textAlign="center">
                 Pizza Express
               </Heading>
 
               <Box>
                 <Box
-                  color="gray.600"
+                  color="gray.800"
                   mb={2}
                   fontSize="sm"
                   fontWeight="medium"
@@ -115,13 +115,13 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Digite seu email"
                   bg="white"
-                  color="gray.700"
+                  color="gray.800"
                   border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
-                    borderColor: "blue.600",
-                    boxShadow: "0 0 0 1px blue.600",
+                    borderColor: "blue.800",
+                    boxShadow: "0 0 0 1px blue.800",
                   }}
                   required
                 />
@@ -129,7 +129,7 @@ const LoginPage = () => {
 
               <Box>
                 <Box
-                  color="gray.600"
+                  color="gray.800"
                   mb={2}
                   fontSize="sm"
                   fontWeight="medium"
@@ -142,13 +142,13 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Digite sua senha"
                   bg="white"
-                  color="gray.700"
+                  color="gray.800"
                   border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
-                    borderColor: "blue.600",
-                    boxShadow: "0 0 0 1px blue.600",
+                    borderColor: "blue.800",
+                    boxShadow: "0 0 0 1px blue.800",
                   }}
                   required
                 />
@@ -159,7 +159,7 @@ const LoginPage = () => {
                 bg="blue.500"
                 color="white"
                 width="full"
-                _hover={{ bg: "blue.600" }}
+                _hover={{ bg: "blue.800" }}
                 disabled={loading}
               >
                 Entrar
@@ -167,7 +167,7 @@ const LoginPage = () => {
 
               <Box textAlign="center">
                 <Link href="/register">
-                  <Button variant="ghost" color="blue.600">
+                  <Button variant="ghost" color="blue.800">
                     Não tem uma conta? Registre-se
                   </Button>
                 </Link>

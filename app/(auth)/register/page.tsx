@@ -183,10 +183,10 @@ const RegisterPage = () => {
           w="full"
           maxW="400px"
           borderTop="4px"
-          borderTopColor="blue.600"
+          borderTopColor="blue.800"
         >
           <VStack gap={6}>
-            <Heading color="blue.600" size="lg" textAlign="center">
+            <Heading color="blue.800" size="lg" textAlign="center">
               Criar Conta
             </Heading>
 
@@ -221,7 +221,7 @@ const RegisterPage = () => {
                 {/* Nome */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -239,9 +239,9 @@ const RegisterPage = () => {
                     borderColor={errors.nome ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.nome ? "red.500" : "blue.600",
+                      borderColor: errors.nome ? "red.500" : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.nome ? "red.500" : "blue.600"
+                        errors.nome ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -255,7 +255,7 @@ const RegisterPage = () => {
                 {/* Email */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -273,9 +273,9 @@ const RegisterPage = () => {
                     borderColor={errors.email ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.email ? "red.500" : "blue.600",
+                      borderColor: errors.email ? "red.500" : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.email ? "red.500" : "blue.600"
+                        errors.email ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -289,7 +289,7 @@ const RegisterPage = () => {
                 {/* Telefone */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -309,9 +309,9 @@ const RegisterPage = () => {
                     _focus={{
                       borderColor: errors.telefone
                         ? "red.500"
-                        : "blue.600",
+                        : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.telefone ? "red.500" : "blue.600"
+                        errors.telefone ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -325,7 +325,7 @@ const RegisterPage = () => {
                 {/* Endereço */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -345,9 +345,9 @@ const RegisterPage = () => {
                     _focus={{
                       borderColor: errors.endereco
                         ? "red.500"
-                        : "blue.600",
+                        : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.endereco ? "red.500" : "blue.600"
+                        errors.endereco ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -361,7 +361,7 @@ const RegisterPage = () => {
                 {/* Senha */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -381,9 +381,9 @@ const RegisterPage = () => {
                     _focus={{
                       borderColor: errors.password
                         ? "red.500"
-                        : "blue.600",
+                        : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.password ? "red.500" : "blue.600"
+                        errors.password ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -397,7 +397,7 @@ const RegisterPage = () => {
                 {/* Confirmar Senha */}
                 <Box w="full">
                   <Text
-                    color="gray.600"
+                    color="gray.800"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -419,9 +419,9 @@ const RegisterPage = () => {
                     _focus={{
                       borderColor: errors.confirmPassword
                         ? "red.500"
-                        : "blue.600",
+                        : "blue.800",
                       boxShadow: `0 0 0 1px ${
-                        errors.confirmPassword ? "red.500" : "blue.600"
+                        errors.confirmPassword ? "red.500" : "blue.800"
                       }`,
                     }}
                   />
@@ -434,7 +434,7 @@ const RegisterPage = () => {
 
                 <Button
                   type="submit"
-                  bg="blue.600"
+                  bg="blue.800"
                   color="white"
                   size="lg"
                   w="full"
@@ -449,10 +449,10 @@ const RegisterPage = () => {
             </Box>
 
             <Box textAlign="center">
-              <Text color="gray.600" fontSize="sm">
+              <Text color="gray.800" fontSize="sm">
                 Já tem uma conta?{" "}
                 <Link href="/login" passHref>
-                  <ChakraLink color="blue.600" fontWeight="semibold">
+                  <ChakraLink color="blue.800" fontWeight="semibold">
                     Fazer login
                   </ChakraLink>
                 </Link>

@@ -68,7 +68,7 @@ export default function Home() {
               <Text
                 fontSize="lg"
                 fontWeight="bold"
-                color="blue.600"
+                color="blue.800"
                 lineHeight="1.2"
               >
                 Fênix Empreendimentos
@@ -81,24 +81,24 @@ export default function Home() {
         </VStack>
 
         {/* Título Principal */}
-        <Heading color="blue.600" size="2xl" lineHeight="1.3">
+        <Heading color="blue.800" size="2xl" lineHeight="1.3">
           <Flex align="center" gap={3} justify="center" wrap="wrap">
-            <Icon as={FaPizzaSlice} boxSize={8} color="orange.500" />
+            <Icon as={FaPizzaSlice} boxSize={8} color="orange.600" />
             Bem-vindo à Pizzaria Express
           </Flex>
         </Heading>
 
         {/* Descrição */}
-        <Text color="gray.600" fontSize="lg" lineHeight="1.6">
+        <Text color="gray.800" fontSize="lg" lineHeight="1.6">
           Descubra as melhores pizzas artesanais feitas com ingredientes frescos{" "}
-          <Icon as={FaLeaf} boxSize={5} color="green.500" /> e preparadas em
+          <Icon as={FaLeaf} boxSize={5} color="green.600" /> e preparadas em
           nosso tradicional forno a lenha{" "}
-          <Icon as={FaFire} boxSize={5} color="orange.500" />.
+          <Icon as={FaFire} boxSize={5} color="orange.600" />.
         </Text>
 
         {/* Botão de Ação */}
         <Button
-          bg="blue.600"
+          bg="blue.800"
           color="white"
           size="lg"
           px={8}
@@ -107,7 +107,7 @@ export default function Home() {
           fontSize="lg"
           fontWeight="semibold"
           _hover={{
-            bg: "blue.500",
+            bg: "blue.700",
             transform: "translateY(-2px)",
             boxShadow: "lg",
           }}
@@ -118,7 +118,7 @@ export default function Home() {
         </Button>
 
         {/* Rodapé elegante */}
-        <Text color="gray.600" fontSize="sm" opacity={0.8} mt={4}>
+        <Text color="gray.800" fontSize="sm" opacity={0.8} mt={4}>
           Uma experiência gastronômica única pela Fênix Empreendimentos
         </Text>
       </VStack>
