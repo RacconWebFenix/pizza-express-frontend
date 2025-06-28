@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <Box
-      bg="gray.50"
+      bg="blue.200"
       minH="100vh"
       p={8}
       display="flex"
@@ -58,10 +58,11 @@ export default function Home() {
           <Flex align="center" gap={3}>
             <Box>
               <Image
-                src="/fenix-icon.svg"
-                alt="Fênix Empreendimentos"
-                width="48px"
-                height="48px"
+                src="/fenix3.jpeg"
+                boxSize="150px"
+                borderRadius="full"
+                fit="cover"
+                alt="Naruto Uzumaki"
               />
             </Box>
             <VStack align="flex-start" gap={1}>

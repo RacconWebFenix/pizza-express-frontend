@@ -2,6 +2,24 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Arquivos estáticos não precisam de autenticação
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.endsWith(".png") ||
+    pathname.endsWith(".jpg") ||
+    pathname.endsWith(".jpeg") ||
+    pathname.endsWith(".gif") ||
+    pathname.endsWith(".svg") ||
+    pathname.endsWith(".ico") ||
+    pathname.endsWith(".css") ||
+    pathname.endsWith(".js")
+  ) {
+    return NextResponse.next();
+  }
+
   // Páginas públicas que não precisam de autenticação
   const publicPages = [
     "/",
@@ -10,8 +28,6 @@ export function middleware(request: NextRequest) {
     "/access-denied",
     "/welcome",
   ];
-
-  const pathname = request.nextUrl.pathname;
 
   if (publicPages.includes(pathname)) {
     return NextResponse.next();
@@ -23,10 +39,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Se tem token, permite o acesso
   return NextResponse.next();
 }
 
+// Matcher mais simples
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
+  matcher: ["/((?!api|_next/static|_next/image).*)"],
 };
