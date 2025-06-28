@@ -11,15 +11,15 @@ export default function AuthLoading({
 }: AuthLoadingProps) {
   return (
     <Box
-      bg="brand.light"
+      bg="gray.50"
       minH="100vh"
       display="flex"
       alignItems="center"
       justifyContent="center"
     >
       <VStack gap={4}>
-        <Spinner size="xl" color="brand.primary" />
-        <Text color="brand.medium" fontSize="lg">
+        <Spinner size="xl" color="blue.600" />
+        <Text color="gray.600" fontSize="lg">
           {message}
         </Text>
       </VStack>

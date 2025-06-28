@@ -60,7 +60,7 @@ const LoginPage = () => {
 
   return (
     <Box
-      bg="brand.light"
+      bg="gray.50"
       minH="100vh"
       display="flex"
       alignItems="center"
@@ -78,12 +78,12 @@ const LoginPage = () => {
           rounded="lg"
           shadow="md"
           borderTop="4px"
-          borderTopColor="brand.primary"
+          borderTopColor="blue.600"
         >
           {loading ? (
             <VStack gap={6}>
-              <Spinner size="xl" color="brand.primary" />
-              <Heading color="brand.primary" size="md">
+              <Spinner size="xl" color="blue.600" />
+              <Heading color="blue.600" size="md">
                 Fazendo login...
               </Heading>
             </VStack>
@@ -96,13 +96,13 @@ const LoginPage = () => {
               maxWidth="400px"
               w="full"
             >
-              <Heading color="brand.primary" textAlign="center">
+              <Heading color="blue.600" textAlign="center">
                 Pizza Express
               </Heading>
 
               <Box>
                 <Box
-                  color="brand.medium"
+                  color="gray.600"
                   mb={2}
                   fontSize="sm"
                   fontWeight="medium"
@@ -115,13 +115,13 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Digite seu email"
                   bg="white"
-                  color="brand.dark"
+                  color="gray.700"
                   border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
+                    borderColor: "blue.600",
+                    boxShadow: "0 0 0 1px blue.600",
                   }}
                   required
                 />
@@ -129,7 +129,7 @@ const LoginPage = () => {
 
               <Box>
                 <Box
-                  color="brand.medium"
+                  color="gray.600"
                   mb={2}
                   fontSize="sm"
                   fontWeight="medium"
@@ -142,13 +142,13 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Digite sua senha"
                   bg="white"
-                  color="brand.dark"
+                  color="gray.700"
                   border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)",
+                    borderColor: "blue.600",
+                    boxShadow: "0 0 0 1px blue.600",
                   }}
                   required
                 />
@@ -156,10 +156,10 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
-                bg="brand.accent"
+                bg="blue.500"
                 color="white"
                 width="full"
-                _hover={{ bg: "brand.primary" }}
+                _hover={{ bg: "blue.600" }}
                 disabled={loading}
               >
                 Entrar
@@ -167,7 +167,7 @@ const LoginPage = () => {
 
               <Box textAlign="center">
                 <Link href="/register">
-                  <Button variant="ghost" color="brand.primary">
+                  <Button variant="ghost" color="blue.600">
                     Não tem uma conta? Registre-se
                   </Button>
                 </Link>

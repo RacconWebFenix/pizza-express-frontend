@@ -22,16 +22,16 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
 
   if (isLoading) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.accent" />
+      <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+        <Spinner size="xl" color="blue.500" />
       </Flex>
     );
   }
 
   if (!isAuthenticated || !user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.accent" />
+      <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+        <Spinner size="xl" color="blue.500" />
       </Flex>
     );
   }

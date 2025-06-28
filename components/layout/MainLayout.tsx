@@ -10,7 +10,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <Box minH="100vh" bg="brand.cream">
+    <Box minH="100vh" bg="gray.50">
       <Header />
       <Box as="main" maxW="1200px" mx="auto" p={4}>
         {children}

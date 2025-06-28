@@ -163,7 +163,7 @@ const RegisterPage = () => {
 
   return (
     <Box
-      bg="brand.light"
+      bg="gray.50"
       minH="100vh"
       display="flex"
       alignItems="center"
@@ -183,10 +183,10 @@ const RegisterPage = () => {
           w="full"
           maxW="400px"
           borderTop="4px"
-          borderTopColor="brand.primary"
+          borderTopColor="blue.600"
         >
           <VStack gap={6}>
-            <Heading color="brand.primary" size="lg" textAlign="center">
+            <Heading color="blue.600" size="lg" textAlign="center">
               Criar Conta
             </Heading>
 
@@ -221,7 +221,7 @@ const RegisterPage = () => {
                 {/* Nome */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -234,14 +234,14 @@ const RegisterPage = () => {
                     onChange={handleInputChange("nome")}
                     placeholder="Seu nome completo"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={errors.nome ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.nome ? "red.500" : "brand.primary",
+                      borderColor: errors.nome ? "red.500" : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.nome ? "red.500" : "brand.primary"
+                        errors.nome ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -255,7 +255,7 @@ const RegisterPage = () => {
                 {/* Email */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -268,14 +268,14 @@ const RegisterPage = () => {
                     onChange={handleInputChange("email")}
                     placeholder="seu@email.com"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={errors.email ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.email ? "red.500" : "brand.primary",
+                      borderColor: errors.email ? "red.500" : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.email ? "red.500" : "brand.primary"
+                        errors.email ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -289,7 +289,7 @@ const RegisterPage = () => {
                 {/* Telefone */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -302,16 +302,16 @@ const RegisterPage = () => {
                     onChange={handleInputChange("telefone")}
                     placeholder="(11) 99999-9999 ou texto livre"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={errors.telefone ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.telefone
                         ? "red.500"
-                        : "brand.primary",
+                        : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.telefone ? "red.500" : "brand.primary"
+                        errors.telefone ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -325,7 +325,7 @@ const RegisterPage = () => {
                 {/* Endereço */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -338,16 +338,16 @@ const RegisterPage = () => {
                     onChange={handleInputChange("endereco")}
                     placeholder="Rua, número, bairro, cidade"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={errors.endereco ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.endereco
                         ? "red.500"
-                        : "brand.primary",
+                        : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.endereco ? "red.500" : "brand.primary"
+                        errors.endereco ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -361,7 +361,7 @@ const RegisterPage = () => {
                 {/* Senha */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -374,16 +374,16 @@ const RegisterPage = () => {
                     onChange={handleInputChange("password")}
                     placeholder="Mínimo 6 caracteres"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={errors.password ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
                       borderColor: errors.password
                         ? "red.500"
-                        : "brand.primary",
+                        : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.password ? "red.500" : "brand.primary"
+                        errors.password ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -397,7 +397,7 @@ const RegisterPage = () => {
                 {/* Confirmar Senha */}
                 <Box w="full">
                   <Text
-                    color="brand.medium"
+                    color="gray.600"
                     mb={2}
                     fontSize="sm"
                     fontWeight="medium"
@@ -410,7 +410,7 @@ const RegisterPage = () => {
                     onChange={handleInputChange("confirmPassword")}
                     placeholder="Digite a senha novamente"
                     bg="white"
-                    color="brand.dark"
+                    color="gray.700"
                     border="1px"
                     borderColor={
                       errors.confirmPassword ? "red.300" : "gray.300"
@@ -419,9 +419,9 @@ const RegisterPage = () => {
                     _focus={{
                       borderColor: errors.confirmPassword
                         ? "red.500"
-                        : "brand.primary",
+                        : "blue.600",
                       boxShadow: `0 0 0 1px ${
-                        errors.confirmPassword ? "red.500" : "brand.primary"
+                        errors.confirmPassword ? "red.500" : "blue.600"
                       }`,
                     }}
                   />
@@ -434,7 +434,7 @@ const RegisterPage = () => {
 
                 <Button
                   type="submit"
-                  bg="brand.primary"
+                  bg="blue.600"
                   color="white"
                   size="lg"
                   w="full"
@@ -449,10 +449,10 @@ const RegisterPage = () => {
             </Box>
 
             <Box textAlign="center">
-              <Text color="brand.medium" fontSize="sm">
+              <Text color="gray.600" fontSize="sm">
                 Já tem uma conta?{" "}
                 <Link href="/login" passHref>
-                  <ChakraLink color="brand.primary" fontWeight="semibold">
+                  <ChakraLink color="blue.600" fontWeight="semibold">
                     Fazer login
                   </ChakraLink>
                 </Link>

@@ -81,8 +81,8 @@ export const PizzaManagementPage: React.FC = () => {
   if (isLoading) {
     return (
       <Box textAlign="center" py={12}>
-        <Spinner size="xl" color="brand.accent" />
-        <Text mt={4} color="brand.medium">
+        <Spinner size="xl" color="blue.500" />
+        <Text mt={4} color="gray.600">
           Carregando pizzas...
         </Text>
       </Box>
@@ -106,9 +106,9 @@ export const PizzaManagementPage: React.FC = () => {
     <VStack gap={8} align="stretch" w="full">
       {/* Navegação */}
       <Flex justify="space-between" align="center">
-        <Heading color="brand.primary" size="xl">
+        <Heading color="blue.600" size="xl">
           <Flex align="center" gap={3}>
-            <Icon as={FaPizzaSlice} color="brand.accent" />
+            <Icon as={FaPizzaSlice} color="blue.500" />
             {view === "create" && "Criar Nova Pizza"}
             {view === "upload" && "Upload de Imagem"}
             {view === "list" && "Gerenciar Pizzas"}
@@ -178,7 +178,7 @@ export const PizzaManagementPage: React.FC = () => {
                   borderColor="gray.100"
                   transition="all 0.3s"
                   _hover={{
-                    borderColor: "brand.accent",
+                    borderColor: "blue.500",
                     boxShadow: "xl",
                   }}
                 >
@@ -219,11 +219,11 @@ export const PizzaManagementPage: React.FC = () => {
 
                   {/* Conteúdo */}
                   <Box p={6}>
-                    <Heading size="md" color="brand.primary" mb={2}>
+                    <Heading size="md" color="blue.600" mb={2}>
                       {pizza.nome}
                     </Heading>
                     <Text
-                      color="brand.medium"
+                      color="gray.600"
                       fontSize="sm"
                       mb={4}
                       style={{
@@ -248,10 +248,10 @@ export const PizzaManagementPage: React.FC = () => {
                     <Flex gap={2} wrap="wrap">
                       <Button
                         size="sm"
-                        bg="brand.accent"
+                        bg="blue.500"
                         color="white"
                         onClick={() => handleUploadImage(pizza)}
-                        _hover={{ bg: "brand.primary" }}
+                        _hover={{ bg: "blue.600" }}
                       >
                         <Icon as={FaImage} mr={1} />
                         {pizza.imagemUrl ? "Trocar" : "Adicionar"} Imagem
@@ -260,8 +260,8 @@ export const PizzaManagementPage: React.FC = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        borderColor="brand.medium"
-                        color="brand.medium"
+                        borderColor="gray.600"
+                        color="gray.600"
                         _hover={{ bg: "brand.light" }}
                       >
                         <Icon as={FaEdit} mr={1} />

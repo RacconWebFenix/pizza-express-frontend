@@ -33,11 +33,11 @@ export default function MobileNavItem({
       justifyContent="flex-start"
       w="100%"
       _hover={{
-        bg: isActive ? "brand.primary" : "brand.light",
-        color: isActive ? "white" : "brand.primary",
+        bg: isActive ? "blue.600" : "gray.100",
+        color: isActive ? "white" : "blue.600",
       }}
-      bg={isActive ? "brand.primary" : "transparent"}
-      color={isActive ? "white" : "brand.medium"}
+      bg={isActive ? "blue.600" : "transparent"}
+      color={isActive ? "white" : "gray.600"}
     >
       {label}
     </Button>

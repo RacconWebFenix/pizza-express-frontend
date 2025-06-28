@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <Box
-      bg="brand.light"
+      bg="gray.50"
       minH="100vh"
       p={8}
       display="flex"
@@ -68,7 +68,7 @@ export default function Home() {
               <Text
                 fontSize="lg"
                 fontWeight="bold"
-                color="brand.primary"
+                color="blue.600"
                 lineHeight="1.2"
               >
                 Fênix Empreendimentos
@@ -81,24 +81,24 @@ export default function Home() {
         </VStack>
 
         {/* Título Principal */}
-        <Heading color="brand.primary" size="2xl" lineHeight="1.3">
+        <Heading color="blue.600" size="2xl" lineHeight="1.3">
           <Flex align="center" gap={3} justify="center" wrap="wrap">
-            <Icon as={FaPizzaSlice} boxSize={8} color="brand.pizza" />
+            <Icon as={FaPizzaSlice} boxSize={8} color="orange.500" />
             Bem-vindo à Pizzaria Express
           </Flex>
         </Heading>
 
         {/* Descrição */}
-        <Text color="brand.medium" fontSize="lg" lineHeight="1.6">
+        <Text color="gray.600" fontSize="lg" lineHeight="1.6">
           Descubra as melhores pizzas artesanais feitas com ingredientes frescos{" "}
-          <Icon as={FaLeaf} boxSize={5} color="brand.fresh" /> e preparadas em
+          <Icon as={FaLeaf} boxSize={5} color="green.500" /> e preparadas em
           nosso tradicional forno a lenha{" "}
-          <Icon as={FaFire} boxSize={5} color="brand.pizza" />.
+          <Icon as={FaFire} boxSize={5} color="orange.500" />.
         </Text>
 
         {/* Botão de Ação */}
         <Button
-          bg="brand.primary"
+          bg="blue.600"
           color="white"
           size="lg"
           px={8}
@@ -107,7 +107,7 @@ export default function Home() {
           fontSize="lg"
           fontWeight="semibold"
           _hover={{
-            bg: "brand.accent",
+            bg: "blue.500",
             transform: "translateY(-2px)",
             boxShadow: "lg",
           }}
@@ -118,7 +118,7 @@ export default function Home() {
         </Button>
 
         {/* Rodapé elegante */}
-        <Text color="brand.medium" fontSize="sm" opacity={0.8} mt={4}>
+        <Text color="gray.600" fontSize="sm" opacity={0.8} mt={4}>
           Uma experiência gastronômica única pela Fênix Empreendimentos
         </Text>
       </VStack>
