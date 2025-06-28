@@ -307,9 +307,7 @@ const RegisterPage = () => {
                     borderColor={errors.telefone ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.telefone
-                        ? "red.500"
-                        : "blue.800",
+                      borderColor: errors.telefone ? "red.500" : "blue.800",
                       boxShadow: `0 0 0 1px ${
                         errors.telefone ? "red.500" : "blue.800"
                       }`,
@@ -343,9 +341,7 @@ const RegisterPage = () => {
                     borderColor={errors.endereco ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.endereco
-                        ? "red.500"
-                        : "blue.800",
+                      borderColor: errors.endereco ? "red.500" : "blue.800",
                       boxShadow: `0 0 0 1px ${
                         errors.endereco ? "red.500" : "blue.800"
                       }`,
@@ -379,9 +375,7 @@ const RegisterPage = () => {
                     borderColor={errors.password ? "red.300" : "gray.300"}
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                      borderColor: errors.password
-                        ? "red.500"
-                        : "blue.800",
+                      borderColor: errors.password ? "red.500" : "blue.800",
                       boxShadow: `0 0 0 1px ${
                         errors.password ? "red.500" : "blue.800"
                       }`,

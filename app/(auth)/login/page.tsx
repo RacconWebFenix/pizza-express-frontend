@@ -101,12 +101,7 @@ const LoginPage = () => {
               </Heading>
 
               <Box>
-                <Box
-                  color="gray.800"
-                  mb={2}
-                  fontSize="sm"
-                  fontWeight="medium"
-                >
+                <Box color="gray.800" mb={2} fontSize="sm" fontWeight="medium">
                   Email
                 </Box>
                 <Input
@@ -128,12 +123,7 @@ const LoginPage = () => {
               </Box>
 
               <Box>
-                <Box
-                  color="gray.800"
-                  mb={2}
-                  fontSize="sm"
-                  fontWeight="medium"
-                >
+                <Box color="gray.800" mb={2} fontSize="sm" fontWeight="medium">
                   Senha
                 </Box>
                 <Input
