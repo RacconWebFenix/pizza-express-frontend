@@ -60,7 +60,7 @@ const LoginPage = () => {
 
   return (
     <Box
-      bg="gray.50"
+      bg="yellow.100"
       minH="100vh"
       display="flex"
       alignItems="center"
@@ -109,9 +109,7 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Digite seu email"
-                  bg="white"
                   color="gray.800"
-                  border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
@@ -133,7 +131,6 @@ const LoginPage = () => {
                   placeholder="Digite sua senha"
                   bg="white"
                   color="gray.800"
-                  border="1px"
                   borderColor="gray.300"
                   _placeholder={{ color: "gray.500" }}
                   _focus={{
@@ -157,7 +154,11 @@ const LoginPage = () => {
 
               <Box textAlign="center">
                 <Link href="/register">
-                  <Button variant="ghost" color="blue.800">
+                  <Button
+                    variant="ghost"
+                    color="blue.800"
+                    _hover={{ bg: "blue.300" }}
+                  >
                     Não tem uma conta? Registre-se
                   </Button>
                 </Link>

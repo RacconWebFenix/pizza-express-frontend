@@ -22,7 +22,7 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
 
   if (isLoading) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+      <Flex minH="100vh" align="center" justify="center" bg="blue.50">
         <Spinner size="xl" color="blue.800" />
       </Flex>
     );
@@ -30,7 +30,7 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
 
   if (!isAuthenticated || !user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+      <Flex minH="100vh" align="center" justify="center" bg="blue.50">
         <Spinner size="xl" color="blue.800" />
       </Flex>
     );

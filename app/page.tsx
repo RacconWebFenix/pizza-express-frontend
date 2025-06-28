@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <Box
-      bg="blue.200"
+      bg="yellow.100"
       minH="100vh"
       p={8}
       display="flex"

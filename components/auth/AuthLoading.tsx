@@ -18,7 +18,7 @@ export default function AuthLoading({
       justifyContent="center"
     >
       <VStack gap={4}>
-        <Spinner size="xl" color="blue.800" />
+        <Spinner size="xl" color="red.800" />
         <Text color="gray.800" fontSize="lg">
           {message}
         </Text>

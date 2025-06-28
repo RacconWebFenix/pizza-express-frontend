@@ -4,7 +4,7 @@ import { Box } from "@chakra-ui/react";
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <Box
-      bg="brand.cream"
+      bg="yellow.100"
       minH="100vh"
       display="flex"
       flexDirection="column"
