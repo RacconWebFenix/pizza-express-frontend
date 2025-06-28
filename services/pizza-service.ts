@@ -186,3 +186,85 @@ export const deletePizza = async (id: string) => {
     throw error;
   }
 };
+
+export const createPizzaWithImage = async (pizzaData: {
+  nome: string;
+  descricao: string;
+  preco: number;
+  imagem: File;
+}) => {
+  const token = Cookies.get("authToken");
+
+  if (!token) {
+    window.location.href = "/access-denied";
+    return null;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("nome", pizzaData.nome);
+    formData.append("descricao", pizzaData.descricao);
+    formData.append("preco", pizzaData.preco.toString());
+    formData.append("imagem", pizzaData.imagem);
+
+    const response = await fetch(`${API_URL}/pizzas/with-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // Não definir Content-Type para multipart/form-data - o browser define automaticamente
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        window.location.href = "/access-denied";
+        return null;
+      }
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Erro ao criar pizza com imagem");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Erro ao criar pizza com imagem:", error);
+    throw error;
+  }
+};
+
+export const uploadImageToPizza = async (id: string, imagem: File) => {
+  const token = Cookies.get("authToken");
+
+  if (!token) {
+    window.location.href = "/access-denied";
+    return null;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("imagem", imagem);
+
+    const response = await fetch(`${API_URL}/pizzas/${id}/upload-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // Não definir Content-Type para multipart/form-data - o browser define automaticamente
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        window.location.href = "/access-denied";
+        return null;
+      }
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Erro ao fazer upload da imagem");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Erro ao fazer upload da imagem:", error);
+    throw error;
+  }
+};
