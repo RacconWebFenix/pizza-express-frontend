@@ -1,62 +1,21 @@
 "use client";
 
-import { Box, Button, Input, Heading, VStack, Spinner } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, VStack, Spinner } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../../components/auth/auth-context";
 import Link from "next/link";
+import { PizzaButton, PizzaCard, PizzaText, PizzaInput } from "@/components/ui";
+import { useLogin } from "@/hooks/useLogin";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (response.ok && responseData.access_token) {
-        // Tenta validar o token e completar o login
-        const loginSuccess = await login(responseData.access_token);
-
-        if (loginSuccess) {
-          // Use window.location para garantir redirecionamento em produção
-          if (typeof window !== "undefined") {
-            window.location.href = "/cardapio";
-          } else {
-            router.push("/cardapio");
-          }
-        } else {
-          alert("Erro na validação do usuário. Por favor, tente novamente.");
-        }
-      } else {
-        alert(
-          "Erro ao realizar login. Verifique suas credenciais e tente novamente."
-        );
-      }
-    } catch {
-      alert("Erro inesperado. Por favor, tente novamente mais tarde.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    email,
+    password,
+    loading,
+    error,
+    handleEmailChange,
+    handlePasswordChange,
+    handleSubmit,
+  } = useLogin();
 
   return (
     <Box
@@ -72,100 +31,82 @@ const LoginPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Box
-          bg="white"
-          p={8}
-          rounded="lg"
-          shadow="md"
-          borderTop="4px"
-          borderTopColor="blue.800"
-        >
+        <PizzaCard variant="default" borderTopColor="brand.primary">
           {loading ? (
             <VStack gap={6}>
-              <Spinner size="xl" color="blue.800" />
-              <Heading color="blue.800" size="md">
+              <Spinner size="xl" color="brand.primary" />
+              <PizzaText variant="heading" color="brand.primary">
                 Fazendo login...
-              </Heading>
+              </PizzaText>
             </VStack>
           ) : (
             <VStack
               as="form"
               onSubmit={handleSubmit}
-              gap={6}
+              gap={4} // Reduzido de 6 para 4
               align="stretch"
               maxWidth="400px"
               w="full"
             >
-              <Heading color="blue.800" textAlign="center">
+              <PizzaText
+                variant="heading"
+                color="brand.primary"
+                textAlign="center"
+              >
                 Pizza Express
-              </Heading>
+              </PizzaText>
 
-              <Box>
-                <Box color="gray.800" mb={2} fontSize="sm" fontWeight="medium">
-                  Email
+              {error && (
+                <Box
+                  bg="red.50"
+                  color="red.800"
+                  p={3}
+                  rounded="md"
+                  border="1px"
+                  borderColor="red.200"
+                  textAlign="center"
+                >
+                  ❌ {error}
                 </Box>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Digite seu email"
-                  color="gray.800"
-                  borderColor="gray.300"
-                  _placeholder={{ color: "gray.500" }}
-                  _focus={{
-                    borderColor: "blue.800",
-                    boxShadow: "0 0 0 1px blue.800",
-                  }}
-                  required
-                />
-              </Box>
+              )}
 
-              <Box>
-                <Box color="gray.800" mb={2} fontSize="sm" fontWeight="medium">
-                  Senha
-                </Box>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Digite sua senha"
-                  bg="white"
-                  color="gray.800"
-                  borderColor="gray.300"
-                  _placeholder={{ color: "gray.500" }}
-                  _focus={{
-                    borderColor: "blue.800",
-                    boxShadow: "0 0 0 1px blue.800",
-                  }}
-                  required
-                />
-              </Box>
+              <PizzaInput
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                placeholder="Digite seu email"
+                required
+              />
 
-              <Button
+              <PizzaInput
+                label="Senha"
+                type="password"
+                value={password}
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                placeholder="Digite sua senha"
+                required
+              />
+
+              <PizzaButton
                 type="submit"
-                bg="blue.500"
-                color="white"
+                variant="primary"
                 width="full"
-                _hover={{ bg: "blue.800" }}
                 disabled={loading}
               >
                 Entrar
-              </Button>
+              </PizzaButton>
 
               <Box textAlign="center">
                 <Link href="/register">
-                  <Button
-                    variant="ghost"
-                    color="blue.800"
-                    _hover={{ bg: "blue.300" }}
-                  >
+                  <PizzaButton variant="ghost" color="brand.primary">
                     Não tem uma conta? Registre-se
-                  </Button>
+                  </PizzaButton>
                 </Link>
               </Box>
             </VStack>
           )}
-        </Box>
+        </PizzaCard>
       </motion.div>
     </Box>
   );

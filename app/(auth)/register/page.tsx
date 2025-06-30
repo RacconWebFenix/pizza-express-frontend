@@ -1,18 +1,11 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Input,
-  Heading,
-  VStack,
-  Text,
-  Link as ChakraLink,
-} from "@chakra-ui/react";
+import { Box, VStack, Link as ChakraLink } from "@chakra-ui/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { PizzaButton, PizzaCard, PizzaText, PizzaInput } from "@/components/ui";
 
 interface FormErrors {
   email?: string;
@@ -175,20 +168,20 @@ const RegisterPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Box
-          bg="white"
-          p={8}
-          rounded="lg"
-          shadow="md"
+        <PizzaCard
+          variant="default"
           w="full"
           maxW="400px"
-          borderTop="4px"
-          borderTopColor="blue.800"
+          borderTopColor="brand.primary"
         >
           <VStack gap={6}>
-            <Heading color="blue.800" size="lg" textAlign="center">
+            <PizzaText
+              variant="heading"
+              color="brand.primary"
+              textAlign="center"
+            >
               Criar Conta
-            </Heading>
+            </PizzaText>
 
             {successMessage && (
               <Box
@@ -219,241 +212,94 @@ const RegisterPage = () => {
             <Box as="form" onSubmit={handleSubmit} w="full">
               <VStack gap={4}>
                 {/* Nome */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Nome Completo
-                  </Text>
-                  <Input
-                    type="text"
-                    value={formData.nome}
-                    onChange={handleInputChange("nome")}
-                    placeholder="Seu nome completo"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={errors.nome ? "red.300" : "gray.300"}
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.nome ? "red.500" : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.nome ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.nome && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.nome}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Nome Completo"
+                  type="text"
+                  value={formData.nome}
+                  onChange={handleInputChange("nome")}
+                  placeholder="Seu nome completo"
+                  error={errors.nome}
+                  required
+                />
 
                 {/* Email */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Email
-                  </Text>
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange("email")}
-                    placeholder="seu@email.com"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={errors.email ? "red.300" : "gray.300"}
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.email ? "red.500" : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.email ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.email && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.email}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange("email")}
+                  placeholder="seu@email.com"
+                  error={errors.email}
+                  required
+                />
 
                 {/* Telefone */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Telefone (Opcional)
-                  </Text>
-                  <Input
-                    type="tel"
-                    value={formData.telefone}
-                    onChange={handleInputChange("telefone")}
-                    placeholder="(11) 99999-9999 ou texto livre"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={errors.telefone ? "red.300" : "gray.300"}
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.telefone ? "red.500" : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.telefone ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.telefone && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.telefone}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Telefone (Opcional)"
+                  type="tel"
+                  value={formData.telefone}
+                  onChange={handleInputChange("telefone")}
+                  placeholder="(11) 99999-9999 ou texto livre"
+                  error={errors.telefone}
+                />
 
                 {/* Endereço */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Endereço
-                  </Text>
-                  <Input
-                    type="text"
-                    value={formData.endereco}
-                    onChange={handleInputChange("endereco")}
-                    placeholder="Rua, número, bairro, cidade"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={errors.endereco ? "red.300" : "gray.300"}
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.endereco ? "red.500" : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.endereco ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.endereco && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.endereco}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Endereço"
+                  type="text"
+                  value={formData.endereco}
+                  onChange={handleInputChange("endereco")}
+                  placeholder="Rua, número, bairro, cidade"
+                  error={errors.endereco}
+                  required
+                />
 
                 {/* Senha */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Senha
-                  </Text>
-                  <Input
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange("password")}
-                    placeholder="Mínimo 6 caracteres"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={errors.password ? "red.300" : "gray.300"}
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.password ? "red.500" : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.password ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.password && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.password}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Senha"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange("password")}
+                  placeholder="Mínimo 6 caracteres"
+                  error={errors.password}
+                  required
+                />
 
                 {/* Confirmar Senha */}
-                <Box w="full">
-                  <Text
-                    color="gray.800"
-                    mb={2}
-                    fontSize="sm"
-                    fontWeight="medium"
-                  >
-                    Confirmar Senha
-                  </Text>
-                  <Input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange("confirmPassword")}
-                    placeholder="Digite a senha novamente"
-                    bg="white"
-                    color="gray.700"
-                    border="1px"
-                    borderColor={
-                      errors.confirmPassword ? "red.300" : "gray.300"
-                    }
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{
-                      borderColor: errors.confirmPassword
-                        ? "red.500"
-                        : "blue.800",
-                      boxShadow: `0 0 0 1px ${
-                        errors.confirmPassword ? "red.500" : "blue.800"
-                      }`,
-                    }}
-                  />
-                  {errors.confirmPassword && (
-                    <Text color="red.500" fontSize="sm" mt={1}>
-                      {errors.confirmPassword}
-                    </Text>
-                  )}
-                </Box>
+                <PizzaInput
+                  label="Confirmar Senha"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange("confirmPassword")}
+                  placeholder="Digite a senha novamente"
+                  error={errors.confirmPassword}
+                  required
+                />
 
-                <Button
+                <PizzaButton
                   type="submit"
-                  bg="blue.800"
-                  color="white"
+                  variant="primary"
                   size="lg"
                   w="full"
-                  loading={loading}
-                  _hover={{ bg: "brand.accent" }}
-                  _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
                   disabled={loading}
                 >
                   {loading ? "Criando conta..." : "Criar Conta"}
-                </Button>
+                </PizzaButton>
               </VStack>
             </Box>
 
             <Box textAlign="center">
-              <Text color="gray.800" fontSize="sm">
+              <PizzaText color="gray.800" fontSize="sm">
                 Já tem uma conta?{" "}
                 <Link href="/login" passHref>
-                  <ChakraLink color="blue.800" fontWeight="semibold">
+                  <ChakraLink color="brand.primary" fontWeight="semibold">
                     Fazer login
                   </ChakraLink>
                 </Link>
-              </Text>
+              </PizzaText>
             </Box>
           </VStack>
-        </Box>
+        </PizzaCard>
       </motion.div>
     </Box>
   );

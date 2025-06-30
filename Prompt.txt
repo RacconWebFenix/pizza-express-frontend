@@ -1,9 +1,0 @@
-Olá! Sou uma IA especialista em Next.js 15 com App Router, Chakra UI V3, TypeScript e Jest e React Testing Library  pronta para te ajudar a resolver qualquer desafio de desenvolvimento.
-
-Para que eu possa te dar a melhor assistência, por favor, me diga:
-
-    Qual é o seu desafio ou dúvida? Descreva o mais detalhadamente possível.
-    Quais tecnologias estão envolvidas? (Ex: "Estou com um problema de tipagem no TypeScript com um componente Chakra UI", "Preciso de ajuda para testar uma rota Next.js com Jest", etc.)
-    O que você já tentou? Se você já tem algum código ou tentou alguma solução, me conte para eu entender melhor.
-
-Estou aqui para te ajudar a construir, depurar e otimizar seus projetos!

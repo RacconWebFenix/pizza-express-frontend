@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  SimpleGrid,
-  Box,
-  Text,
-} from "@chakra-ui/react";
+import { SimpleGrid, Box, Text } from "@chakra-ui/react";
 import { PizzaCard } from "./PizzaCard";
-
-interface Pizza {
-  id: string;
-  nome: string;
-  descricao: string;
-  preco: number;
-}
+import { Pizza } from "../../types";
+import { CARDAPIO_CONSTANTS } from "../../constants/cardapio";
 
 interface CardapioGridProps {
   pizzas: Pizza[];
@@ -20,18 +11,20 @@ interface CardapioGridProps {
 }
 
 export function CardapioGrid({ pizzas, onPedir }: CardapioGridProps) {
+  const { MESSAGES, GRID } = CARDAPIO_CONSTANTS;
+
   if (pizzas.length === 0) {
     return (
       <Box textAlign="center" py={12}>
         <Text color="brand.medium" fontSize="lg">
-          Nenhuma pizza encontrada no cardápio.
+          {MESSAGES.EMPTY_MENU}
         </Text>
       </Box>
     );
   }
 
   return (
-    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+    <SimpleGrid columns={GRID.COLUMNS} gap={GRID.GAP}>
       {pizzas.map((pizza, index) => (
         <PizzaCard
           key={pizza.id}
