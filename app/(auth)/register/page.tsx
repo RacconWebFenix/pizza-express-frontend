@@ -159,12 +159,7 @@ const RegisterPage = () => {
 
         // Aguarda 2 segundos antes de redirecionar
         setTimeout(() => {
-          // Use window.location para garantir redirecionamento em produção
-          if (typeof window !== "undefined") {
-            window.location.href = "/login";
-          } else {
-            router.push("/login");
-          }
+          router.push("/login");
         }, 2000);
       } else {
         // Trata diferentes tipos de erro
@@ -333,7 +328,7 @@ const RegisterPage = () => {
                   fontWeight="semibold"
                   cursor="pointer"
                   _hover={{ textDecoration: "underline" }}
-                  onClick={() => (window.location.href = "/login")}
+                  onClick={() => router.push("/login")}
                 >
                   Fazer login
                 </PizzaText>

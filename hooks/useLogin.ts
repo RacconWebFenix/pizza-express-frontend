@@ -78,11 +78,7 @@ export const useLogin = (): UseLoginReturn => {
 
           if (loginSuccess) {
             console.log("Login bem-sucedido, redirecionando...");
-            if (typeof window !== "undefined") {
-              window.location.href = "/cardapio";
-            } else {
-              router.push("/cardapio");
-            }
+            router.push("/cardapio");
           } else {
             console.error("Falha na validação do token");
             setError(
