@@ -74,6 +74,7 @@ const LoginPage = () => {
                 label="Email"
                 type="email"
                 value={email}
+                width="full"
                 onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="Digite seu email"
                 required
@@ -83,6 +84,7 @@ const LoginPage = () => {
                 label="Senha"
                 type="password"
                 value={password}
+                width="full"
                 onChange={(e) => handlePasswordChange(e.target.value)}
                 placeholder="Digite sua senha"
                 required
