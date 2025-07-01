@@ -4,7 +4,13 @@ import { Box, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { PizzaButton, PizzaCard, PizzaText, PizzaInput } from "@/components/ui";
+import {
+  PizzaButton,
+  PizzaCard,
+  PizzaText,
+  PizzaInput,
+  PizzaLoading,
+} from "@/components/ui";
 
 interface FormErrors {
   email?: string;
@@ -25,8 +31,8 @@ const RegisterPage = () => {
     endereco: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
@@ -124,7 +130,6 @@ const RegisterPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
-    setSuccessMessage("");
 
     if (!validateForm()) {
       return;
@@ -153,14 +158,12 @@ const RegisterPage = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        setSuccessMessage(
-          "Cadastro realizado com sucesso! Redirecionando para o login..."
-        );
+        setShowSuccess(true);
 
-        // Aguarda 2 segundos antes de redirecionar
+        // Aguarda 3 segundos antes de redirecionar
         setTimeout(() => {
           router.push("/login");
-        }, 2000);
+        }, 3000);
       } else {
         // Trata diferentes tipos de erro
         if (response.status === 409) {
@@ -174,170 +177,221 @@ const RegisterPage = () => {
         } else {
           setErrorMessage("Erro ao realizar cadastro. Tente novamente.");
         }
+        setLoading(false); // Para o loading apenas em caso de erro
       }
     } catch (error) {
       console.error("Erro no cadastro:", error);
       setErrorMessage(
         "Erro inesperado. Por favor, tente novamente mais tarde."
       );
-    } finally {
-      setLoading(false);
+      setLoading(false); // Para o loading em caso de erro
     }
   };
 
   return (
-    <Box
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      p={4}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <PizzaCard
-          variant="default"
-          w="full"
-          maxW="400px"
-          borderTopColor="brand.primary"
+    <>
+      {/* Loading de tela cheia */}
+      <PizzaLoading
+        isVisible={loading}
+        message={
+          showSuccess
+            ? "Cadastro realizado com sucesso!"
+            : "Processando cadastro..."
+        }
+      />
+
+      {/* Card de sucesso (aparece apenas quando cadastro é bem-sucedido) */}
+      {showSuccess && !loading && (
+        <Box
+          minH="100vh"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          p={4}
         >
-          <VStack gap={6}>
-            <PizzaText
-              variant="heading"
-              color="brand.primary"
-              textAlign="center"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <PizzaCard
+              variant="default"
+              w="full"
+              maxW="400px"
+              borderTopColor="green.500"
             >
-              Criar Conta
-            </PizzaText>
+              <VStack gap={6} textAlign="center">
+                <Box fontSize="4xl">🍕</Box>
 
-            {successMessage && (
-              <Box
-                bg="green.50"
-                color="green.800"
-                p={3}
-                rounded="md"
-                border="1px"
-                borderColor="green.200"
-              >
-                ✅ {successMessage}
-              </Box>
-            )}
-
-            {errorMessage && (
-              <Box
-                bg="red.50"
-                color="red.800"
-                p={3}
-                rounded="md"
-                border="1px"
-                borderColor="red.200"
-              >
-                ❌ {errorMessage}
-              </Box>
-            )}
-
-            <Box as="form" onSubmit={handleSubmit} w="full">
-              <VStack gap={4}>
-                {/* Nome */}
-                <PizzaInput
-                  label="Nome Completo"
-                  type="text"
-                  value={formData.nome}
-                  onChange={handleInputChange("nome")}
-                  placeholder="Seu nome completo"
-                  error={errors.nome}
-                  required
-                />
-
-                {/* Email */}
-                <PizzaInput
-                  label="Email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange("email")}
-                  placeholder="seu@email.com"
-                  error={errors.email}
-                  required
-                />
-
-                {/* Telefone */}
-                <PizzaInput
-                  label="Telefone"
-                  type="tel"
-                  value={formData.telefone}
-                  onChange={handleInputChange("telefone")}
-                  placeholder="(11) 99999-9999"
-                  error={errors.telefone}
-                  maxLength={15} // (99) 99999-9999 = 15 caracteres
-                  required
-                />
-
-                {/* Endereço */}
-                <PizzaInput
-                  label="Endereço"
-                  type="text"
-                  value={formData.endereco}
-                  onChange={handleInputChange("endereco")}
-                  placeholder="Rua, número, bairro, cidade"
-                  error={errors.endereco}
-                  required
-                />
-
-                {/* Senha */}
-                <PizzaInput
-                  label="Senha"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange("password")}
-                  placeholder="Mínimo 6 caracteres"
-                  error={errors.password}
-                  required
-                />
-
-                {/* Confirmar Senha */}
-                <PizzaInput
-                  label="Confirmar Senha"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange("confirmPassword")}
-                  placeholder="Digite a senha novamente"
-                  error={errors.confirmPassword}
-                  required
-                />
-
-                <PizzaButton
-                  type="submit"
-                  variant="primary"
-                  w="full"
-                  disabled={loading}
-                >
-                  {loading ? "Criando conta..." : "Criar Conta"}
-                </PizzaButton>
-              </VStack>
-            </Box>
-
-            <Box textAlign="center">
-              <PizzaText color="gray.800" fontSize="sm">
-                Já tem uma conta?{" "}
                 <PizzaText
-                  as="span"
-                  color="brand.primary"
-                  fontWeight="semibold"
-                  cursor="pointer"
-                  _hover={{ textDecoration: "underline" }}
-                  onClick={() => router.push("/login")}
+                  variant="heading"
+                  color="green.600"
+                  textAlign="center"
                 >
-                  Fazer login
+                  Cadastro Realizado!
                 </PizzaText>
-              </PizzaText>
-            </Box>
-          </VStack>
-        </PizzaCard>
-      </motion.div>
-    </Box>
+
+                <Box
+                  bg="green.50"
+                  color="green.800"
+                  p={4}
+                  rounded="md"
+                  border="1px"
+                  borderColor="green.200"
+                >
+                  ✅ Sua conta foi criada com sucesso!
+                  <br />
+                  Redirecionando para o login...
+                </Box>
+              </VStack>
+            </PizzaCard>
+          </motion.div>
+        </Box>
+      )}
+
+      {/* Formulário de cadastro (aparece apenas quando não está em loading nem sucesso) */}
+      {!loading && !showSuccess && (
+        <Box
+          minH="100vh"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          p={4}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <PizzaCard
+              variant="default"
+              w="full"
+              maxW="400px"
+              borderTopColor="brand.primary"
+            >
+              <VStack gap={6}>
+                <PizzaText
+                  variant="heading"
+                  color="brand.primary"
+                  textAlign="center"
+                >
+                  Criar Conta
+                </PizzaText>
+
+                {errorMessage && (
+                  <Box
+                    bg="red.50"
+                    color="red.800"
+                    p={3}
+                    rounded="md"
+                    border="1px"
+                    borderColor="red.200"
+                  >
+                    ❌ {errorMessage}
+                  </Box>
+                )}
+
+                <Box as="form" onSubmit={handleSubmit} w="full">
+                  <VStack gap={4}>
+                    {/* Nome */}
+                    <PizzaInput
+                      label="Nome Completo"
+                      type="text"
+                      value={formData.nome}
+                      onChange={handleInputChange("nome")}
+                      placeholder="Seu nome completo"
+                      error={errors.nome}
+                      required
+                    />
+
+                    {/* Email */}
+                    <PizzaInput
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange("email")}
+                      placeholder="seu@email.com"
+                      error={errors.email}
+                      required
+                    />
+
+                    {/* Telefone */}
+                    <PizzaInput
+                      label="Telefone"
+                      type="tel"
+                      value={formData.telefone}
+                      onChange={handleInputChange("telefone")}
+                      placeholder="(11) 99999-9999"
+                      error={errors.telefone}
+                      maxLength={15} // (99) 99999-9999 = 15 caracteres
+                      required
+                    />
+
+                    {/* Endereço */}
+                    <PizzaInput
+                      label="Endereço"
+                      type="text"
+                      value={formData.endereco}
+                      onChange={handleInputChange("endereco")}
+                      placeholder="Rua, número, bairro, cidade"
+                      error={errors.endereco}
+                      required
+                    />
+
+                    {/* Senha */}
+                    <PizzaInput
+                      label="Senha"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleInputChange("password")}
+                      placeholder="Mínimo 6 caracteres"
+                      error={errors.password}
+                      required
+                    />
+
+                    {/* Confirmar Senha */}
+                    <PizzaInput
+                      label="Confirmar Senha"
+                      type="password"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange("confirmPassword")}
+                      placeholder="Digite a senha novamente"
+                      error={errors.confirmPassword}
+                      required
+                    />
+
+                    <PizzaButton
+                      type="submit"
+                      variant="primary"
+                      w="full"
+                      disabled={loading}
+                    >
+                      {loading ? "Criando conta..." : "Criar Conta"}
+                    </PizzaButton>
+                  </VStack>
+                </Box>
+
+                <Box textAlign="center">
+                  <PizzaText color="gray.800" fontSize="sm">
+                    Já tem uma conta?{" "}
+                    <PizzaText
+                      as="span"
+                      color="brand.primary"
+                      fontWeight="semibold"
+                      cursor="pointer"
+                      _hover={{ textDecoration: "underline" }}
+                      onClick={() => router.push("/login")}
+                    >
+                      Fazer login
+                    </PizzaText>
+                  </PizzaText>
+                </Box>
+              </VStack>
+            </PizzaCard>
+          </motion.div>
+        </Box>
+      )}
+    </>
   );
 };
 
