@@ -1,10 +1,9 @@
 "use client";
 
-import { Box, VStack, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { PizzaButton, PizzaCard, PizzaText, PizzaInput } from "@/components/ui";
 
 interface FormErrors {
@@ -61,8 +60,15 @@ const RegisterPage = () => {
       newErrors.confirmPassword = "Senhas não coincidem";
     }
 
-    // Validação do telefone (opcional - string)
-    // O telefone é opcional, então não há validação específica se estiver vazio
+    // Validação do telefone (obrigatório)
+    if (!formData.telefone.trim()) {
+      newErrors.telefone = "Telefone é obrigatório";
+    } else {
+      const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+      if (!phoneRegex.test(formData.telefone)) {
+        newErrors.telefone = "Telefone deve estar no formato (99) 9999-9999";
+      }
+    }
 
     // Validação do endereço
     if (!formData.endereco.trim()) {
@@ -75,10 +81,40 @@ const RegisterPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Função para formatar telefone automaticamente
+  const formatPhoneNumber = (value: string): string => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, "");
+
+    // Aplica a formatação baseada na quantidade de dígitos
+    if (numbers.length <= 2) {
+      return numbers.length > 0 ? `(${numbers}` : "";
+    } else if (numbers.length <= 6) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 10) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(
+        6
+      )}`;
+    } else {
+      // Suporta tanto 10 quanto 11 dígitos (com 9 na frente)
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(
+        7,
+        11
+      )}`;
+    }
+  };
+
   const handleInputChange =
     (field: keyof typeof formData) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({ ...formData, [field]: e.target.value });
+      let value = e.target.value;
+
+      // Aplica formatação especial para telefone
+      if (field === "telefone") {
+        value = formatPhoneNumber(value);
+      }
+
+      setFormData({ ...formData, [field]: value });
       // Limpa o erro do campo quando o usuário começa a digitar
       if (errors[field as keyof FormErrors]) {
         setErrors({ ...errors, [field]: undefined });
@@ -108,7 +144,7 @@ const RegisterPage = () => {
             nome: formData.nome.trim(),
             email: formData.email.toLowerCase().trim(),
             password: formData.password,
-            telefone: formData.telefone.trim() || undefined, // Opcional como string
+            telefone: formData.telefone.trim(),
             endereco: formData.endereco.trim(),
           }),
         }
@@ -156,7 +192,6 @@ const RegisterPage = () => {
 
   return (
     <Box
-      bg="gray.50"
       minH="100vh"
       display="flex"
       alignItems="center"
@@ -235,12 +270,14 @@ const RegisterPage = () => {
 
                 {/* Telefone */}
                 <PizzaInput
-                  label="Telefone (Opcional)"
+                  label="Telefone"
                   type="tel"
                   value={formData.telefone}
                   onChange={handleInputChange("telefone")}
-                  placeholder="(11) 99999-9999 ou texto livre"
+                  placeholder="(11) 99999-9999"
                   error={errors.telefone}
+                  maxLength={15} // (99) 99999-9999 = 15 caracteres
+                  required
                 />
 
                 {/* Endereço */}
@@ -279,7 +316,6 @@ const RegisterPage = () => {
                 <PizzaButton
                   type="submit"
                   variant="primary"
-                  size="lg"
                   w="full"
                   disabled={loading}
                 >
@@ -291,11 +327,16 @@ const RegisterPage = () => {
             <Box textAlign="center">
               <PizzaText color="gray.800" fontSize="sm">
                 Já tem uma conta?{" "}
-                <Link href="/login" passHref>
-                  <ChakraLink color="brand.primary" fontWeight="semibold">
-                    Fazer login
-                  </ChakraLink>
-                </Link>
+                <PizzaText
+                  as="span"
+                  color="brand.primary"
+                  fontWeight="semibold"
+                  cursor="pointer"
+                  _hover={{ textDecoration: "underline" }}
+                  onClick={() => (window.location.href = "/login")}
+                >
+                  Fazer login
+                </PizzaText>
               </PizzaText>
             </Box>
           </VStack>
