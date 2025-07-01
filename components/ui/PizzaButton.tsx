@@ -1,6 +1,7 @@
 "use client";
 
-import { Button as ChakraButton, ButtonProps } from "@chakra-ui/react";
+import { Button as ChakraButton, ButtonProps, HStack } from "@chakra-ui/react";
+import { PizzaSpinner } from "./PizzaSpinner";
 
 interface PizzaButtonProps
   extends Omit<ButtonProps, "colorScheme" | "variant"> {
@@ -13,6 +14,7 @@ interface PizzaButtonProps
     | "danger"
     | "outline"
     | "ghost";
+  loading?: boolean;
 }
 
 /**
@@ -21,6 +23,8 @@ interface PizzaButtonProps
  */
 export function PizzaButton({
   variant = "primary",
+  loading = false,
+  children,
   ...props
 }: PizzaButtonProps) {
   // Mapeia variantes customizadas para props do Chakra
@@ -107,8 +111,18 @@ export function PizzaButton({
       minH="44px" // Altura consistente com inputs
       px={6} // Padding horizontal padrão
       fontSize="md" // Tamanho de fonte consistente
+      disabled={loading || props.disabled}
       {...buttonStyles}
       {...props}
-    />
+    >
+      {loading ? (
+        <HStack gap={2}>
+          <PizzaSpinner size={16} />
+          <span>{children || "Carregando..."}</span>
+        </HStack>
+      ) : (
+        children
+      )}
+    </ChakraButton>
   );
 }

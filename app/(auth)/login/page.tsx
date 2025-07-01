@@ -1,9 +1,15 @@
 "use client";
 
-import { Box, VStack, Spinner } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PizzaButton, PizzaCard, PizzaText, PizzaInput } from "@/components/ui";
+import {
+  PizzaButton,
+  PizzaCard,
+  PizzaText,
+  PizzaInput,
+  PizzaSpinner,
+} from "@/components/ui";
 import { useLogin } from "@/hooks/useLogin";
 
 const LoginPage = () => {
@@ -34,7 +40,7 @@ const LoginPage = () => {
         <PizzaCard variant="default" borderTopColor="brand.primary">
           {loading ? (
             <VStack gap={6}>
-              <Spinner size="xl" color="brand.primary" />
+              <PizzaSpinner size={48} />
               <PizzaText variant="heading" color="brand.primary">
                 Fazendo login...
               </PizzaText>

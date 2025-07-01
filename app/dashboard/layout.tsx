@@ -1,9 +1,11 @@
 "use client";
 
+"use client";
+
 import { ReactNode, useEffect } from "react";
 import { useAuth } from "../../components/auth/auth-context";
 import { useRouter } from "next/navigation";
-import { Spinner, Flex } from "@chakra-ui/react";
+import { PizzaLoading } from "../../components/ui";
 import MainLayout from "../../components/layout/MainLayout";
 
 interface DashboardLayoutProps {
@@ -22,17 +24,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (isLoading) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.accent" />
-      </Flex>
+      <PizzaLoading
+        message="Carregando dashboard..."
+        isVisible={true}
+        fullscreen={true}
+        showMessage={true}
+      />
     );
   }
 
   if (!isAuthenticated || !user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="brand.cream">
-        <Spinner size="xl" color="brand.accent" />
-      </Flex>
+      <PizzaLoading
+        message="Verificando acesso..."
+        isVisible={true}
+        fullscreen={true}
+        showMessage={true}
+      />
     );
   }
 

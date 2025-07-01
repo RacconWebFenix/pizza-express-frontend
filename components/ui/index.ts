@@ -9,3 +9,4 @@ export { PizzaBadge } from "./PizzaBadge";
 export { PizzaText } from "./PizzaText";
 export { PizzaInput } from "./PizzaInput";
 export { PizzaLoading } from "./PizzaLoading";
+export { PizzaSpinner } from "./PizzaSpinner";

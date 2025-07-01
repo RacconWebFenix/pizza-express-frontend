@@ -3,7 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { useAuth } from "../../components/auth/auth-context";
 import { useRouter } from "next/navigation";
-import { Spinner, Flex } from "@chakra-ui/react";
+import { PizzaLoading } from "../../components/ui";
 import MainLayout from "../../components/layout/MainLayout";
 
 interface CardapioLayoutProps {
@@ -22,17 +22,23 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
 
   if (isLoading) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="blue.50">
-        <Spinner size="xl" color="blue.800" />
-      </Flex>
+      <PizzaLoading
+        message="Carregando cardápio..."
+        isVisible={true}
+        fullscreen={true}
+        showMessage={true}
+      />
     );
   }
 
   if (!isAuthenticated || !user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg="blue.50">
-        <Spinner size="xl" color="blue.800" />
-      </Flex>
+      <PizzaLoading
+        message="Verificando acesso..."
+        isVisible={true}
+        fullscreen={true}
+        showMessage={true}
+      />
     );
   }
 

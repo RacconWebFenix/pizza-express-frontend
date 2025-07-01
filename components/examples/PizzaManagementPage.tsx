@@ -1,10 +1,3 @@
-/* 
-  EXEMPLO DE USO - Componente para gerenciar pizzas com imagens
-  
-  Este arquivo demonstra como implementar uma página completa de gerenciamento
-  de pizzas com funcionalidades de upload de imagem.
-*/
-
 "use client";
 
 import { useState } from "react";
@@ -18,7 +11,6 @@ import {
   Flex,
   Icon,
   Badge,
-  Spinner,
 } from "@chakra-ui/react";
 import { FaPizzaSlice, FaPlus, FaImage, FaEdit } from "react-icons/fa";
 import Image from "next/image";
@@ -28,6 +20,7 @@ import { usePizzas } from "@/hooks/usePizzas";
 import { usePizzaActions } from "@/hooks/usePizzaActions";
 import { CreatePizzaWithImageForm } from "@/components/examples/CreatePizzaWithImageForm";
 import { UploadImageToPizza } from "@/components/examples/UploadImageToPizza";
+import { PizzaLoading } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
 import type { Pizza } from "@/types";
 
@@ -80,12 +73,13 @@ export const PizzaManagementPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box textAlign="center" py={12}>
-        <Spinner size="xl" color="blue.700" />
-        <Text mt={4} color="gray.800">
-          Carregando pizzas...
-        </Text>
-      </Box>
+      <PizzaLoading
+        message="Carregando pizzas..."
+        isVisible={true}
+        fullscreen={false}
+        showMessage={true}
+        size="lg"
+      />
     );
   }
 
