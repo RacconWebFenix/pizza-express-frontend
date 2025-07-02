@@ -45,27 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       const existingToken = Cookies.get("authToken");
 
-      // Verifica também se há dados demo no localStorage
-      const demoToken =
-        typeof window !== "undefined"
-          ? localStorage.getItem("demoToken")
-          : null;
-      const demoUser =
-        typeof window !== "undefined" ? localStorage.getItem("demoUser") : null;
-
-      if (demoToken && demoUser && !existingToken) {
-        // Usa dados demo se disponíveis
-        try {
-          const userData = JSON.parse(demoUser);
-          setUser(userData);
-          setToken(demoToken);
-
-          // Salva no cookie também
-          Cookies.set("authToken", demoToken, { expires: 1, path: "/" });
-        } catch (error) {
-          console.error("Erro ao carregar dados demo:", error);
-        }
-      } else if (existingToken) {
+      if (existingToken) {
         const userData = await validateToken(existingToken);
         if (userData) {
           setUser(userData);
@@ -85,10 +65,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const validateToken = async (token: string): Promise<User | null> => {
     try {
-      console.log("Validando token...", {
-        api: process.env.NEXT_PUBLIC_API_URL,
-      });
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,21 +72,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       });
 
-      console.log("Resposta da validação:", {
-        status: response.status,
-        ok: response.ok,
-      });
-
       if (!response.ok) {
-        console.error("Token inválido ou API não respondeu");
         return null;
       }
 
       const userData = await response.json();
-      console.log("Dados do usuário validados:", userData);
       return userData;
-    } catch (error) {
-      console.error("Erro na validação do token:", error);
+    } catch {
       return null;
     }
   };
@@ -155,12 +123,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    // Remove dados demo se existirem
+    // Redireciona para a home
     if (typeof window !== "undefined") {
-      localStorage.removeItem("demoToken");
-      localStorage.removeItem("demoUser");
-
-      // Redireciona para a home
       window.location.href = "/";
     }
   };
