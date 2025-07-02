@@ -12,7 +12,7 @@ interface ActionButtonProps {
   title: string;
   description: string;
   icon: React.ElementType;
-  variant: "primary" | "secondary" | "pizza" | "success";
+  variant: "primary" | "secondary" | "pizza" | "cheese" | "success";
   onClick: () => void;
   index: number;
 }
@@ -90,7 +90,7 @@ export function DashboardActions({
       title: "Criar Pizza",
       description: "Adicionar nova pizza ao cardápio",
       icon: FaPlus,
-      variant: "primary" as const,
+      variant: "cheese" as const,
       onClick: onShowCreateForm,
     },
   ];

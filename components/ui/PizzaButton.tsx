@@ -9,6 +9,7 @@ interface PizzaButtonProps
     | "primary"
     | "secondary"
     | "pizza"
+    | "cheese"
     | "success"
     | "warning"
     | "danger"
@@ -50,6 +51,13 @@ export function PizzaButton({
           color: "white",
           _hover: { bg: "orange.500", transform: "translateY(-1px)" },
           _active: { bg: "orange.700", transform: "translateY(0)" },
+        };
+      case "cheese":
+        return {
+          bg: "yellow.300",
+          color: "white",
+          _hover: { bg: "yellow.500", transform: "translateY(-1px)" },
+          _active: { bg: "yellow.700", transform: "translateY(0)" },
         };
       case "success":
         return {
