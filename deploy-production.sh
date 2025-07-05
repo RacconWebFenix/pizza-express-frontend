@@ -37,42 +37,42 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+# Check if Docker Compose is installed (modern command)
+if ! sudo docker compose version &> /dev/null; then
     print_error "Docker Compose não está instalado. Por favor, instale o Docker Compose primeiro."
     exit 1
 fi
 
 print_status "Parando containers existentes..."
-docker-compose down 2>/dev/null || true
+sudo docker compose down 2>/dev/null || true
 
 print_status "Limpando imagens antigas..."
-docker image prune -f 2>/dev/null || true
+sudo docker image prune -f 2>/dev/null || true
 
 print_status "Construindo a aplicação..."
-docker-compose build --no-cache
+sudo docker compose build --no-cache
 
 print_status "Iniciando a aplicação em modo produção..."
-docker-compose up -d
+sudo docker compose up -d
 
 print_success "Deploy concluído!"
 print_status "A aplicação está rodando em: http://localhost:3000"
 print_status ""
 print_status "Para verificar os logs:"
-print_warning "docker-compose logs -f"
+print_warning "sudo docker compose logs -f"
 print_status ""
 print_status "Para parar a aplicação:"
-print_warning "docker-compose down"
+print_warning "sudo docker compose down"
 print_status ""
 print_status "Para acessar o container:"
-print_warning "docker-compose exec pizza-express-frontend sh"
+print_warning "sudo docker compose exec pizza-express-frontend sh"
 
 # Wait a bit and check if container is running
 sleep 5
 
-if docker-compose ps | grep -q "Up"; then
+if sudo docker compose ps | grep -q "Up"; then
     print_success "Container está rodando com sucesso!"
 else
     print_error "Algo deu errado. Verificando logs..."
-    docker-compose logs
+    sudo docker compose logs
 fi
