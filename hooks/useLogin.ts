@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "../components/auth/auth-context";
 import { loginUser } from "../services/auth-service";
 
@@ -20,7 +19,6 @@ export const useLogin = (): UseLoginReturn => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
-  const router = useRouter();
 
   const handleEmailChange = useCallback(
     (value: string) => {
@@ -48,32 +46,24 @@ export const useLogin = (): UseLoginReturn => {
       setLoading(true);
       setError("");
 
-      console.log("[LOGIN] Starting login process...");
-
       try {
         const responseData = await loginUser({ email, password });
-        console.log("[LOGIN] Login API response received:", { hasToken: !!responseData.access_token });
 
         if (responseData.access_token) {
-          console.log("[LOGIN] Token received, attempting auth context login...");
           const loginSuccess = await login(responseData.access_token);
-          console.log("[LOGIN] Auth context login result:", loginSuccess);
 
           if (loginSuccess) {
-            console.log("[LOGIN] Login successful, redirecting to /cardapio...");
-            router.push("/cardapio");
+            // Redireciona para o cardápio após login bem-sucedido
+            window.location.href = "/cardapio";
           } else {
-            console.error("[LOGIN] Auth context login failed");
             setError(
               "Erro na validação do usuário. Por favor, tente novamente."
             );
           }
         } else {
-          console.error("[LOGIN] No access token in response");
           setError("Resposta inválida do servidor. Tente novamente.");
         }
       } catch (err) {
-        console.error("[LOGIN] Login error:", err);
         setError(
           err instanceof Error
             ? err.message
@@ -83,7 +73,7 @@ export const useLogin = (): UseLoginReturn => {
         setLoading(false);
       }
     },
-    [email, password, login, router]
+    [email, password, login]
   );
 
   return {
