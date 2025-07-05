@@ -3,7 +3,8 @@
 import { Box, Input, VStack, HStack } from "@chakra-ui/react";
 import { useRef, ChangeEvent } from "react";
 import { FaCloudUploadAlt, FaTrash } from "react-icons/fa";
-import { PizzaText, PizzaButton } from "@/components/ui";
+import { PizzaText } from "./PizzaText";
+import { PizzaButton } from "./PizzaButton";
 import Image from "next/image";
 
 interface PizzaFileInputProps {

@@ -3,8 +3,8 @@
 import { SimpleGrid, Box, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { PizzaCard } from "./PizzaCard";
-import { PizzaText, PizzaLoading } from "@/components/ui";
-import { Pizza } from "@/types";
+import { PizzaText, PizzaLoading } from "../ui";
+import { Pizza } from "../../types";
 
 const MotionBox = motion(Box);
 

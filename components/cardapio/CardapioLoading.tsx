@@ -1,6 +1,6 @@
 "use client";
 
-import { PizzaLoading } from "@/components/ui";
+import { PizzaLoading } from "../ui";
 
 export function CardapioLoading() {
   return (

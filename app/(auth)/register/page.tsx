@@ -4,13 +4,11 @@ import { Box, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import {
-  PizzaButton,
-  PizzaCard,
-  PizzaText,
-  PizzaInput,
-  PizzaLoading,
-} from "@/components/ui";
+import { PizzaButton } from "../../../components/ui/PizzaButton";
+import { PizzaCard } from "../../../components/ui/PizzaCard";
+import { PizzaText } from "../../../components/ui/PizzaText";
+import { PizzaInput } from "../../../components/ui/PizzaInput";
+import { PizzaLoading } from "../../../components/ui/PizzaLoading";
 
 interface FormErrors {
   email?: string;

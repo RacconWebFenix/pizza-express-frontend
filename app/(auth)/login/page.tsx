@@ -9,8 +9,8 @@ import {
   PizzaText,
   PizzaInput,
   PizzaSpinner,
-} from "@/components/ui";
-import { useLogin } from "@/hooks/useLogin";
+} from "../../../components/ui";
+import { useLogin } from "../../../hooks/useLogin";
 
 const LoginPage = () => {
   const {

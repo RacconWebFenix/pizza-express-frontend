@@ -1,7 +1,9 @@
 "use client";
 
 import { Box, HStack, Portal, VStack } from "@chakra-ui/react";
-import { PizzaButton, PizzaText, PizzaBadge } from "@/components/ui";
+import { PizzaButton } from "./PizzaButton";
+import { PizzaText } from "./PizzaText";
+import { PizzaBadge } from "./PizzaBadge";
 import Image from "next/image";
 import { FaTimes, FaPizzaSlice, FaHeart } from "react-icons/fa";
 import { useEffect } from "react";

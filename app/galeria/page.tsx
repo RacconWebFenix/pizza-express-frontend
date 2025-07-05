@@ -1,7 +1,7 @@
 "use client";
 
-import { PizzaGallery } from "@/components/cardapio";
-import { usePizzas } from "@/hooks/usePizzas";
+import { PizzaGallery } from "../../components/cardapio/PizzaGallery";
+import { usePizzas } from "../../hooks/usePizzas";
 import { useRouter } from "next/navigation";
 
 export default function GaleriaPage() {

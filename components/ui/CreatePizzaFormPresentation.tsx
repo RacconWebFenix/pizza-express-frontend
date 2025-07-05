@@ -1,16 +1,14 @@
 "use client";
 
 import { VStack, HStack, Box } from "@chakra-ui/react";
-import {
-  PizzaCard,
-  PizzaText,
-  PizzaInput,
-  PizzaTextarea,
-  PizzaFileInput,
-  PizzaButton,
-  PizzaLoading,
-  PizzaImageModal,
-} from "@/components/ui";
+import { PizzaCard } from "./PizzaCard";
+import { PizzaText } from "./PizzaText";
+import { PizzaInput } from "./PizzaInput";
+import { PizzaTextarea } from "./PizzaTextarea";
+import { PizzaFileInput } from "./PizzaFileInput";
+import { PizzaButton } from "./PizzaButton";
+import { PizzaLoading } from "./PizzaLoading";
+import { PizzaImageModal } from "./PizzaImageModal";
 
 interface CreatePizzaFormPresentationProps {
   // Form data

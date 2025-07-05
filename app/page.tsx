@@ -3,10 +3,12 @@
 import { Box, Flex, Icon, VStack, Image } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
-import { useAuth } from "@/components/auth/auth-context";
-import AuthLoading from "@/components/auth/AuthLoading";
+import { useAuth } from "../components/auth/auth-context";
+import AuthLoading from "../components/auth/AuthLoading";
 import { useEffect } from "react";
-import { PizzaButton, PizzaBadge, PizzaText } from "@/components/ui";
+import { PizzaButton } from "../components/ui/PizzaButton";
+import { PizzaBadge } from "../components/ui/PizzaBadge";
+import { PizzaText } from "../components/ui/PizzaText";
 
 export default function Home() {
   const router = useRouter();
