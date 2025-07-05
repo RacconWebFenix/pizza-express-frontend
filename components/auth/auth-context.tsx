@@ -62,23 +62,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (newToken: string): Promise<boolean> => {
+    console.log("[AUTH CONTEXT] Login attempt with token:", !!newToken);
+    
     if (!newToken) {
+      console.error("[AUTH CONTEXT] No token provided");
       return false;
     }
 
     // Validar o token com a rota /me
+    console.log("[AUTH CONTEXT] Validating token...");
     const userData = await validateToken(newToken);
 
     if (!userData) {
+      console.error("[AUTH CONTEXT] Token validation failed");
       return false;
     }
+
+    console.log("[AUTH CONTEXT] Token validation successful, user:", userData.email);
 
     // Se o token é válido, salva o usuário e o token
     setUser(userData);
     setToken(newToken);
 
     // Salva o token no cookie
+    console.log("[AUTH CONTEXT] Saving token to cookie...");
     saveAuthToken(newToken);
+    console.log("[AUTH CONTEXT] Login process completed successfully");
 
     return true;
   };

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  pizza-express-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://pizza-express-backend.vercel.app
+    restart: unless-stopped
+    container_name: pizza-express-frontend-prod
+    networks:
+      - pizza-network
+
+networks:
+  pizza-network:
+    driver: bridge
