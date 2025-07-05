@@ -7,6 +7,8 @@ import { CardapioContainer } from "../../components/cardapio";
  *
  * Esta página é responsável apenas por renderizar o container do cardápio,
  * seguindo o princípio de responsabilidade única.
+ *
+ * Proteção: Middleware + Layout do cardápio
  */
 export default function CardapioPage() {
   return <CardapioContainer />;

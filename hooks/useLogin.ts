@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../components/auth/auth-context";
+import { loginUser } from "../services/auth-service";
 
 interface UseLoginReturn {
   email: string;
@@ -48,20 +49,9 @@ export const useLogin = (): UseLoginReturn => {
       setError("");
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
+        const responseData = await loginUser({ email, password });
 
-        const responseData = await response.json();
-
-        if (response.ok && responseData.access_token) {
+        if (responseData.access_token) {
           const loginSuccess = await login(responseData.access_token);
 
           if (loginSuccess) {
@@ -72,12 +62,14 @@ export const useLogin = (): UseLoginReturn => {
             );
           }
         } else {
-          setError(
-            responseData.message || "Email ou senha inválidos. Tente novamente."
-          );
+          setError("Resposta inválida do servidor. Tente novamente.");
         }
-      } catch {
-        setError("Erro de conexão. Verifique sua internet e tente novamente.");
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Erro de conexão. Verifique sua internet e tente novamente."
+        );
       } finally {
         setLoading(false);
       }

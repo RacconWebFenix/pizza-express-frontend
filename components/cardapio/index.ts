@@ -11,3 +11,4 @@ export { CardapioFooter } from "./CardapioFooter";
 export { CardapioLoading } from "./CardapioLoading";
 export { CardapioError } from "./CardapioError";
 export { PizzaCard } from "./PizzaCard";
+export { PizzaGallery } from "./PizzaGallery";

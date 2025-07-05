@@ -179,8 +179,7 @@ const RegisterPage = () => {
         }
         setLoading(false); // Para o loading apenas em caso de erro
       }
-    } catch (error) {
-      console.error("Erro no cadastro:", error);
+    } catch {
       setErrorMessage(
         "Erro inesperado. Por favor, tente novamente mais tarde."
       );

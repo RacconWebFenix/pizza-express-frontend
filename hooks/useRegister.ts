@@ -165,8 +165,7 @@ export const useRegister = (): UseRegisterReturn => {
             responseData.message || "Erro ao criar conta. Tente novamente."
           );
         }
-      } catch (error) {
-        console.error("Erro no registro:", error);
+      } catch {
         setErrorMessage(
           "Erro de conexão. Verifique sua internet e tente novamente."
         );

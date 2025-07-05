@@ -8,3 +8,4 @@ export { DashboardContent } from "./DashboardContent";
 export { DashboardHeader } from "./DashboardHeader";
 export { DashboardStats } from "./DashboardStats";
 export { DashboardActions } from "./DashboardActions";
+export { CreatePizzaForm } from "./CreatePizzaForm";

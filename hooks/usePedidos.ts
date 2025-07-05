@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { FaClock, FaCheckCircle, FaTimes } from "react-icons/fa";
-import { mockPedidos } from "../mock";
+import { getAuthToken } from "../services/auth-service";
 import type { Pedido } from "../types/pedidos";
 
 export interface StatusConfig {
@@ -15,24 +15,55 @@ export interface StatusConfig {
 interface UsePedidosReturn {
   pedidos: Pedido[];
   selectedStatus: string;
+  isLoading: boolean;
+  error: string | null;
   getStatusConfig: (status: string) => StatusConfig;
   handleStatusFilter: (status: string) => void;
   filteredPedidos: Pedido[];
+  refetch: () => Promise<void>;
 }
 
 export const usePedidos = (): UsePedidosReturn => {
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [selectedStatus, setSelectedStatus] = useState("todos");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Converte os dados do mock para o formato esperado
-  const pedidos = useMemo(() => {
-    return mockPedidos.map((pedido) => ({
-      id: pedido.id,
-      cliente: `Cliente ${pedido.id}`, // Dados mock
-      pizzas: pedido.pizzas,
-      total: pedido.total,
-      status: pedido.status,
-      horario: `${pedido.data} ${pedido.hora}`,
-    }));
+  const fetchPedidos = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      if (!API_URL) {
+        throw new Error("URL da API não configurada");
+      }
+
+      const token = getAuthToken();
+
+      const response = await fetch(`${API_URL}/pedidos`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setPedidos(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar pedidos");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPedidos();
   }, []);
 
   const getStatusConfig = useCallback((status: string): StatusConfig => {
@@ -51,26 +82,26 @@ export const usePedidos = (): UsePedidosReturn => {
           color: "brand.success",
           icon: FaCheckCircle,
           label: "Entregue",
-          bgColor: "#F0FDF4",
-          borderColor: "brand.fresh",
+          bgColor: "brand.success",
+          borderColor: "brand.success",
           badgeScheme: "green",
         };
       case "cancelado":
         return {
-          color: "brand.error",
+          color: "brand.danger",
           icon: FaTimes,
           label: "Cancelado",
-          bgColor: "#FEF2F2",
-          borderColor: "brand.error",
+          bgColor: "brand.danger",
+          borderColor: "brand.danger",
           badgeScheme: "red",
         };
       default:
         return {
           color: "gray.500",
           icon: FaClock,
-          label: "Desconhecido",
-          bgColor: "gray.50",
-          borderColor: "gray.200",
+          label: "Pendente",
+          bgColor: "gray.100",
+          borderColor: "gray.300",
           badgeScheme: "gray",
         };
     }
@@ -85,13 +116,16 @@ export const usePedidos = (): UsePedidosReturn => {
       return pedidos;
     }
     return pedidos.filter((pedido) => pedido.status === selectedStatus);
-  }, [selectedStatus, pedidos]);
+  }, [pedidos, selectedStatus]);
 
   return {
     pedidos,
     selectedStatus,
+    isLoading,
+    error,
     getStatusConfig,
     handleStatusFilter,
     filteredPedidos,
+    refetch: fetchPedidos,
   };
 };

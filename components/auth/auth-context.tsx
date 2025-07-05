@@ -7,12 +7,13 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import Cookies from "js-cookie";
-
-interface User {
-  userId: number;
-  email: string;
-}
+import {
+  validateToken,
+  getAuthToken,
+  saveAuthToken,
+  removeAuthToken,
+  User,
+} from "../../services/auth-service";
 
 interface AuthContextType {
   token: string | null;
@@ -32,10 +33,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(() => {
     // Inicializa o token do cookie ao montar o componente
-    if (typeof window !== "undefined") {
-      return Cookies.get("authToken") || null;
-    }
-    return null;
+    return getAuthToken();
   });
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Valida o token existente no cookie quando o componente monta
   useEffect(() => {
     const initializeAuth = async () => {
-      const existingToken = Cookies.get("authToken");
+      const existingToken = getAuthToken();
 
       if (existingToken) {
         const userData = await validateToken(existingToken);
@@ -52,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setToken(existingToken);
         } else {
           // Token inválido, remove o cookie
-          Cookies.remove("authToken", { path: "/" });
+          removeAuthToken();
           setToken(null);
         }
       }
@@ -62,26 +60,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth();
   }, []);
-
-  const validateToken = async (token: string): Promise<User | null> => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        return null;
-      }
-
-      const userData = await response.json();
-      return userData;
-    } catch {
-      return null;
-    }
-  };
 
   const login = async (newToken: string): Promise<boolean> => {
     if (!newToken) {
@@ -99,15 +77,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(userData);
     setToken(newToken);
 
-    // Define o cookie com configurações específicas para produção
-    const cookieOptions = {
-      expires: 1, // 1 dia
-      path: "/", // Disponível em todo o site
-      sameSite: "lax" as const, // Menos restritivo que strict para produção
-      secure: process.env.NODE_ENV === "production", // HTTPS apenas em produção
-    };
-
-    Cookies.set("authToken", newToken, cookieOptions);
+    // Salva o token no cookie
+    saveAuthToken(newToken);
 
     return true;
   };
@@ -116,12 +87,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     setUser(null);
 
-    // Remove o cookie com as mesmas opções
-    Cookies.remove("authToken", {
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
+    // Remove o token do cookie
+    removeAuthToken();
 
     // Redireciona para a home
     if (typeof window !== "undefined") {

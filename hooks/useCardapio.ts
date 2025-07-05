@@ -14,14 +14,12 @@ interface UseCardapioReturn {
 export const useCardapio = (): UseCardapioReturn => {
   const { pizzas, isLoading, error, refetch } = usePizzas();
 
-  const handlePedir = useCallback((pizzaId: string, pizzaNome: string) => {
-    console.log(`Pedindo: ${pizzaNome} (ID: ${pizzaId})`);
+  const handlePedir = useCallback((_pizzaId: string, _pizzaNome: string) => {
     // TODO: Implementar lógica de pedido
     // Aqui seria chamado um serviço para adicionar ao carrinho ou fazer pedido
   }, []);
 
   const handleVerPedidos = useCallback(() => {
-    console.log("Ver todos os pedidos");
     // TODO: Implementar navegação para pedidos
     // Router.push('/pedidos') ou similar
   }, []);

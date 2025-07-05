@@ -2,7 +2,7 @@
 
 import { Box, VStack } from "@chakra-ui/react";
 import { CardapioHeader } from "./CardapioHeader";
-import { CardapioGrid } from "./CardapioGrid";
+import { PizzaGallery } from "./PizzaGallery";
 import { CardapioFooter } from "./CardapioFooter";
 import { Pizza } from "../../types";
 import { CARDAPIO_CONSTANTS } from "../../constants/cardapio";
@@ -10,6 +10,8 @@ import { CARDAPIO_CONSTANTS } from "../../constants/cardapio";
 interface CardapioContentProps {
   pizzas: Pizza[];
   totalPizzas: number;
+  isLoading: boolean;
+  error: string | null;
   onPedir: (pizzaId: string, pizzaNome: string) => void;
   onVerPedidos: () => void;
 }
@@ -17,6 +19,8 @@ interface CardapioContentProps {
 export function CardapioContent({
   pizzas,
   totalPizzas,
+  isLoading,
+  error,
   onPedir,
   onVerPedidos,
 }: CardapioContentProps) {
@@ -36,7 +40,14 @@ export function CardapioContent({
         mx="auto"
       >
         <CardapioHeader totalPizzas={totalPizzas} />
-        <CardapioGrid pizzas={pizzas} onPedir={onPedir} />
+        <PizzaGallery
+          pizzas={pizzas}
+          isLoading={isLoading}
+          error={error}
+          onPedir={onPedir}
+          title="🍕 Nosso Cardápio"
+          emptyMessage="Nenhuma pizza disponível no momento"
+        />
         <CardapioFooter onVerPedidos={onVerPedidos} />
       </VStack>
     </Box>

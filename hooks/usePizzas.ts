@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Pizza } from "../types";
-import { getPizzas } from "../services/pizza-service";
+import { getAuthToken } from "../services/auth-service";
 
 interface UsePizzasReturn {
   pizzas: Pizza[];
@@ -18,11 +18,35 @@ export const usePizzas = (): UsePizzasReturn => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await getPizzas();
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      if (!API_URL) {
+        throw new Error("URL da API não configurada");
+      }
+
+      const token = getAuthToken();
+
+      const response = await fetch(`${API_URL}/pizzas`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
       setPizzas(data);
     } catch (err) {
-      console.error("Error fetching pizzas:", err);
-      setError("Erro ao carregar pizzas. Tente novamente.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erro ao carregar pizzas. Tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -30,7 +54,7 @@ export const usePizzas = (): UsePizzasReturn => {
 
   useEffect(() => {
     fetchPizzas();
-  }, []);
+  }, []); // Sem dependências - executa apenas uma vez
 
   return {
     pizzas,

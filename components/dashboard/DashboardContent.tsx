@@ -4,7 +4,7 @@ import { Box, VStack } from "@chakra-ui/react";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardStats } from "./DashboardStats";
 import { DashboardActions } from "./DashboardActions";
-import { CreatePizzaWithImageForm } from "../examples/CreatePizzaWithImageForm";
+import { CreatePizzaForm } from "./CreatePizzaForm";
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
 import type { Pizza } from "../../types";
 
@@ -48,8 +48,7 @@ export function DashboardContent({
           maxW={LAYOUT.MAX_WIDTH}
           mx="auto"
         >
-          {" "}
-          <CreatePizzaWithImageForm
+          <CreatePizzaForm
             onSuccess={onPizzaCreated}
             onCancel={onHideCreateForm}
           />

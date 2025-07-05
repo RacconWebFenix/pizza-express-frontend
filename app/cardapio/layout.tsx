@@ -20,6 +20,7 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
     }
   }, [isAuthenticated, isLoading, router]);
 
+  // Mostrar loading enquanto está carregando
   if (isLoading) {
     return (
       <PizzaLoading
@@ -31,6 +32,7 @@ export default function CardapioLayout({ children }: CardapioLayoutProps) {
     );
   }
 
+  // Se não está autenticado, mostrar loading (vai redirecionar)
   if (!isAuthenticated || !user) {
     return (
       <PizzaLoading
