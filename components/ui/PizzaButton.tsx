@@ -16,6 +16,7 @@ interface PizzaButtonProps
     | "outline"
     | "ghost";
   loading?: boolean;
+  leftIcon?: React.ReactElement;
 }
 
 /**
@@ -26,6 +27,7 @@ export function PizzaButton({
   variant = "primary",
   loading = false,
   children,
+  leftIcon,
   ...props
 }: PizzaButtonProps) {
   // Mapeia variantes customizadas para props do Chakra
@@ -124,12 +126,15 @@ export function PizzaButton({
       {...props}
     >
       {loading ? (
-        <HStack gap={2}>
+        <HStack as="span" scale={2} justifyContent="center" alignItems="center">
           <PizzaSpinner size={16} />
           <span>{children || "Carregando..."}</span>
         </HStack>
       ) : (
-        children
+        <HStack as="span" justifyContent="center" alignItems="center">
+          {leftIcon}
+          <span>{children}</span>
+        </HStack>
       )}
     </ChakraButton>
   );

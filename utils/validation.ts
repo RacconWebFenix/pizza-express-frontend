@@ -1,3 +1,7 @@
+import { z } from "zod";
+
+// ... (suas validações existentes)
+
 // Validação de email
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -63,71 +67,92 @@ export const hasMaxLength = (value: string, maxLength: number): boolean => {
   return value.length <= maxLength;
 };
 
-// Validação de arquivo de imagem
-export const validateImageFile = (
-  file: File
-): { isValid: boolean; error?: string } => {
-  // Tipos de arquivo permitidos (conforme backend)
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+// // Validação de arquivo de imagem
+// export const validateImageFile = (
+//   file: File
+// ): { isValid: boolean; error?: string } => {
+//   // Tipos de arquivo permitidos (conforme backend)
+//   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-  // Tamanho máximo: 5MB (conforme backend)
-  const maxSize = 5 * 1024 * 1024; // 5MB em bytes
+//   // Tamanho máximo: 5MB (conforme backend)
+//   const maxSize = 5 * 1024 * 1024; // 5MB em bytes
 
-  if (!allowedTypes.includes(file.type)) {
-    return {
-      isValid: false,
-      error: "Tipo de arquivo não permitido. Use apenas: JPG, PNG ou WEBP",
-    };
-  }
+//   if (!allowedTypes.includes(file.type)) {
+//     return {
+//       isValid: false,
+//       error: "Tipo de arquivo não permitido. Use apenas: JPG, PNG ou WEBP",
+//     };
+//   }
 
-  if (file.size > maxSize) {
-    return {
-      isValid: false,
-      error: "Arquivo muito grande. Tamanho máximo: 5MB",
-    };
-  }
+//   if (file.size > maxSize) {
+//     return {
+//       isValid: false,
+//       error: "Arquivo muito grande. Tamanho máximo: 5MB",
+//     };
+//   }
 
-  return { isValid: true };
-};
+//   return { isValid: true };
+// };
 
-// Validação de dados da pizza
+// Schema de validação para a pizza
+const PizzaSchema = z.object({
+  nome: z
+    .string()
+    .min(3, { message: "O nome da pizza deve ter no mínimo 3 caracteres." })
+    .max(50, {
+      message: "O nome da pizza não pode ter mais de 50 caracteres.",
+    }),
+
+  descricao: z
+    .string()
+    .min(10, { message: "A descrição deve ter no mínimo 10 caracteres." })
+    .max(200, { message: "A descrição não pode ter mais de 200 caracteres." }),
+
+  preco: z
+    .number({
+      // Mensagem para quando o valor não é um número
+      invalid_type_error: "O preço deve ser um número válido.",
+    })
+    .positive({ message: "O preço deve ser um valor positivo." }),
+});
+
+// Interface para garantir a tipagem correta do array de erros
+interface ValidationError {
+  path: string | number;
+  message: string;
+}
+
+// Função para validar os dados da pizza
 export const validatePizzaData = (data: {
   nome: string;
   descricao: string;
   preco: number;
-}): { isValid: boolean; errors: string[] } => {
-  const errors: string[] = [];
-
-  if (!isRequired(data.nome)) {
-    errors.push("Nome é obrigatório");
-  }
-
-  if (!hasMinLength(data.nome, 2)) {
-    errors.push("Nome deve ter pelo menos 2 caracteres");
-  }
-
-  if (!hasMaxLength(data.nome, 100)) {
-    errors.push("Nome deve ter no máximo 100 caracteres");
-  }
-
-  if (!isRequired(data.descricao)) {
-    errors.push("Descrição é obrigatória");
-  }
-
-  if (!hasMinLength(data.descricao, 10)) {
-    errors.push("Descrição deve ter pelo menos 10 caracteres");
-  }
-
-  if (!hasMaxLength(data.descricao, 500)) {
-    errors.push("Descrição deve ter no máximo 500 caracteres");
-  }
-
-  if (!isValidPrice(data.preco)) {
-    errors.push("Preço deve ser um número positivo");
-  }
-
+}) => {
+  const result = PizzaSchema.safeParse(data);
   return {
-    isValid: errors.length === 0,
-    errors,
+    isValid: result.success,
+    errors: result.success
+      ? []
+      : (result.error.issues.map((e) => ({
+          path: e.path[0],
+          message: e.message,
+        })) as ValidationError[]),
   };
+};
+
+// Função para validar o arquivo de imagem
+export const validateImageFile = (file: File) => {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+  if (file.size > MAX_FILE_SIZE) {
+    return { isValid: false, error: "A imagem não pode ter mais de 5MB." };
+  }
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return {
+      isValid: false,
+      error: "Formato de imagem inválido. Use JPG, PNG ou WebP.",
+    };
+  }
+  return { isValid: true, error: null };
 };

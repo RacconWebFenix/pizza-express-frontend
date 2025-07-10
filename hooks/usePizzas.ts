@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Pizza } from "../types";
 import { getAuthToken } from "../services/auth-service";
 
 interface UsePizzasReturn {
   pizzas: Pizza[];
+  setPizzas: Dispatch<SetStateAction<Pizza[]>>; // Tipo para a função setPizzas
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -58,6 +59,7 @@ export const usePizzas = (): UsePizzasReturn => {
 
   return {
     pizzas,
+    setPizzas, // ADIÇÃO: Retorne a função aqui
     isLoading,
     error,
     refetch: fetchPizzas,

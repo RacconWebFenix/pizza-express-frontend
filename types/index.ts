@@ -4,17 +4,19 @@ export interface Pizza {
   nome: string;
   descricao: string;
   preco: number;
-  categoria?: string;
-  disponivel?: boolean;
-  imagem?: string;
-  imagemUrl?: string; // URL da imagem do Cloudinary
+  imagemUrl?: string; // URL da imagem vinda do backend
+  imagem?: string; // Campo opcional para o nome do arquivo
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Types para criação de Pizza com imagem
-export interface CreatePizzaWithImageData {
+export interface CreatePizzaData {
   nome: string;
-  descricao: string;
+  descricao:string;
   preco: number;
+}
+
+export interface CreatePizzaWithImageData extends CreatePizzaData {
   imagem: File;
 }
 
@@ -23,11 +25,8 @@ export interface UploadImageData {
   imagem: File;
 }
 
-// Types para validação de arquivo
-export interface FileValidation {
-  isValid: boolean;
-  error?: string;
-}
+
+
 
 // Types para Pedido
 export interface Pedido {

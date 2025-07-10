@@ -4,10 +4,10 @@ import { Box, VStack } from "@chakra-ui/react";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardStats } from "./DashboardStats";
 import { DashboardActions } from "./DashboardActions";
-import { CreatePizzaForm } from "./CreatePizzaForm";
+import { GerenciarCardapio } from "./GerenciarCardapio"; // Importe o novo componente
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
-import type { Pizza } from "../../types";
 
+// A interface de props agora reflete a nova lógica de visualização
 interface DashboardContentProps {
   stats: {
     totalPizzas: number;
@@ -15,48 +15,35 @@ interface DashboardContentProps {
     receitaTotal: number;
     pizzasMaisVendidas: string;
   };
-  showCreateForm: boolean;
-  onNavigateToCardapio: () => void;
+  showGerenciarCardapio: boolean;
   onNavigateToPedidos: () => void;
-  onShowCreateForm: () => void;
-  onHideCreateForm: () => void;
-  onPizzaCreated: (pizza: Pizza) => void;
+  onShowGerenciarCardapio: () => void; // Ação para mostrar a tela de gerenciamento
+  onHideGerenciarCardapio: () => void; // Ação para voltar ao dashboard
 }
 
 export function DashboardContent({
   stats,
-  showCreateForm,
-  onNavigateToCardapio,
+  showGerenciarCardapio,
   onNavigateToPedidos,
-  onShowCreateForm,
-  onHideCreateForm,
-  onPizzaCreated,
+  onShowGerenciarCardapio,
+  onHideGerenciarCardapio,
 }: DashboardContentProps) {
   const { LAYOUT } = DASHBOARD_CONSTANTS;
 
-  if (showCreateForm) {
+  // Se showGerenciarCardapio for true, renderiza a tela de gerenciamento
+  if (showGerenciarCardapio) {
     return (
       <Box
         bg={LAYOUT.BACKGROUND_COLOR}
         minH={LAYOUT.MIN_HEIGHT}
         p={LAYOUT.PADDING}
       >
-        <VStack
-          gap={LAYOUT.GAP}
-          align="stretch"
-          w="full"
-          maxW={LAYOUT.MAX_WIDTH}
-          mx="auto"
-        >
-          <CreatePizzaForm
-            onSuccess={onPizzaCreated}
-            onCancel={onHideCreateForm}
-          />
-        </VStack>
+        <GerenciarCardapio onNavigateBack={onHideGerenciarCardapio} />
       </Box>
     );
   }
 
+  // Caso contrário, mostra o dashboard principal com as estatísticas
   return (
     <Box
       bg={LAYOUT.BACKGROUND_COLOR}
@@ -73,9 +60,11 @@ export function DashboardContent({
         <DashboardHeader />
         <DashboardStats stats={stats} />
         <DashboardActions
-          onNavigateToCardapio={onNavigateToCardapio}
+          // O botão "Ver Cardápio" agora vai chamar onShowGerenciarCardapio
+          onNavigateToCardapio={onShowGerenciarCardapio}
           onNavigateToPedidos={onNavigateToPedidos}
-          onShowCreateForm={onShowCreateForm}
+          // A ação de criar pizza também deve levar para a tela de gerenciamento
+          onShowCreateForm={onShowGerenciarCardapio}
         />
       </VStack>
     </Box>

@@ -4,8 +4,9 @@
  */
 
 export { DashboardContainer } from "./DashboardContainer";
-export { DashboardContent } from "./DashboardContent";
+export { DashboardContent } from "./DashboardContent"; // Corrigido
 export { DashboardHeader } from "./DashboardHeader";
 export { DashboardStats } from "./DashboardStats";
 export { DashboardActions } from "./DashboardActions";
-export { CreatePizzaForm } from "./CreatePizzaForm";
+export { GerenciarCardapio } from "./GerenciarCardapio"; // Adicionado
+export { PizzaFormContainer } from "./PizzaFormContainer"; // Adicionado
