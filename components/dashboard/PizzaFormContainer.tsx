@@ -52,8 +52,6 @@ export const PizzaFormContainer = ({
     }
   }, [pizzaToEdit, isEditing, isOpen]);
 
-  // CORREÇÃO AQUI:
-  // Acessamos o nome do campo através de 'e.target.name'
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
