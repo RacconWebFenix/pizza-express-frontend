@@ -50,7 +50,7 @@ export const updatePizza = async (
 
   // Ajuste para usar PATCH, que é o método no seu controller
   const response = await fetch(`${API_URL}/pizzas/${id}`, {
-    method: "PATCH", // <-- CORREÇÃO: Mude de PUT/POST para PATCH
+    method: "PATCH", 
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });

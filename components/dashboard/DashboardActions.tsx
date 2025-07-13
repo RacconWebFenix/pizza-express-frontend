@@ -2,7 +2,10 @@
 
 import { SimpleGrid, Box, Icon } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { FaPlus, FaEdit } from "react-icons/fa";
+
+import { TbSettingsPlus } from "react-icons/tb";
+import { MdOutlineInventory, MdRestaurantMenu } from "react-icons/md";
+
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
 import { PizzaButton, PizzaText, PizzaCard } from "../ui";
 
@@ -38,13 +41,13 @@ function ActionButton({
           variant={variant}
           onClick={onClick}
           w="full"
-          justifyContent="flex-start"
+          justifyContent="space-around"
           gap={4}
           h="auto"
           p={4}
+          leftIcon={<Icon as={icon} boxSize={10} />}
         >
-          <Icon as={icon} fontSize="xl" />
-          <Box textAlign="left">
+          <Box textAlign="left" m={2} flex="1">
             <PizzaText variant="heading" fontSize="md">
               {title}
             </PizzaText>
@@ -75,21 +78,21 @@ export function DashboardActions({
     {
       title: "Ver Cardápio",
       description: "Visualizar todas as pizzas disponíveis",
-      icon: FaEdit,
+      icon: MdRestaurantMenu,
       variant: "pizza" as const,
       onClick: onNavigateToCardapio,
     },
     {
       title: "Ver Pedidos",
       description: "Gerenciar pedidos realizados",
-      icon: FaEdit,
+      icon: MdOutlineInventory,
       variant: "success" as const,
       onClick: onNavigateToPedidos,
     },
     {
-      title: "Criar Pizza",
-      description: "Adicionar nova pizza ao cardápio",
-      icon: FaPlus,
+      title: "Gerenciar Pizzas",
+      description: "Gerenciar pizzas do cardápio",
+      icon: TbSettingsPlus,
       variant: "cheese" as const,
       onClick: onShowCreateForm,
     },

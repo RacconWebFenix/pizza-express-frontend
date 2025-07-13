@@ -110,8 +110,7 @@ const PizzaSchema = z.object({
 
   preco: z
     .number({
-      // Mensagem para quando o valor não é um número
-      invalid_type_error: "O preço deve ser um número válido.",
+      message: "O preço deve ser um número válido.",
     })
     .positive({ message: "O preço deve ser um valor positivo." }),
 });

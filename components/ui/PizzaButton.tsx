@@ -56,7 +56,7 @@ export function PizzaButton({
         };
       case "cheese":
         return {
-          bg: "yellow.300",
+          bg: "yellow.600",
           color: "white",
           _hover: { bg: "yellow.500", transform: "translateY(-1px)" },
           _active: { bg: "yellow.700", transform: "translateY(0)" },
@@ -126,13 +126,12 @@ export function PizzaButton({
       {...props}
     >
       {loading ? (
-        <HStack as="span" scale={2} justifyContent="center" alignItems="center">
-          <PizzaSpinner size={16} />
-          <span>{children || "Carregando..."}</span>
+        <HStack as="span" justifyContent="center" alignItems="center">
+          {loading && <PizzaSpinner size={26} />}
         </HStack>
       ) : (
         <HStack as="span" justifyContent="center" alignItems="center">
-          {leftIcon}
+          <span>{leftIcon}</span>
           <span>{children}</span>
         </HStack>
       )}

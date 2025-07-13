@@ -1,12 +1,22 @@
 "use client";
 import { useState } from "react";
 import { usePizzas } from "../../hooks/usePizzas";
+import { deletePizza } from "../../services/pizza-service";
 import { PizzaFormContainer } from "./PizzaFormContainer";
 import { Pizza } from "../../types";
 import { PizzaButton, PizzaCard, PizzaLoading, PizzaText } from "../ui";
-import { PlusCircle, PlusCircleIcon } from "lucide-react";
-import { Box, Flex, Grid, Heading, Image, VStack } from "@chakra-ui/react";
+import { PlusCircle } from "lucide-react";
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  Icon,
+  Image,
+  VStack,
+} from "@chakra-ui/react";
 import { formatCurrency } from "@/utils/format";
+import { TbArrowBack } from "react-icons/tb";
 
 interface GerenciarCardapioProps {
   onNavigateBack: () => void; // Função para voltar ao dashboard principal
@@ -18,6 +28,7 @@ export const GerenciarCardapio = ({
   const { pizzas, setPizzas, isLoading, error } = usePizzas();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [pizzaToEdit, setPizzaToEdit] = useState<Pizza | null>(null);
+  const [removingPizzaId, setRemovingPizzaId] = useState<string | null>(null); // NOVO
 
   const handleOpenCreateModal = () => {
     setPizzaToEdit(null);
@@ -42,6 +53,20 @@ export const GerenciarCardapio = ({
       return [updatedOrCreatedPizza, ...prev];
     });
   };
+  // setRemovingPizzaId("3"); // Inicia loading
+
+  // Função para remover pizza
+  const handleRemovePizza = async (pizza: Pizza) => {
+    setRemovingPizzaId(pizza.id); // Inicia loading
+    try {
+      await deletePizza(pizza.id);
+      setPizzas((prev: Pizza[]) => prev.filter((p) => p.id !== pizza.id));
+    } catch {
+      alert("Erro ao remover pizza no servidor.");
+    } finally {
+      setRemovingPizzaId(null); // Finaliza loading
+    }
+  };
 
   if (isLoading) return <PizzaLoading message="Carregando cardápio..." />;
   if (error)
@@ -56,19 +81,19 @@ export const GerenciarCardapio = ({
       <Flex justify="space-between" align="center" mb={6}>
         <Flex align="center">
           <PizzaButton
-            aria-label="Voltar"
-            leftIcon={<PlusCircleIcon size="16px" />}
+            leftIcon={<Icon as={TbArrowBack} boxSize={6} />}
             onClick={onNavigateBack}
             mr={4}
-            variant="ghost"
-          />
-          <Heading as="h1" size="xl">
-            Gerenciar Cardápio
-          </Heading>
+          >
+            <Heading as="h1" size="xl">
+              Voltar
+            </Heading>
+          </PizzaButton>
         </Flex>
         <PizzaButton
+          variant="success"
           onClick={handleOpenCreateModal}
-          leftIcon={<PlusCircle size="16px" />}
+          leftIcon={<Icon as={PlusCircle} boxSize={6} />}
         >
           Adicionar Pizza
         </PizzaButton>
@@ -83,8 +108,6 @@ export const GerenciarCardapio = ({
         gap={6}
       >
         {pizzas.map((pizza) => (
-          // CORREÇÃO AQUI: Não passamos mais a prop 'pizza'.
-          // Em vez disso, construímos o conteúdo DENTRO do PizzaCard.
           <PizzaCard key={pizza.id}>
             <VStack spaceX={4} spaceY={4} align="stretch">
               {/* Imagem da Pizza */}
@@ -112,12 +135,21 @@ export const GerenciarCardapio = ({
               </VStack>
 
               {/* Botão de Ação */}
-              <Flex justify="flex-end">
+              <Flex justify="space-around" gap={4}>
                 <PizzaButton
                   variant="outline"
                   onClick={() => handleOpenEditModal(pizza)}
+                  w="full"
                 >
                   Editar
+                </PizzaButton>
+                <PizzaButton
+                  variant="danger"
+                  onClick={() => handleRemovePizza(pizza)}
+                  w="full"
+                  loading={removingPizzaId === pizza.id} // loading só para a pizza removida
+                >
+                  Remover
                 </PizzaButton>
               </Flex>
             </VStack>
