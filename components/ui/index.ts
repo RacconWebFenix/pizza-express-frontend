@@ -11,7 +11,6 @@ export { PizzaInput } from "./PizzaInput";
 export { PizzaTextarea } from "./PizzaTextarea";
 export { PizzaLoading } from "./PizzaLoading";
 export { PizzaSpinner } from "./PizzaSpinner";
-export { PizzaImageModal } from "./PizzaImageModal";
 export { PizzaFileInput } from "./PizzaFileInput";
 export * from "./PizzaFormPresentation";
 export * from "./PizzaModal";

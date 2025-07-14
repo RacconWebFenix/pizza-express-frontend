@@ -2,41 +2,33 @@
 
 import { DashboardContent } from "./DashboardContent";
 import { useDashboard } from "../../hooks/useDashboard";
-import { PizzaLoading, PizzaText } from "../ui"; // Importe seus componentes de feedback
+import { PizzaLoading, PizzaText } from "../ui";
 
+/**
+ * Componente "Container" que atua como uma ponte limpa entre a lógica (hook)
+ * e a apresentação (DashboardContent).
+ * SOLID: Sua única responsabilidade é orquestrar essa conexão.
+ */
 export function DashboardContainer() {
-  // CORREÇÃO: Usando os nomes corretos e atualizados do hook
-  const {
-    stats,
-    isGerenciarView,
-    isLoading,
-    error,
-    handleNavigateToPedidos,
-    handleShowGerenciarCardapio,
-    handleHideGerenciarCardapio,
-  } = useDashboard();
+  // 1. Consome o hook e obtém TODAS as suas props em um único objeto.
+  //    Isso inclui os novos estados e handlers dos modais.
+  const dashboardProps = useDashboard();
 
-  // Adicionando os estados de loading e erro que vêm do hook
-  if (isLoading) {
+  // 2. A lógica de loading e erro, que lida com estados da UI, permanece aqui.
+  if (dashboardProps.isLoading) {
     return <PizzaLoading message="Carregando dados do dashboard..." />;
   }
 
-  if (error) {
+  if (dashboardProps.error) {
     return (
       <PizzaText variant="danger" textAlign="center">
-        {error}
+        {dashboardProps.error}
       </PizzaText>
     );
   }
 
-  return (
-    // CORREÇÃO: Passando as props com os nomes corretos para o DashboardContent
-    <DashboardContent
-      stats={stats}
-      showGerenciarCardapio={isGerenciarView}
-      onShowGerenciarCardapio={handleShowGerenciarCardapio}
-      onHideGerenciarCardapio={handleHideGerenciarCardapio}
-      onNavigateToPedidos={handleNavigateToPedidos}
-    />
-  );
+  // 3. Passa TODAS as props do hook diretamente para o DashboardContent.
+  //    Esta abordagem é limpa, simples e fácil de manter. Se você adicionar
+  //    algo novo no hook, não precisa mudar nada neste arquivo.
+  return <DashboardContent {...dashboardProps} />;
 }

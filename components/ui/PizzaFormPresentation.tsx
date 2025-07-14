@@ -7,7 +7,6 @@ import {
   PizzaButton,
   PizzaFileInput,
   PizzaText,
-  PizzaImageModal,
 } from ".";
 
 interface PizzaFormPresentationProps {
@@ -34,12 +33,10 @@ export const PizzaFormPresentation = ({
   imagePreview,
   isLoading,
   apiError,
-  isImageModalOpen,
   onInputChange,
   onImageChange,
   onSubmit,
   onImageModalOpen,
-  onImageModalClose,
   onImageRemove,
   onCancel,
 }: PizzaFormPresentationProps) => (
@@ -105,11 +102,5 @@ export const PizzaFormPresentation = ({
         </HStack>
       </VStack>
     </Box>
-    <PizzaImageModal
-      isOpen={isImageModalOpen}
-      onClose={onImageModalClose}
-      imageUrl={imagePreview || ""}
-      imageName={formData.nome || "Preview da Pizza"}
-    />
   </>
 );

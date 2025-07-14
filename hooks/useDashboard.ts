@@ -1,8 +1,11 @@
+"use client";
+
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "../constants";
+import { Pizza } from "../types"; // Importe o tipo Pizza
 
-
+// Interface para as estatísticas
 interface DashboardStats {
   totalPizzas: number;
   pedidosHoje: number;
@@ -10,22 +13,34 @@ interface DashboardStats {
   pizzasMaisVendidas: string;
 }
 
-// CORREÇÃO: Sincronizando a interface com a implementação
-interface UseDashboardReturn {
+// Interface para o retorno completo do hook
+export interface UseDashboardReturn {
   stats: DashboardStats;
-  isGerenciarView: boolean; // Renomeado de showCreateForm
+  isGerenciarView: boolean;
   isLoading: boolean;
   error: string | null;
   handleNavigateToCardapio: () => void;
   handleNavigateToPedidos: () => void;
-  handleShowGerenciarCardapio: () => void; // Renomeado de handleShowCreateForm
-  handleHideGerenciarCardapio: () => void; // Renomeado de handleHideCreateForm
-  handlePizzaCreated: () => void; // Removido o parâmetro 'pizza' que não era usado
+  handleShowGerenciarCardapio: () => void;
+  handleHideGerenciarCardapio: () => void;
   refetch: () => Promise<void>;
+  // --- Novas propriedades para os modais ---
+  isFormModalOpen: boolean;
+  pizzaToEdit: Pizza | null;
+
+  handleOpenFormModal: (pizza?: Pizza) => void;
+  handleCloseFormModal: () => void;
+  handlePizzaSaved: () => void;
 }
 
+/**
+ * Hook com a responsabilidade única (SRP) de gerenciar toda a lógica
+ * de estado e ações da página de dashboard.
+ */
 export const useDashboard = (): UseDashboardReturn => {
   const router = useRouter();
+
+  // --- Estados existentes ---
   const [isGerenciarView, setIsGerenciarView] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalPizzas: 0,
@@ -36,20 +51,19 @@ export const useDashboard = (): UseDashboardReturn => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Usando useCallback para que a função não seja recriada a cada renderização
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [pizzaToEdit, setPizzaToEdit] = useState<Pizza | null>(null);
+
   const fetchDashboardStats = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-
-      // Mock temporário para estatísticas do dashboard
       const mockStats = {
         totalPizzas: 12,
         pedidosHoje: 8,
         receitaTotal: 450.5,
         pizzasMaisVendidas: "Margherita",
       };
-
       await new Promise((resolve) => setTimeout(resolve, 800));
       setStats(mockStats);
     } catch (err) {
@@ -65,35 +79,46 @@ export const useDashboard = (): UseDashboardReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, []); // Array de dependências vazio, a função é estável
+  }, []);
 
   useEffect(() => {
     fetchDashboardStats();
   }, [fetchDashboardStats]);
 
-  const handleNavigateToCardapio = useCallback(() => {
-    router.push(ROUTES.APP.CARDAPIO);
-  }, [router]);
+  // --- Handlers existentes ---
+  const handleNavigateToCardapio = useCallback(
+    () => router.push(ROUTES.APP.CARDAPIO),
+    [router]
+  );
+  const handleNavigateToPedidos = useCallback(
+    () => router.push(ROUTES.APP.PEDIDOS),
+    [router]
+  );
+  const handleShowGerenciarCardapio = useCallback(
+    () => setIsGerenciarView(true),
+    []
+  );
+  const handleHideGerenciarCardapio = useCallback(
+    () => setIsGerenciarView(false),
+    []
+  );
 
-  const handleNavigateToPedidos = useCallback(() => {
-    router.push(ROUTES.APP.PEDIDOS);
-  }, [router]);
-
-  // CORREÇÃO: Renomeando os handlers para clareza e consistência
-  const handleShowGerenciarCardapio = useCallback(() => {
-    setIsGerenciarView(true);
+  const handleOpenFormModal = useCallback((pizza?: Pizza) => {
+    setPizzaToEdit(pizza || null);
+    setIsFormModalOpen(true);
   }, []);
 
-  const handleHideGerenciarCardapio = useCallback(() => {
-    setIsGerenciarView(false);
+  const handleCloseFormModal = useCallback(() => {
+    setIsFormModalOpen(false);
+    setPizzaToEdit(null);
   }, []);
 
-  const handlePizzaCreated = useCallback(() => {
-    setIsGerenciarView(false);
-    fetchDashboardStats();
-  }, [fetchDashboardStats]);
+  const handlePizzaSaved = useCallback(() => {
+    handleCloseFormModal();
 
-  // CORREÇÃO: Sincronizando o objeto de retorno com a interface
+    router.refresh();
+  }, [handleCloseFormModal, router]);
+
   return {
     stats,
     isGerenciarView,
@@ -101,9 +126,15 @@ export const useDashboard = (): UseDashboardReturn => {
     error,
     handleNavigateToCardapio,
     handleNavigateToPedidos,
-    handleShowGerenciarCardapio, // Nome consistente
-    handleHideGerenciarCardapio, // Nome consistente
-    handlePizzaCreated,
+    handleShowGerenciarCardapio,
+    handleHideGerenciarCardapio,
     refetch: fetchDashboardStats,
+
+    isFormModalOpen,
+    pizzaToEdit,
+
+    handleOpenFormModal,
+    handleCloseFormModal,
+    handlePizzaSaved, // Nome novo e mais claro!
   };
 };

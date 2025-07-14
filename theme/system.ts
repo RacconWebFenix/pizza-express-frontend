@@ -8,8 +8,8 @@ import {
 } from "../recipes";
 
 /**
- * Sistema customizado do Chakra UI para Pizza Express
- * Inclui todas as recipes e configurações específicas do projeto
+ * Sistema customizado do Chakra UI (Panda CSS) para Pizza Express
+ * Inclui todas as recipes e configurações de design tokens do projeto.
  */
 const customConfig = defineConfig({
   ...defaultConfig,
@@ -22,11 +22,13 @@ const customConfig = defineConfig({
       text: textRecipe,
       container: containerRecipe,
     },
+    // =========================================================================
+    // === A SEÇÃO DE TOKENS É O ÚNICO LUGAR QUE PRECISAMOS MODIFICAR ========
+    // =========================================================================
     tokens: {
       ...defaultConfig.theme?.tokens,
       colors: {
         ...defaultConfig.theme?.tokens?.colors,
-        // Mantém compatibilidade com cores brand existentes
         brand: {
           primary: { value: "{colors.blue.800}" },
           accent: { value: "{colors.blue.700}" },
@@ -40,6 +42,16 @@ const customConfig = defineConfig({
           warning: { value: "{colors.yellow.500}" },
           error: { value: "{colors.red.600}" },
         },
+      },
+      // --- A FORMA CORRETA DE ADICIONAR Z-INDEX ---
+      // Panda CSS reconhece a chave "zIndex" e automaticamente
+      // cria a propriedade utilitária "zIndex" para os componentes.
+      zIndex: {
+        ...defaultConfig.theme?.tokens?.zIndex,
+        sticky: { value: 10 },
+        popover: { value: 20 },
+        modal: { value: 1400 },
+        modalOnTop: { value: 1401 },
       },
     },
   },

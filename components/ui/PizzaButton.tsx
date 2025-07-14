@@ -17,6 +17,7 @@ interface PizzaButtonProps
     | "ghost";
   loading?: boolean;
   leftIcon?: React.ReactElement;
+  type?: "button" | "submit" | "reset"; 
 }
 
 /**
@@ -28,6 +29,7 @@ export function PizzaButton({
   loading = false,
   children,
   leftIcon,
+  type,
   ...props
 }: PizzaButtonProps) {
   // Mapeia variantes customizadas para props do Chakra
@@ -118,23 +120,32 @@ export function PizzaButton({
       fontWeight="600"
       borderRadius="md"
       transition="all 0.2s ease"
-      minH="44px" // Altura consistente com inputs
-      px={6} // Padding horizontal padrão
-      fontSize="md" // Tamanho de fonte consistente
+      minH="44px"
+      px={0} // Resetamos o padding do botão para que o container interno controle o espaço
+      py={0}
+      fontSize="md"
       disabled={loading || props.disabled}
       {...buttonStyles}
       {...props}
-    >
-      {loading ? (
-        <HStack as="span" justifyContent="center" alignItems="center">
-          {loading && <PizzaSpinner size={26} />}
-        </HStack>
-      ) : (
-        <HStack as="span" justifyContent="center" alignItems="center">
-          <span>{leftIcon}</span>
-          <span>{children}</span>
-        </HStack>
-      )}
+      type={type}>
+      <HStack
+        as="span"
+        w="100%" // <-- Chave da solução: Força o HStack a ocupar toda a largura
+        h="100%" // <-- Chave da solução: Força o HStack a ocupar toda a altura
+        justifyContent="center"
+        alignItems="center"
+        px={6} // Aplicamos o padding aqui dentro, no container
+        gap={2}
+      >
+        {loading ? (
+          <PizzaSpinner size={20} />
+        ) : (
+          <>
+            {leftIcon}
+            <span>{children}</span>
+          </>
+        )}
+      </HStack>
     </ChakraButton>
   );
 }

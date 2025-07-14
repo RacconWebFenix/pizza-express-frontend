@@ -12,6 +12,7 @@ interface PizzaFormContainerProps {
   onClose: () => void;
   onSuccess: (pizza: Pizza) => void;
   pizzaToEdit?: Pizza | null;
+
 }
 
 export const PizzaFormContainer = ({
@@ -73,6 +74,11 @@ export const PizzaFormContainer = ({
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null); // <<<-- CORREÇÃO APLICADA AQUI
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,10 +146,7 @@ export const PizzaFormContainer = ({
         onCancel={onClose}
         onImageModalOpen={() => setIsImageModalOpen(true)}
         onImageModalClose={() => setIsImageModalOpen(false)}
-        onImageRemove={() => {
-          setSelectedImage(null);
-          setImagePreview(isEditing ? pizzaToEdit?.imagemUrl || null : null);
-        }}
+        onImageRemove={handleRemoveImage} 
       />
     </PizzaModal>
   );

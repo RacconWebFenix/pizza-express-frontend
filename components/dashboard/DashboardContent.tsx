@@ -4,69 +4,74 @@ import { Box, VStack } from "@chakra-ui/react";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardStats } from "./DashboardStats";
 import { DashboardActions } from "./DashboardActions";
-import { GerenciarCardapio } from "./GerenciarCardapio"; // Importe o novo componente
+import { GerenciarCardapio } from "./GerenciarCardapio";
+import { PizzaFormContainer } from "./PizzaFormContainer";
+
+import { UseDashboardReturn } from "../../hooks/useDashboard"; // Importe a interface do hook
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
 
-// A interface de props agora reflete a nova lógica de visualização
-interface DashboardContentProps {
-  stats: {
-    totalPizzas: number;
-    pedidosHoje: number;
-    receitaTotal: number;
-    pizzasMaisVendidas: string;
-  };
-  showGerenciarCardapio: boolean;
-  onNavigateToPedidos: () => void;
-  onShowGerenciarCardapio: () => void; // Ação para mostrar a tela de gerenciamento
-  onHideGerenciarCardapio: () => void; // Ação para voltar ao dashboard
-}
-
+/**
+ * Componente de Apresentação que gerencia o layout do conteúdo do dashboard
+ * e renderiza os modais de forma desacoplada.
+ */
 export function DashboardContent({
   stats,
-  showGerenciarCardapio,
-  onNavigateToPedidos,
-  onShowGerenciarCardapio,
-  onHideGerenciarCardapio,
-}: DashboardContentProps) {
+  isGerenciarView, // Nome atualizado
+  handleNavigateToPedidos,
+  handleShowGerenciarCardapio,
+  handleHideGerenciarCardapio,
+  handleNavigateToCardapio,
+  isFormModalOpen,
+  pizzaToEdit,
+
+  handleCloseFormModal,
+  handlePizzaSaved,
+}: UseDashboardReturn) {
+  // A interface de props agora é a mesma do retorno do hook
   const { LAYOUT } = DASHBOARD_CONSTANTS;
 
-  // Se showGerenciarCardapio for true, renderiza a tela de gerenciamento
-  if (showGerenciarCardapio) {
-    return (
+  return (
+    // Usamos um React Fragment <> para agrupar o layout principal e os modais
+    <>
       <Box
         bg={LAYOUT.BACKGROUND_COLOR}
         minH={LAYOUT.MIN_HEIGHT}
         p={LAYOUT.PADDING}
       >
-        <GerenciarCardapio onNavigateBack={onHideGerenciarCardapio} />
+        <VStack
+          gap={LAYOUT.GAP}
+          align="stretch"
+          w="full"
+          maxW={LAYOUT.MAX_WIDTH}
+          mx="auto"
+        >
+          {isGerenciarView ? (
+            // A view de Gerenciar agora recebe a função para abrir o formulário
+            <GerenciarCardapio
+              onNavigateBack={handleHideGerenciarCardapio}
+              // onOpenForm={handleOpenFormModal}
+            />
+          ) : (
+            // O Dashboard principal
+            <>
+              <DashboardHeader />
+              <DashboardStats stats={stats} />
+              <DashboardActions
+                onNavigateToPedidos={handleNavigateToPedidos}
+                onShowCreateForm={handleShowGerenciarCardapio}
+                onNavigateToCardapio={handleNavigateToCardapio}
+              />
+            </>
+          )}
+        </VStack>
       </Box>
-    );
-  }
 
-  // Caso contrário, mostra o dashboard principal com as estatísticas
-  return (
-    <Box
-      bg={LAYOUT.BACKGROUND_COLOR}
-      minH={LAYOUT.MIN_HEIGHT}
-      p={LAYOUT.PADDING}
-    >
-      <VStack
-        gap={LAYOUT.GAP}
-        align="stretch"
-        w="full"
-        maxW={LAYOUT.MAX_WIDTH}
-        mx="auto"
-      >
-        <DashboardHeader />
-        <DashboardStats stats={stats} />
-        <DashboardActions
-          // O botão "Ver Cardápio" agora vai chamar onShowGerenciarCardapio
-          onNavigateToCardapio={onShowGerenciarCardapio}
-          onNavigateToPedidos={onNavigateToPedidos}
-          // A ação de criar pizza também deve levar para a tela de gerenciamento
-          onShowCreateForm={onShowGerenciarCardapio}
-        />
-      </VStack>
-    </Box>
+      <PizzaFormContainer
+        isOpen={isFormModalOpen}
+        onClose={handleCloseFormModal}
+        pizzaToEdit={pizzaToEdit}
+        onSuccess={handlePizzaSaved}
+      />
+    </>
   );
 }
