@@ -25,7 +25,7 @@ export function PizzaGallery({
   pizzas,
   isLoading,
   error,
-  onPedir,
+
   title = "🍕 Nosso Cardápio",
   emptyMessage = "Nenhuma pizza encontrada",
 }: PizzaGalleryProps) {
@@ -137,12 +137,7 @@ export function PizzaGallery({
           px={4}
         >
           {pizzas.map((pizza, index) => (
-            <PizzaCard
-              key={pizza.id}
-              pizza={pizza}
-              index={index}
-              onPedir={onPedir}
-            />
+            <PizzaCard key={pizza.id} pizza={pizza} index={index} />
           ))}
         </SimpleGrid>
 
