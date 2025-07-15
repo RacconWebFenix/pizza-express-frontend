@@ -11,28 +11,49 @@ import {
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
+import { Pizza } from "@/types";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "../auth/auth-context";
+import { toaster } from "../ui/toaster";
 
 const MotionBox = motion(Box);
 
 interface PizzaCardProps {
-  pizza: {
-    id: string;
-    nome: string;
-    descricao: string;
-    preco: number;
-    imagem?: string;
-    imagemUrl?: string;
-  };
+  pizza: Pizza;
   index: number;
-  onPedir: (pizzaId: string, pizzaNome: string) => void;
 }
 
-export function PizzaCard({ pizza, index, onPedir }: PizzaCardProps) {
+export function PizzaCard({ pizza, index }: PizzaCardProps) {
+  const { addToCart } = useCart();
+  const { user } = useAuth();
   // URL da imagem - prioriza imagemUrl (Cloudinary) ou imagem local
   const imageUrl = pizza.imagemUrl || pizza.imagem || "/pizza.png";
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = "/pizza.png"; // Fallback para imagem padrão
+  };
+
+  const handleAddToCart = () => {
+    if (!user) {
+      toaster.create({
+        title: "Acesso Negado",
+        description:
+          "Você precisa fazer login para adicionar itens ao carrinho.",
+        type: "warning",
+        duration: 3000,
+        closable: true,
+      });
+      return;
+    }
+
+    addToCart(pizza);
+    toaster.create({
+      title: "Pizza Adicionada!",
+      description: `"${pizza.nome}" foi adicionada ao seu carrinho.`,
+      type: "success",
+      duration: 2000,
+      closable: true,
+    });
   };
 
   return (
@@ -120,7 +141,7 @@ export function PizzaCard({ pizza, index, onPedir }: PizzaCardProps) {
             w="full"
             _hover={{ bg: "brand.accent", transform: "translateY(-1px)" }}
             transition="all 0.2s"
-            onClick={() => onPedir(pizza.id, pizza.nome)}
+            onClick={handleAddToCart}
           >
             🍕 Pedir Agora
           </Button>

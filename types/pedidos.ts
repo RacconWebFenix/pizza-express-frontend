@@ -6,3 +6,4 @@ export interface Pedido {
   status: string;
   horario: string;
 }
+

@@ -1,43 +1,9 @@
-// Types para Pizza
-export interface Pizza {
-  id: string;
-  nome: string;
-  descricao: string;
-  preco: number;
-  imagemUrl?: string; // URL da imagem vinda do backend
-  imagem?: string; // Campo opcional para o nome do arquivo
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreatePizzaData {
-  nome: string;
-  descricao:string;
-  preco: number;
-}
-
-export interface CreatePizzaWithImageData extends CreatePizzaData {
-  imagem: File;
-}
 
 // Types para upload de imagem
 export interface UploadImageData {
   imagem: File;
 }
 
-
-
-
-// Types para Pedido
-export interface Pedido {
-  id: string;
-  pizzas: string[];
-  total: number;
-  status: "preparando" | "entregue" | "cancelado";
-  data: string;
-  hora: string;
-  userId?: string;
-}
 
 // Types para Usuário
 export interface User {
@@ -81,3 +47,14 @@ export interface DashboardStats {
   color: string;
   bgGradient: string;
 }
+
+// Exporta todos os tipos relacionados a pizza
+// export * from "./pizza"; // Removido porque o módulo não existe
+
+// Exporta todos os tipos relacionados a pedidos
+export * from "./pedidos";
+
+// Exporta todos os tipos relacionados ao carrinho de compras
+export * from "./cart";
+
+export * from "./pizza";
