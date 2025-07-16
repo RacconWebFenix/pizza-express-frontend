@@ -3,10 +3,9 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "../components/auth/auth-context";
-
 import { CartProvider } from "@/contexts/CartContext";
 import { Toaster } from "@/components/ui/toaster";
-import { pizzaExpressSystem } from "@/theme/sistem";
+import { pizzaExpressSystem } from "@/theme/system";
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (

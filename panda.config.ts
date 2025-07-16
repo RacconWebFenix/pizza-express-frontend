@@ -1,18 +1,21 @@
-// panda.config.ts
-
 import { defineConfig } from "@pandacss/dev";
-import { themeExtension } from "./theme/config"; // 1. Importe nossa fonte da verdade
+import { pizzaTheme } from "./theme/theme"; // Importa nossa fonte da verdade
 
 export default defineConfig({
+  // Limpa os estilos padrão do navegador
   preflight: true,
+
+  // Onde o PandaCSS deve procurar por seu código para analisar o uso de estilos
   include: ["./{app,components}/**/*.{js,jsx,ts,tsx}"],
-  exclude: [],
+
+  // O diretório de saída para os tipos e CSS gerados
   outdir: "styled-system",
-  jsxFramework: "react",
+
+  // Importar o preset de configurações do Chakra UI
   presets: ["@chakra-ui/panda-preset"],
 
-  // 2. Use a extensão importada
+  // Usa o tema importado para estender o preset do Chakra
   theme: {
-    extend: themeExtension,
+    extend: pizzaTheme,
   },
 });

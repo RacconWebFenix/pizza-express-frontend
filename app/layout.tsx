@@ -1,14 +1,16 @@
-import { Inter } from "next/font/google"
-import Provider from "./provider"
+import { Inter } from "next/font/google";
+import Provider from "./provider";
+import "@/styled-system/css";
+
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-})
+});
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html className={inter.className} suppressHydrationWarning>
@@ -17,5 +19,5 @@ export default function RootLayout({
         <Provider>{children}</Provider>
       </body>
     </html>
-  )
+  );
 }
