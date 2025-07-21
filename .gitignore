@@ -40,3 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /styled-system
+# Panda CSS (Panda + Chakra)
+styled-system/
