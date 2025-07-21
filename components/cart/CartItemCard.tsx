@@ -1,7 +1,6 @@
 "use client";
 
-import { Flex, HStack, Icon, Image, Text, VStack } from "@chakra-ui/react";
-import { FaTrash } from "react-icons/fa";
+import { Flex, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { CartItem } from "@/types";
 import { useCart } from "@/contexts/CartContext";
 import { formatCurrency } from "@/utils/format";
@@ -58,7 +57,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
       <HStack gap={4}>
         <HStack>
           <PizzaButton
-            size="sm"
+            size="md"
             onClick={handleDecrease}
             aria-label="Diminuir quantidade"
           >
@@ -68,7 +67,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
             {item.quantity}
           </Text>
           <PizzaButton
-            size="sm"
+            size="md"
             onClick={handleIncrease}
             aria-label="Aumentar quantidade"
           >
@@ -80,9 +79,8 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
         </Text>
         <PizzaButton
           aria-label="Remover item do carrinho"
-          leftIcon={<Icon as={FaTrash} />}
           color="red.500"
-          variant="ghost"
+          variant="solid"
           onClick={() => removeFromCart(item.pizza.id)}
         />
       </HStack>

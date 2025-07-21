@@ -93,7 +93,7 @@ export const PizzaFormPresentation = ({
           </PizzaButton>
           <PizzaButton
             type="submit"
-            variant="primary"
+            variant="solid"
             loading={isLoading}
             flex={1}
           >

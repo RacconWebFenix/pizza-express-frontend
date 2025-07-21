@@ -92,7 +92,7 @@ export default function Home() {
 
         {/* Botão de Ação */}
         <PizzaButton
-          variant="primary"
+          variant="solid"
           size="lg"
           px={8}
           py={6}
@@ -109,6 +109,37 @@ export default function Home() {
           Uma experiência gastronômica única pela Fênix Empreendimentos
         </PizzaText>
       </VStack>
+      {/* TESTE DE CORES DO TEMA CHAKRA */}
+      <Box
+        mt={8}
+        p={6}
+        borderRadius="lg"
+        boxShadow="md"
+        bg="brand.primary"
+        color="white"
+      >
+        Teste: brand.primary
+      </Box>
+      <Box
+        mt={4}
+        p={6}
+        borderRadius="lg"
+        boxShadow="md"
+        bg="brand.pizza"
+        color="white"
+      >
+        Teste: brand.pizza
+      </Box>
+      <Box
+        mt={4}
+        p={6}
+        borderRadius="lg"
+        boxShadow="md"
+        bg="brand.success"
+        color="white"
+      >
+        Teste: brand.success
+      </Box>
     </Box>
   );
 }

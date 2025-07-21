@@ -162,7 +162,7 @@ export function PizzaFileInput({
                 Alterar
               </PizzaButton>
 
-              <PizzaButton variant="danger" size="sm" onClick={handleRemove}>
+              <PizzaButton variant="outline" colorScheme="red" size="sm" onClick={handleRemove}>
                 <HStack gap={1}>
                   <FaTrash size={12} />
                   <span>Remover</span>

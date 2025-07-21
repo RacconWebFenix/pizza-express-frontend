@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import Provider from "./provider";
+import { Providers } from "./provider";
 import "@/styled-system/css";
 
 const inter = Inter({
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html className={inter.className} suppressHydrationWarning>
       <head />
       <body>
-        <Provider>{children}</Provider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -1,21 +1,21 @@
 "use client";
 
 import { ChakraProvider } from "@chakra-ui/react";
+import { pizzaExpressSystem } from "@/theme/system";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "../components/auth/auth-context";
 import { CartProvider } from "@/contexts/CartContext";
 import { Toaster } from "@/components/ui/toaster";
-import { pizzaExpressSystem } from "@/theme/system";
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <ChakraProvider value={pizzaExpressSystem}>
+    <ChakraProvider value={pizzaExpressSystem}>
+      <AuthProvider>
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <CartProvider>{props.children}</CartProvider>
+          <CartProvider>{children}</CartProvider>
           <Toaster />
         </ThemeProvider>
-      </ChakraProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ChakraProvider>
   );
 }

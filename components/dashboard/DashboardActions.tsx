@@ -15,7 +15,7 @@ interface ActionButtonProps {
   title: string;
   description: string;
   icon: React.ElementType;
-  variant: "primary" | "secondary" | "pizza" | "cheese" | "success";
+  variant: "solid" | "outline" | "ghost";
   onClick: () => void;
   index: number;
 }
@@ -45,8 +45,8 @@ function ActionButton({
           gap={4}
           h="auto"
           p={4}
-          leftIcon={<Icon as={icon} boxSize={10} />}
         >
+          <Icon as={icon} boxSize={10} />
           <Box textAlign="left" m={2} flex="1">
             <PizzaText variant="heading" fontSize="md">
               {title}
@@ -79,21 +79,21 @@ export function DashboardActions({
       title: "Ver Cardápio",
       description: "Visualizar todas as pizzas disponíveis",
       icon: MdRestaurantMenu,
-      variant: "pizza" as const,
+      variant: "solid" as const,
       onClick: onNavigateToCardapio,
     },
     {
       title: "Ver Pedidos",
       description: "Gerenciar pedidos realizados",
       icon: MdOutlineInventory,
-      variant: "success" as const,
+      variant: "outline" as const,
       onClick: onNavigateToPedidos,
     },
     {
       title: "Gerenciar Pizzas",
       description: "Gerenciar pizzas do cardápio",
       icon: TbSettingsPlus,
-      variant: "cheese" as const,
+      variant: "ghost" as const,
       onClick: onShowCreateForm,
     },
   ];

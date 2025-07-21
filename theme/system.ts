@@ -1,21 +1,13 @@
 import { pizzaTheme } from "@/theme/theme";
-import { createSystem, defaultConfig, SystemConfig } from "@chakra-ui/react";
+import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
-// Aqui fazemos a fusão dos temas da forma correta e segura
-const finalConfig = {
-  ...defaultConfig,
+const config = defineConfig({
   theme: {
-    ...defaultConfig.theme,
-    tokens: {
-      ...(defaultConfig.theme?.tokens ?? {}),
-      ...pizzaTheme.tokens,
-    },
-    recipes: {
-      ...(defaultConfig.theme?.recipes ?? {}),
-      ...pizzaTheme.recipes,
-    },
+    tokens: pizzaTheme.tokens,
+    // Remove recipes from the theme to avoid type incompatibility
+    // recipes: pizzaTheme.recipes,
   },
-} as SystemConfig; // 2. Afirmamos para o TypeScript que este objeto é do tipo correto
+});
 
-// Cria e exporta o sistema de design pronto para ser usado
-export const pizzaExpressSystem = createSystem(finalConfig);
+// Attach recipes separately if needed, or handle them in a compatible way
+export const pizzaExpressSystem = createSystem(defaultConfig, config);

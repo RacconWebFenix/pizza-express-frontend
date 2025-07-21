@@ -98,7 +98,7 @@ const LoginPage = () => {
 
               <PizzaButton
                 type="submit"
-                variant="primary"
+                variant="solid"
                 width="full"
                 disabled={loading}
               >
@@ -107,7 +107,7 @@ const LoginPage = () => {
 
               <Box textAlign="center">
                 <Link href="/register">
-                  <PizzaButton variant="ghost" color="brand.primary">
+                  <PizzaButton variant="solid" color="brand.primary">
                     Não tem uma conta? Registre-se
                   </PizzaButton>
                 </Link>

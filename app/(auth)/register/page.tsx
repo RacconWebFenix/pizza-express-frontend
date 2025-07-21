@@ -359,11 +359,11 @@ const RegisterPage = () => {
 
                     <PizzaButton
                       type="submit"
-                      variant="primary"
+                      variant="solid"
                       w="full"
                       disabled={loading}
                     >
-                      {loading ? "Criando conta..." : "Criar Conta"}
+                      Cadastrar
                     </PizzaButton>
                   </VStack>
                 </Box>
