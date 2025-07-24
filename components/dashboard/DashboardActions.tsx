@@ -2,12 +2,10 @@
 
 import { SimpleGrid, Box, Icon } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-
 import { TbSettingsPlus } from "react-icons/tb";
 import { MdOutlineInventory, MdRestaurantMenu } from "react-icons/md";
-
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
-import { PizzaButton, PizzaText, PizzaCard } from "../ui";
+import { PizzaButton, PizzaCard, PizzaText } from "../ui";
 
 const MotionBox = motion(Box);
 
@@ -16,6 +14,7 @@ interface ActionButtonProps {
   description: string;
   icon: React.ElementType;
   variant: "solid" | "outline" | "ghost";
+  className?: string;
   onClick: () => void;
   index: number;
 }
@@ -25,38 +24,46 @@ function ActionButton({
   description,
   icon,
   variant,
+  className = "",
   onClick,
   index,
 }: ActionButtonProps) {
   const { ANIMATIONS } = DASHBOARD_CONSTANTS;
-
   return (
     <MotionBox
       initial={ANIMATIONS.FADE_IN.initial}
       animate={ANIMATIONS.FADE_IN.animate}
       transition={{ ...ANIMATIONS.FADE_IN.transition, delay: index * 0.1 }}
     >
-      <PizzaCard variant="default" p={6}>
-        <PizzaButton
-          variant={variant}
-          onClick={onClick}
-          w="full"
-          justifyContent="space-around"
-          gap={4}
-          h="auto"
-          p={4}
-        >
-          <Icon as={icon} boxSize={10} />
-          <Box textAlign="left" m={2} flex="1">
-            <PizzaText variant="heading" fontSize="md">
-              {title}
-            </PizzaText>
-            <PizzaText variant="caption" mt={1}>
-              {description}
-            </PizzaText>
-          </Box>
-        </PizzaButton>
-      </PizzaCard>
+      <PizzaButton
+        variant={variant}
+        size="lg"
+        onClick={onClick}
+        w="full"
+        justifyContent="flex-start"
+        gap={6}
+        h="auto"
+        p={5}
+        borderWidth={variant === "outline" ? 2 : 0}
+        borderColor={variant === "outline" ? "brand.pizza" : undefined}
+        aria-label={title}
+        className={className}
+        _hover={{
+          transform: "scale(1.03)",
+          boxShadow: "xl",
+          bg: variant === "ghost" ? "brand.light" : undefined,
+        }}
+      >
+        <Icon as={icon} boxSize={12} color="brand.primary" />
+        <Box textAlign="left" ml={2} flex="1">
+          <PizzaText variant="heading" fontSize="xl" color="brand.primary">
+            {title}
+          </PizzaText>
+          <PizzaText variant="caption" mt={2} color="brand.medium">
+            {description}
+          </PizzaText>
+        </Box>
+      </PizzaButton>
     </MotionBox>
   );
 }
@@ -73,49 +80,53 @@ export function DashboardActions({
   onShowCreateForm,
 }: DashboardActionsProps) {
   const { GRID, TITLES } = DASHBOARD_CONSTANTS;
-
   const actions = [
     {
       title: "Ver Cardápio",
       description: "Visualizar todas as pizzas disponíveis",
       icon: MdRestaurantMenu,
       variant: "solid" as const,
+      className: "button-pizza",
       onClick: onNavigateToCardapio,
     },
     {
       title: "Ver Pedidos",
       description: "Gerenciar pedidos realizados",
       icon: MdOutlineInventory,
-      variant: "outline" as const,
+      variant: "solid" as const,
+      className: "button-primary",
       onClick: onNavigateToPedidos,
     },
     {
       title: "Gerenciar Pizzas",
       description: "Gerenciar pizzas do cardápio",
       icon: TbSettingsPlus,
-      variant: "ghost" as const,
+      variant: "solid" as const,
+      className: "button-primary",
       onClick: onShowCreateForm,
     },
   ];
-
   return (
     <Box>
       <PizzaText variant="heading" fontSize="xl" mb={4}>
         {TITLES.QUICK_ACTIONS}
       </PizzaText>
-      <SimpleGrid columns={GRID.ACTIONS_COLUMNS} gap={GRID.GAP}>
-        {actions.map((action, index) => (
-          <ActionButton
-            key={action.title}
-            title={action.title}
-            description={action.description}
-            icon={action.icon}
-            variant={action.variant}
-            onClick={action.onClick}
-            index={index}
-          />
-        ))}
-      </SimpleGrid>
+      <PizzaCard variant="pizza" p={6}>
+        <SimpleGrid columns={GRID.ACTIONS_COLUMNS} gap={GRID.GAP}>
+          {actions.map((action, index) => (
+            <ActionButton
+              key={action.title}
+              title={action.title}
+              description={action.description}
+              icon={action.icon}
+              variant={action.variant}
+              className={action.className}
+              onClick={action.onClick}
+              index={index}
+            />
+          ))}
+        </SimpleGrid>
+      </PizzaCard>
     </Box>
   );
 }
