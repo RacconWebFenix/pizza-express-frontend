@@ -1,13 +1,7 @@
 "use client";
 
-import { VStack, HStack, Box } from "@chakra-ui/react";
-import {
-  PizzaInput,
-  PizzaTextarea,
-  PizzaButton,
-  PizzaFileInput,
-  PizzaText,
-} from ".";
+import { VStack, HStack, Box, Button } from "@chakra-ui/react";
+import { PizzaInput, PizzaTextarea, PizzaFileInput, PizzaText } from ".";
 
 interface PizzaFormPresentationProps {
   formData: { nome: string; descricao: string; preco: string };
@@ -40,67 +34,61 @@ export const PizzaFormPresentation = ({
   onImageRemove,
   onCancel,
 }: PizzaFormPresentationProps) => (
-  <>
-    <Box as="form" onSubmit={onSubmit} w="full">
-      <VStack spaceX={5} spaceY={5} align="stretch">
-        <PizzaFileInput
-          label="Imagem da Pizza *"
-          error={errors.imagem}
-          onChange={onImageChange}
-          preview={imagePreview}
-          onPreviewClick={onImageModalOpen}
-          onRemove={onImageRemove}
-        />
-        <PizzaInput
-          label="Nome da Pizza"
-          name="nome"
-          value={formData.nome}
-          onChange={onInputChange}
-          error={errors.nome}
-          placeholder="Ex: Pizza Margherita"
-        />
-        <PizzaTextarea
-          label="Descrição"
-          name="descricao"
-          value={formData.descricao}
-          onChange={onInputChange}
-          error={errors.descricao}
-          placeholder="Descreva os ingredientes..."
-          rows={4}
-        />
-        <PizzaInput
-          label="Preço (R$)"
-          name="preco"
-          value={formData.preco}
-          onChange={onInputChange}
-          error={errors.preco}
-          placeholder="Ex: 49,90"
-        />
-        {apiError && (
-          <PizzaText variant="danger" fontSize="sm">
-            {apiError}
-          </PizzaText>
-        )}
-        <HStack w="full" spaceX={4} spaceY={4}>
-          <PizzaButton
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            disabled={isLoading}
-            flex={1}
-          >
-            Cancelar
-          </PizzaButton>
-          <PizzaButton
-            type="submit"
-            variant="solid"
-            loading={isLoading}
-            flex={1}
-          >
-            Salvar Pizza
-          </PizzaButton>
-        </HStack>
-      </VStack>
-    </Box>
-  </>
+  <Box as="form" onSubmit={onSubmit} w="full">
+    <VStack align="stretch">
+      <PizzaFileInput
+        label="Imagem da Pizza *"
+        error={errors.imagem}
+        onChange={onImageChange}
+        preview={imagePreview}
+        onPreviewClick={onImageModalOpen}
+        onRemove={onImageRemove}
+      />
+      <PizzaInput
+        label="Nome da Pizza"
+        name="nome"
+        value={formData.nome}
+        onChange={onInputChange}
+        error={errors.nome}
+        placeholder="Ex: Pizza Margherita"
+      />
+      <PizzaTextarea
+        label="Descrição"
+        name="descricao"
+        value={formData.descricao}
+        onChange={onInputChange}
+        error={errors.descricao}
+        placeholder="Descreva os ingredientes..."
+        rows={4}
+      />
+      <PizzaInput
+        label="Preço (R$)"
+        name="preco"
+        value={formData.preco}
+        onChange={onInputChange}
+        error={errors.preco}
+        placeholder="Ex: 49,90"
+      />
+      {apiError && (
+        <PizzaText variant="danger" fontSize="sm">
+          {apiError}
+        </PizzaText>
+      )}
+      <HStack w="full" justify="space-between" mt={4}>
+        <Button
+          colorPalette="orange"
+          variant="solid"
+          loading={isLoading}
+          disabled={isLoading}
+          type="submit"
+          flex={1}
+        >
+          Salvar Pizza
+        </Button>
+        <Button colorPalette="red" variant="solid" onClick={onCancel} flex={1}>
+          Cancelar
+        </Button>
+      </HStack>
+    </VStack>
+  </Box>
 );

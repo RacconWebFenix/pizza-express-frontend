@@ -1,10 +1,10 @@
 "use client";
 
-import { Box, Input, VStack, HStack } from "@chakra-ui/react";
+import { Box, Input, VStack, HStack, Button } from "@chakra-ui/react";
 import { useRef, ChangeEvent } from "react";
 import { FaCloudUploadAlt, FaTrash } from "react-icons/fa";
 import { PizzaText } from "./PizzaText";
-import { PizzaButton } from "./PizzaButton";
+
 import Image from "next/image";
 
 interface PizzaFileInputProps {
@@ -158,16 +158,25 @@ export function PizzaFileInput({
             </Box>
 
             <HStack gap={3}>
-              <PizzaButton variant="outline" size="sm" onClick={handleClick}>
+              <Button
+                colorPalette="orange"
+                variant="solid"
+                onClick={handleClick}
+              >
                 Alterar
-              </PizzaButton>
+              </Button>
 
-              <PizzaButton variant="outline" colorScheme="red" size="sm" onClick={handleRemove}>
+              <Button
+                colorPalette="red"
+                variant="solid"
+                size="sm"
+                onClick={handleRemove}
+              >
                 <HStack gap={1}>
                   <FaTrash size={12} />
                   <span>Remover</span>
                 </HStack>
-              </PizzaButton>
+              </Button>
             </HStack>
           </VStack>
         </Box>

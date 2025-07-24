@@ -9,6 +9,7 @@ import { PizzaButton, PizzaCard, PizzaLoading, PizzaText } from "../ui";
 import { PlusCircle } from "lucide-react";
 import {
   Box,
+  Button,
   Flex,
   Grid,
   Heading,
@@ -119,11 +120,8 @@ export const GerenciarCardapio = ({
             </Heading>
           </PizzaButton>
         </Flex>
-        <PizzaButton
-          variant="solid"
-          onClick={handleOpenCreateModal}
-        >
-         <Icon as={PlusCircle} boxSize={6} />
+        <PizzaButton variant="solid" onClick={handleOpenCreateModal}>
+          <Icon as={PlusCircle} boxSize={6} />
           Adicionar Pizza
         </PizzaButton>
       </Flex>
@@ -137,61 +135,57 @@ export const GerenciarCardapio = ({
         gap={6}
       >
         {pizzas.map((pizza) => (
-          <PizzaCard key={pizza.id}>
-            <VStack spaceX={4} spaceY={4} align="stretch">
-              {/* Imagem da Pizza */}
-              <Image
-                src={pizza.imagemUrl || "/pizza.png"}
-                alt={`Imagem da pizza ${pizza.nome}`}
-                borderRadius="md"
-                height="200px"
-                objectFit="cover"
-              />
-              {/* Informações da Pizza */}
-              <VStack spaceX={1} align="stretch" flex="1">
-                <Heading size="md">{pizza.nome}</Heading>
-                <PizzaText fontSize="sm" color="gray.600">
-                  {pizza.descricao}
-                </PizzaText>
-                <PizzaText
-                  fontWeight="bold"
-                  fontSize="lg"
-                  color="brand.success"
-                >
-                  {formatCurrency(pizza.preco)}
-                </PizzaText>
-              </VStack>
-              {/* Botões de Ação */}
-              <Flex justify="space-around" gap={4}>
-                <PizzaButton
-                  variant="outline"
-                  onClick={() => handleOpenEditModal(pizza)}
-                  w="full"
-                >
-                  Editar
-                </PizzaButton>
-                <PizzaButton
-                  variant="outline"
-                  colorScheme="red"
-                  onClick={() => handleRemovePizza(pizza)}
-                  w="full"
-                  loading={removingPizzaId === pizza.id}
-                >
-                  Remover
-                </PizzaButton>
-                <PizzaButton
-                  variant="outline"
-                  onClick={() => {
-                    setImageModalPizza(pizza);
-                    setImageFile(null);
-                    setImageUploadError(null);
-                  }}
-                  w="full"
-                >
-                  Atualizar imagem
-                </PizzaButton>
-              </Flex>
+          <PizzaCard
+            key={pizza.id}
+            display="flex" // 1. Tornar o card um contêiner flex
+            flexDirection="column" // 2. Organizar itens em coluna
+            height="100%" // 3. Fazer o card ocupar toda a altura da célula do grid
+          >
+            {/* Imagem não muda */}
+            <Image
+              src={pizza.imagemUrl || "/pizza.png"}
+              alt={`Imagem da pizza ${pizza.nome}`}
+              borderRadius="md"
+              height="200px"
+              objectFit="cover"
+            />
+
+            {/* Contêiner para o conteúdo de texto que vai crescer */}
+            <VStack
+              flex="1" // 4. ESSENCIAL: Faz esta área crescer e empurrar os botões para baixo
+              align="stretch"
+              p={4} // Adicione um padding para espaçamento interno
+            >
+              <Heading size="md">{pizza.nome}</Heading>
+              <PizzaText fontSize="sm" color="gray.600">
+                {pizza.descricao}
+              </PizzaText>
+              <PizzaText fontWeight="bold" fontSize="lg" color="brand.success">
+                {formatCurrency(pizza.preco)}
+              </PizzaText>
             </VStack>
+
+            {/* Contêiner dos botões de ação */}
+            <Flex justify="space-between" align="center" p={4} pt={0} gap={2}>
+              <Button
+                colorPalette="orange"
+                variant="solid"
+                onClick={() => handleOpenEditModal(pizza)}
+                flex="1"
+              >
+                Editar
+              </Button>
+              <Button
+                colorPalette="red"
+                variant="solid"
+                onClick={() => handleRemovePizza(pizza)}
+                loading={removingPizzaId === pizza.id}
+                flex="1"
+              >
+                Remover
+              </Button>
+              {/* O terceiro botão provavelmente deveria ser um ícone ou estar em um menu */}
+            </Flex>
           </PizzaCard>
         ))}
       </Grid>
