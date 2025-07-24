@@ -41,7 +41,17 @@ export const usePizzas = (): UsePizzasReturn => {
 
       const data = await response.json();
 
-      setPizzas(data);
+      // Mapeia o campo 'image' do backend para 'imagemUrl' usado no frontend
+      const pizzasAdaptadas = Array.isArray(data)
+        ? data.map((pizza: Pizza) => ({
+            ...pizza,
+            imagemUrl:
+              (pizza as Pizza & { image?: string }).image ||
+              pizza.imagemUrl ||
+              "",
+          }))
+        : [];
+      setPizzas(pizzasAdaptadas);
     } catch (err) {
       setError(
         err instanceof Error

@@ -18,32 +18,32 @@ interface PedidoCardProps {
 
 export function PedidoCard({ pedido, statusConfig, index }: PedidoCardProps) {
   const { ANIMATIONS } = PEDIDOS_CONSTANTS;
-  
+
   // Mapeia status para variant do card
   const getCardVariant = (status: string) => {
     switch (status) {
-      case 'entregue':
-        return 'success';
-      case 'preparando':
-        return 'warning';
-      case 'cancelado':
-        return 'danger';
+      case "entregue":
+        return "success";
+      case "preparando":
+        return "warning";
+      case "cancelado":
+        return "danger";
       default:
-        return 'default';
+        return "default";
     }
   };
 
   // Mapeia status para variant do badge
   const getBadgeVariant = (status: string) => {
     switch (status) {
-      case 'entregue':
-        return 'delivered';
-      case 'preparando':
-        return 'preparing';
-      case 'cancelado':
-        return 'cancelled';
+      case "entregue":
+        return "delivered";
+      case "preparando":
+        return "preparing";
+      case "cancelado":
+        return "cancelled";
       default:
-        return 'default';
+        return "default";
     }
   };
 
@@ -71,41 +71,29 @@ export function PedidoCard({ pedido, statusConfig, index }: PedidoCardProps) {
 
         {/* Informações do Cliente */}
         <VStack align="stretch" gap={2}>
-          <PizzaText variant="caption">
-            Cliente
-          </PizzaText>
+          <PizzaText variant="caption">Cliente</PizzaText>
           <PizzaText variant="body" fontWeight="medium">
-            {pedido.cliente}
+            {pedido.cliente.nome}
           </PizzaText>
         </VStack>
 
         {/* Pizzas */}
         <VStack align="stretch" gap={2}>
-          <PizzaText variant="caption">
-            Pizzas
-          </PizzaText>
-          <PizzaText variant="body">
-            {pedido.pizzas.join(", ")}
-          </PizzaText>
+          <PizzaText variant="caption">Pizzas</PizzaText>
+          <PizzaText variant="body">{pedido.pizzas.join(", ")}</PizzaText>
         </VStack>
 
         {/* Total e Horário */}
         <Flex justify="space-between" align="center">
           <VStack align="flex-start" gap={1}>
-            <PizzaText variant="caption">
-              Total
-            </PizzaText>
+            <PizzaText variant="caption">Total</PizzaText>
             <PizzaText variant="heading" fontSize="lg">
               {formatCurrency(pedido.total)}
             </PizzaText>
           </VStack>
           <VStack align="flex-end" gap={1}>
-            <PizzaText variant="caption">
-              Horário
-            </PizzaText>
-            <PizzaText variant="body">
-              {pedido.horario}
-            </PizzaText>
+            <PizzaText variant="caption">Horário</PizzaText>
+            <PizzaText variant="body">{pedido.horario}</PizzaText>
           </VStack>
         </Flex>
       </VStack>
