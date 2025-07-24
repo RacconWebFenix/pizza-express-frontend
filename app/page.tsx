@@ -1,12 +1,11 @@
 "use client";
 
-import { Box, Flex, Icon, VStack, Image } from "@chakra-ui/react";
+import { Box, Flex, Icon, VStack, Image, Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
 import { useAuth } from "../components/auth/auth-context";
 import AuthLoading from "../components/auth/AuthLoading";
 import { useEffect } from "react";
-import { PizzaButton } from "../components/ui/PizzaButton";
 import { PizzaBadge } from "../components/ui/PizzaBadge";
 import { PizzaText } from "../components/ui/PizzaText";
 
@@ -37,30 +36,37 @@ export default function Home() {
 
   return (
     <Box
-      bg="yellow.100"
+      bgGradient="linear(to-br, yellow.100, orange.100)"
       minH="100vh"
-      p={8}
+      p={{ base: 6, md: 12 }}
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
     >
-      <VStack gap={8} align="center" maxW="700px" textAlign="center">
+      <VStack
+        gap={{ base: 6, md: 8 }}
+        align="center"
+        maxW="700px"
+        textAlign="center"
+        px={4}
+      >
         {/* Logo e Branding da Fênix */}
-        <VStack gap={4}>
-          <Flex align="center" gap={3}>
+        <VStack gap={3}>
+          <Flex align="center" gap={4}>
             <Box>
               <Image
                 src="/fenix3.jpeg"
-                boxSize="150px"
+                boxSize={{ base: "120px", md: "150px" }}
                 borderRadius="full"
                 fit="cover"
-                alt="Naruto Uzumaki"
+                alt="Logo da Fênix Empreendimentos"
+                loading="lazy"
               />
             </Box>
             <VStack align="flex-start" gap={1}>
               <PizzaText
-                fontSize="lg"
+                fontSize={{ base: "md", md: "lg" }}
                 fontWeight="bold"
                 color="brand.primary"
                 lineHeight="1.2"
@@ -75,71 +81,63 @@ export default function Home() {
         </VStack>
 
         {/* Título Principal */}
-        <Flex align="center" gap={3} justify="center" wrap="wrap">
-          <Icon as={FaPizzaSlice} boxSize={8} color="orange.600" />
-          <PizzaText variant="heading" color="brand.primary" lineHeight="1.3">
+        <Flex
+          align="center"
+          gap={3}
+          justify="center"
+          wrap="wrap"
+          aria-label="Bem-vindo à Pizzaria Express"
+        >
+          <Icon
+            as={FaPizzaSlice}
+            boxSize={{ base: 6, md: 8 }}
+            color="orange.600"
+            aria-hidden="true"
+            transition="transform 0.3s ease"
+            _hover={{ transform: "rotate(15deg)" }}
+          />
+          <PizzaText
+            variant="heading"
+            color="brand.primary"
+            lineHeight="1.3"
+            fontSize={{ base: "2xl", md: "3xl" }}
+          >
             Bem-vindo à Pizzaria Express
           </PizzaText>
         </Flex>
 
         {/* Descrição */}
-        <PizzaText color="gray.800" fontSize="lg" lineHeight="1.6">
-          Descubra as melhores pizzas artesanais feitas com ingredientes frescos{" "}
-          <Icon as={FaLeaf} boxSize={5} color="green.600" /> e preparadas em
-          nosso tradicional forno a lenha{" "}
-          <Icon as={FaFire} boxSize={5} color="orange.600" />.
+        <PizzaText color="gray.300" fontSize={{ base: "md", md: "lg" }} lineHeight="1.6">
+          Descubra as melhores pizzas artesanais, feitas com ingredientes frescos{" "}
+          <Icon as={FaLeaf} boxSize={5} color="green.600" aria-hidden="true" /> e
+          assadas em nosso tradicional forno a lenha{" "}
+          <Icon as={FaFire} boxSize={5} color="orange.600" aria-hidden="true" />
+          , garantindo sabor e qualidade excepcionais.
         </PizzaText>
 
         {/* Botão de Ação */}
-        <PizzaButton
+        <Button
           variant="solid"
           size="lg"
-          px={8}
-          py={6}
+          px={{ base: 6, md: 8 }}
+          py={{ base: 4, md: 6 }}
           borderRadius="lg"
-          fontSize="lg"
+          fontSize={{ base: "lg", md: "xl" }}
           fontWeight="semibold"
+          colorScheme="orange"
           onClick={handleNavigateToWelcome}
+          _hover={{ bg: "orange.500", transform: "scale(1.05)" }}
+          transition="all 0.3s ease"
+          aria-label="Explorar Cardápio"
         >
           Explorar Cardápio
-        </PizzaButton>
+        </Button>
 
         {/* Rodapé elegante */}
-        <PizzaText color="gray.800" fontSize="sm" opacity={0.8} mt={4}>
+        <PizzaText color="gray.400" fontSize="sm" opacity={0.8} mt={6}>
           Uma experiência gastronômica única pela Fênix Empreendimentos
         </PizzaText>
       </VStack>
-      {/* TESTE DE CORES DO TEMA CHAKRA */}
-      <Box
-        mt={8}
-        p={6}
-        borderRadius="lg"
-        boxShadow="md"
-        bg="brand.primary"
-        color="white"
-      >
-        Teste: brand.primary
-      </Box>
-      <Box
-        mt={4}
-        p={6}
-        borderRadius="lg"
-        boxShadow="md"
-        bg="brand.pizza"
-        color="white"
-      >
-        Teste: brand.pizza
-      </Box>
-      <Box
-        mt={4}
-        p={6}
-        borderRadius="lg"
-        boxShadow="md"
-        bg="brand.success"
-        color="white"
-      >
-        Teste: brand.success
-      </Box>
     </Box>
   );
 }
