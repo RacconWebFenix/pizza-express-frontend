@@ -10,8 +10,10 @@ export interface Pedido {
     createdAt?: string;
     updatedAt?: string;
   };
+
   pizzas: string[];
   total: number;
-  status: string;
+  status: "NOVO" | "EM_PREPARO" | "PRONTO_PARA_ENTREGA" | "FINALIZADO";
   horario: string;
 }
+

@@ -9,10 +9,11 @@ interface PizzaInputProps extends Omit<InputProps, "size"> {
   error?: string;
   required?: boolean;
   size?: "sm" | "md" | "lg";
+  color?: string;
 }
 
 export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
-  ({ label, error, required, size = "md", ...props }, ref) => {
+  ({ label, error, required, color, size = "md", ...props }, ref) => {
     const sizeStyles = {
       sm: {
         fontSize: "sm",
@@ -39,7 +40,12 @@ export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
     return (
       <Box w="full">
         {label && (
-          <PizzaText color="gray.800" mb={2} fontSize="sm" fontWeight="medium">
+          <PizzaText
+            color={color || "gray.800 "}
+            mb={2}
+            fontSize="sm"
+            fontWeight="medium"
+          >
             {label}
             {required && (
               <PizzaText as="span" color="red.500" ml={1}>

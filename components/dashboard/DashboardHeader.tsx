@@ -1,37 +1,43 @@
 "use client";
 
-import { Box, Heading, Text } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
-
-const MotionBox = motion(Box);
+import {
+  Flex,
+  Heading,
+  Text,
+  Button, // O Avatar foi removido das importações
+} from "@chakra-ui/react";
+import { useAuth } from "../auth/auth-context";
 
 export function DashboardHeader() {
-  const { TITLES, MESSAGES, ANIMATIONS } = DASHBOARD_CONSTANTS;
+  const { user, logout } = useAuth();
 
   return (
-    <MotionBox
-      initial={ANIMATIONS.FADE_IN.initial}
-      animate={ANIMATIONS.FADE_IN.animate}
-      transition={ANIMATIONS.FADE_IN.transition}
-      textAlign="center"
-      mb={8}
+    <Flex
+      as="header"
+      align="center"
+      justify="space-between"
+      p={4}
+      bg="white"
+      boxShadow="md"
+      borderBottomWidth="1px"
+      borderColor="gray.200"
+      _dark={{ bg: "gray.800", borderColor: "gray.700" }}
+      position="sticky"
+      top={0}
+      zIndex="sticky"
     >
-      <Heading
-        fontSize={{ base: "2xl", md: "4xl" }}
-        color="brand.dark"
-        mb={2}
-        fontWeight="bold"
-      >
-        {TITLES.MAIN}
+      <Heading size="md" color="brand.primary">
+        Pizza Express Dashboard
       </Heading>
-      <Text
-        fontSize={{ base: "md", md: "lg" }}
-        color="brand.medium"
-        fontWeight="medium"
-      >
-        {MESSAGES.WELCOME}
-      </Text>
-    </MotionBox>
+      <Flex align="center" gap={4}>
+        {/* O Avatar foi removido e o email do usuário é exibido no lugar */}
+        <Text fontWeight="medium" display={{ base: "none", md: "block" }}>
+          {user?.email}
+        </Text>
+        <Button colorScheme="red" size="sm" variant="outline" onClick={logout}>
+          Sair
+        </Button>
+      </Flex>
+    </Flex>
   );
 }
