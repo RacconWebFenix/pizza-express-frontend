@@ -1,6 +1,6 @@
 "use client";
 
-import {  Flex, Icon, Text, useDisclosure } from "@chakra-ui/react";
+import { Flex, Icon, Text, useDisclosure } from "@chakra-ui/react";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCart } from "@/contexts/CartContext";
 import CartModal from "./CartModal";
@@ -13,9 +13,23 @@ import CartModal from "./CartModal";
  * e abre o modal do carrinho ao ser clicado.
  */
 const CartWidget = () => {
-  const { cart } = useCart();
-  // O useDisclosure será usado para controlar a abertura e fecho do modal
+  const { cart, removeFromCart, clearCart, updateQuantity } = useCart(); // 1. Obtenha os dados e funções do contexto
   const { open, onOpen, onClose } = useDisclosure();
+
+  // 2. Crie uma função para o checkout (pode ser mais complexa no futuro)
+  const handleCheckout = () => {
+    alert("Pedido finalizado!");
+    clearCart();
+    onClose();
+  };
+
+  // 3. Transforme os itens do carrinho para o formato que o CartModal espera
+  const modalCartItems = cart.items.map((item) => ({
+    id: item.pizza.id,
+    name: item.pizza.nome,
+    price: item.pizza.preco,
+    quantity: item.quantity,
+  }));
 
   return (
     <>
@@ -53,8 +67,14 @@ const CartWidget = () => {
         )}
       </Flex>
 
-      {/* Renderiza o Modal do Carrinho, controlando sua visibilidade */}
-      <CartModal isOpen={open} onClose={onClose} />
+      <CartModal
+        isOpen={open}
+        onClose={onClose}
+        cartItems={modalCartItems}
+        onRemoveItem={removeFromCart}
+        onCheckout={handleCheckout}
+        onUpdateQuantity={updateQuantity}
+      />
     </>
   );
 };

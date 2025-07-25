@@ -12,7 +12,7 @@ import {
   Portal,
   IconButton,
 } from "@chakra-ui/react";
-import { IoMdClose, IoMdTrash } from "react-icons/io";
+import { IoMdClose, IoMdTrash, IoMdAdd, IoMdRemove } from "react-icons/io";
 
 interface CartItem {
   id: string;
@@ -27,6 +27,7 @@ interface CartModalProps {
   cartItems: CartItem[];
   onRemoveItem: (itemId: string) => void;
   onCheckout: () => void;
+  onUpdateQuantity: (itemId: string, newQuantity: number) => void;
 }
 
 const CartModal: React.FC<CartModalProps> = ({
@@ -35,6 +36,7 @@ const CartModal: React.FC<CartModalProps> = ({
   cartItems,
   onRemoveItem,
   onCheckout,
+  onUpdateQuantity,
 }) => {
   if (!isOpen) return null;
 
@@ -42,7 +44,7 @@ const CartModal: React.FC<CartModalProps> = ({
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  console.log(cartItems);
+
   return (
     <Portal>
       <Box
@@ -82,7 +84,6 @@ const CartModal: React.FC<CartModalProps> = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              colorPalette="gray"
             >
               <IoMdClose />
             </IconButton>
@@ -101,7 +102,7 @@ const CartModal: React.FC<CartModalProps> = ({
               {(cartItems || []).map((item, index) => (
                 <Box key={item.id}>
                   <HStack justify="space-between" align="center" py={3}>
-                    <VStack align="start" gap={1} flex={1}>
+                    <VStack align="start" gap={2} flex={1}>
                       <Text
                         fontWeight="medium"
                         color="gray.800"
@@ -109,13 +110,35 @@ const CartModal: React.FC<CartModalProps> = ({
                       >
                         {item.name}
                       </Text>
-                      <Text
-                        fontSize="sm"
-                        color="gray.600"
-                        _dark={{ color: "gray.300" }}
-                      >
-                        Quantidade: {item.quantity}
-                      </Text>
+                      {/* ALTERADO: Forma de passar o ícone corrigida */}
+                      <HStack>
+                        <IconButton
+                          aria-label="Diminuir quantidade"
+                          size="xs"
+                          onClick={() =>
+                            onUpdateQuantity(item.id, item.quantity - 1)
+                          }
+                        >
+                          <IoMdRemove />
+                        </IconButton>
+                        <Text
+                          w="40px"
+                          textAlign="center"
+                          fontSize="md"
+                          fontWeight="bold"
+                        >
+                          {item.quantity}
+                        </Text>
+                        <IconButton
+                          aria-label="Aumentar quantidade"
+                          size="xs"
+                          onClick={() =>
+                            onUpdateQuantity(item.id, item.quantity + 1)
+                          }
+                        >
+                          <IoMdAdd />
+                        </IconButton>
+                      </HStack>
                     </VStack>
                     <HStack spaceX={3}>
                       <Text
@@ -129,7 +152,7 @@ const CartModal: React.FC<CartModalProps> = ({
                         aria-label="Remover item"
                         size="sm"
                         variant="ghost"
-                        colorPalette="red"
+                        colorScheme="red"
                         onClick={() => onRemoveItem(item.id)}
                       >
                         <IoMdTrash />
@@ -170,7 +193,7 @@ const CartModal: React.FC<CartModalProps> = ({
             <ButtonGroup width="full" spaceX={3}>
               <Button
                 variant="outline"
-                colorPalette="gray"
+                colorScheme="gray"
                 onClick={onClose}
                 flex={1}
                 size="lg"
@@ -179,7 +202,7 @@ const CartModal: React.FC<CartModalProps> = ({
               </Button>
               <Button
                 variant="solid"
-                colorPalette="green"
+                colorScheme="green"
                 onClick={onCheckout}
                 disabled={!cartItems || cartItems.length === 0}
                 flex={1}
