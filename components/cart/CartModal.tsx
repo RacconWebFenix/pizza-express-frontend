@@ -1,112 +1,201 @@
-"use client";
+import React from "react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Separator,
+  Portal,
+  IconButton,
+} from "@chakra-ui/react";
+import { IoMdClose, IoMdTrash } from "react-icons/io";
 
-import { VStack, Text, Flex, Box } from "@chakra-ui/react";
-import { PizzaModal, PizzaButton } from "@/components/ui";
-import { useCart } from "@/contexts/CartContext";
-
-import CartItemCard from "./CartItemCard";
-import { formatCurrency } from "@/utils/format";
-import { toaster } from "../ui/toaster";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
 
 interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
+  cartItems: CartItem[];
+  onRemoveItem: (itemId: string) => void;
+  onCheckout: () => void;
 }
 
-/**
- * @component CartModal
- * @description Modal que exibe o conteúdo do carrinho de compras.
- */
-const CartModal = ({ isOpen, onClose }: CartModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+const CartModal: React.FC<CartModalProps> = ({
+  isOpen,
+  onClose,
+  cartItems,
+  onRemoveItem,
+  onCheckout,
+}) => {
+  if (!isOpen) return null;
 
-  const { cart, clearCart } = useCart();
-  const router = useRouter();
-
-  const handleCheckout = async () => {
-    setIsLoading(true);
-    try {
-      // await createOrder(cart.items, cart.totalPrice);
-
-      toaster.create({
-        title: "Pedido realizado com sucesso!",
-        description: "O seu pedido foi enviado para a cozinha.",
-        type: "success",
-      });
-
-      clearCart(); // Limpa o carrinho após o sucesso
-      onClose(); // Fecha o modal
-      router.push("/pedidos"); // Redireciona para a página de pedidos
-    } catch (error) {
-      toaster.create({
-        title: "Erro ao finalizar pedido",
-        description:
-          typeof error === "object" && error !== null && "message" in error
-            ? String((error as { message?: string }).message)
-            : "Não foi possível completar o seu pedido. Tente novamente.",
-        type: "danger",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const total = (cartItems || []).reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  console.log(cartItems);
   return (
-    <PizzaModal isOpen={isOpen} onClose={onClose} title="Meu Carrinho">
-      {/* O conteúdo do modal é agora um único VStack */}
-      <VStack p={6} gap={4} alignItems="stretch">
-        {cart.items.length > 0 ? (
-          <VStack gap={4}>
-            {cart.items.map((item) => (
-              <CartItemCard key={item.pizza.id} item={item} />
-            ))}
-          </VStack>
-        ) : (
-          <Text textAlign="center" py={8}>
-            O seu carrinho está vazio.
-          </Text>
-        )}
+    <Portal>
+      <Box
+        position="fixed"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        bg="blackAlpha.600"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        zIndex={1000}
+        onClick={onClose}
+      >
+        <Box
+          bg="white"
+          p={8}
+          borderRadius="xl"
+          width="90%"
+          maxWidth="500px"
+          boxShadow="2xl"
+          position="relative"
+          onClick={(e) => e.stopPropagation()}
+          _dark={{
+            bg: "gray.800",
+            color: "white",
+          }}
+        >
+          {/* Header */}
+          <Flex justify="space-between" align="center" mb={6}>
+            <Heading size="lg" color="gray.800" _dark={{ color: "white" }}>
+              Seu Carrinho
+            </Heading>
+            <IconButton
+              aria-label="Fechar carrinho"
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              colorPalette="gray"
+            >
+              <IoMdClose />
+            </IconButton>
+          </Flex>
 
-        {/* Rodapé renderizado condicionalmente */}
-        {cart.items.length > 0 && (
-          <VStack as="footer" pt={4} gap={3} alignItems="stretch">
-            {/* Divisor manual */}
-            <Box h="1px" bg="gray.200" my={2} />
+          {/* Content */}
+          {!cartItems || cartItems.length === 0 ? (
+            <Box textAlign="center" py={8}>
+              <Text color="gray.500" fontSize="lg">
+                Seu carrinho está vazio.
+              </Text>
+            </Box>
+          ) : (
+            <VStack gap={4} align="stretch">
+              {/* Cart Items */}
+              {(cartItems || []).map((item, index) => (
+                <Box key={item.id}>
+                  <HStack justify="space-between" align="center" py={3}>
+                    <VStack align="start" gap={1} flex={1}>
+                      <Text
+                        fontWeight="medium"
+                        color="gray.800"
+                        _dark={{ color: "white" }}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        fontSize="sm"
+                        color="gray.600"
+                        _dark={{ color: "gray.300" }}
+                      >
+                        Quantidade: {item.quantity}
+                      </Text>
+                    </VStack>
+                    <HStack spaceX={3}>
+                      <Text
+                        fontWeight="bold"
+                        color="green.600"
+                        _dark={{ color: "green.400" }}
+                      >
+                        R$ {(item.price * item.quantity).toFixed(2)}
+                      </Text>
+                      <IconButton
+                        aria-label="Remover item"
+                        size="sm"
+                        variant="ghost"
+                        colorPalette="red"
+                        onClick={() => onRemoveItem(item.id)}
+                      >
+                        <IoMdTrash />
+                      </IconButton>
+                    </HStack>
+                  </HStack>
+                  {index < cartItems.length - 1 && <Separator />}
+                </Box>
+              ))}
 
-            <Flex justifyContent="space-between" alignItems="center">
-              <Text fontSize="lg" fontWeight="bold">
-                Total:
-              </Text>
-              <Text fontSize="xl" fontWeight="bold" color="green.500">
-                {formatCurrency(cart.totalPrice)}
-              </Text>
-            </Flex>
-            <VStack mt={4} gap={3}>
-              <PizzaButton
-                color="green"
-                loading={isLoading}
-                onClick={handleCheckout}
-                w="100%"
+              {/* Total */}
+              <Box pt={4}>
+                <Separator mb={4} />
+                <HStack justify="space-between">
+                  <Text
+                    fontSize="xl"
+                    fontWeight="bold"
+                    color="gray.800"
+                    _dark={{ color: "white" }}
+                  >
+                    Total:
+                  </Text>
+                  <Text
+                    fontSize="xl"
+                    fontWeight="bold"
+                    color="green.600"
+                    _dark={{ color: "green.400" }}
+                  >
+                    R$ {total.toFixed(2)}
+                  </Text>
+                </HStack>
+              </Box>
+            </VStack>
+          )}
+
+          {/* Footer */}
+          <Box mt={8}>
+            <ButtonGroup width="full" spaceX={3}>
+              <Button
+                variant="outline"
+                colorPalette="gray"
+                onClick={onClose}
+                flex={1}
+                size="lg"
+              >
+                Continuar Comprando
+              </Button>
+              <Button
+                variant="solid"
+                colorPalette="green"
+                onClick={onCheckout}
+                disabled={!cartItems || cartItems.length === 0}
+                flex={1}
+                size="lg"
+                _disabled={{
+                  opacity: 0.6,
+                  cursor: "not-allowed",
+                }}
               >
                 Finalizar Pedido
-              </PizzaButton>
-              <PizzaButton
-                variant="outline"
-                color="red"
-                onClick={clearCart}
-                w="100%"
-                disabled={isLoading}
-              >
-                Esvaziar Carrinho
-              </PizzaButton>
-            </VStack>
-          </VStack>
-        )}
-      </VStack>
-    </PizzaModal>
+              </Button>
+            </ButtonGroup>
+          </Box>
+        </Box>
+      </Box>
+    </Portal>
   );
 };
-
 export default CartModal;
