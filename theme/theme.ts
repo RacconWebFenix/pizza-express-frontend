@@ -1,24 +1,32 @@
-import { defineTokens, defineRecipe } from "@pandacss/dev";
+import { defineRecipe } from "@pandacss/dev";
 
 // =================================================================
-// 1. DEFINIÇÃO DOS TOKENS (cores, espaçamentos, z-index, etc.)
+// 1. DEFINIÇÃO DOS TOKENS (Cores, Fontes, z-index, etc.)
 // =================================================================
 export const pizzaTheme = {
   tokens: {
     colors: {
       brand: {
-        primary: { value: "#2B6CB0" },
-        accent: { value: "#2C5282" },
-        pizza: { value: "#ED8936" },
-        medium: { value: "#2D3748" },
-        light: { value: "#F7FAFC" },
-        dark: { value: "#1A202C" },
-        fresh: { value: "#38A169" },
-        success: { value: "#38A169" },
-        cream: { value: "#F7FAFC" },
-        warning: { value: "#ECC94B" },
-        error: { value: "#E53E3E" },
+        // Cores revisadas para a identidade da pizzaria
+        primary: { value: "#D92B2B" }, // Vermelho principal (tomate, paixão)
+        secondary: { value: "#2E7D32" }, // Verde (ingredientes frescos, manjericão)
+        accent: { value: "#FFC107" }, // Amarelo/Mostarda (queijo, alegria)
+
+        // Mantendo tons neutros para UI
+        background: { value: "#F5F5F5" }, // Fundo principal da aplicação
+        surface: { value: "#FFFFFF" }, // Fundo para cards e elementos elevados
+        textPrimary: { value: "#212121" }, // Texto principal, escuro
+        textSecondary: { value: "#757575" }, // Texto de apoio, mais claro
+
+        // Cores de feedback
+        success: { value: "#2E7D32" }, // Verde para sucesso
+        warning: { value: "#ECC94B" }, // Amarelo para alertas
+        error: { value: "#D92B2B" }, // Vermelho para erros
       },
+    },
+    fonts: {
+      heading: { value: "'Roboto Slab', serif" },
+      body: { value: "'Roboto', sans-serif" },
     },
     zIndex: {
       sticky: { value: 10 },
@@ -39,6 +47,7 @@ export const pizzaTheme = {
         borderRadius: "lg",
         transition: "all 0.2s ease",
         cursor: "pointer",
+        fontFamily: "body", // Usando a fonte do corpo para consistência
         _disabled: { opacity: 0.6, cursor: "not-allowed" },
       },
       variants: {
@@ -46,17 +55,22 @@ export const pizzaTheme = {
           primary: {
             bg: "brand.primary",
             color: "white",
-            _hover: { bg: "brand.accent" },
+            _hover: {
+              bg: "#C62828", // Um tom de vermelho um pouco mais escuro para o hover
+            },
           },
-          pizza: {
-            bg: "brand.pizza",
-            color: "white",
-            _hover: { bg: "orange.500" },
+          // Renomeei 'pizza' para 'accent' para um nome mais semântico
+          accent: {
+            bg: "brand.accent",
+            color: "brand.textPrimary",
+            _hover: {
+              bg: "#FFB300", // Um tom de amarelo um pouco mais escuro
+            },
           },
           ghost: {
             bg: "transparent",
-            color: "brand.primary",
-            _hover: { bg: "brand.light" },
+            color: "gray.600",
+            _hover: { bg: "rgba(217, 43, 43, 0.1)" }, // Fundo vermelho bem sutil no hover
           },
         },
         size: {

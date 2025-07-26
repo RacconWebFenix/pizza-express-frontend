@@ -1,118 +1,77 @@
-"use client";
+// /components/dashboard/DashboardStats.tsx
+import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react";
+import { FiDollarSign, FiPackage, FiClipboard } from "react-icons/fi";
+import { ReactElement } from "react";
 
-import {
-  SimpleGrid,
-  Box,
-  Text,
-  Flex,
-  Icon,
-  Heading,
-  VStack,
-} from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { FaPizzaSlice, FaShoppingCart, FaChartLine } from "react-icons/fa";
-import { formatCurrency } from "../../utils/format";
-import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
-
-const MotionBox = motion(Box);
-
-interface StatsCardProps {
+interface StatCardProps {
   title: string;
-  value: string | number;
-  icon: React.ElementType;
-  index: number;
+  stat: string;
+  icon: ReactElement;
+  iconBg: string;
 }
 
-function StatsCard({ title, value, icon, index }: StatsCardProps) {
-  const { ANIMATIONS } = DASHBOARD_CONSTANTS;
-
+function StatCard({ title, stat, icon, iconBg }: StatCardProps) {
   return (
-    <MotionBox
-      initial={ANIMATIONS.FADE_IN.initial}
-      animate={ANIMATIONS.FADE_IN.animate}
-      transition={{ ...ANIMATIONS.FADE_IN.transition, delay: index * 0.1 }}
-      bg="white"
-      p={6}
+    <Flex
+      p={5}
+      bg="brand.surface"
       borderRadius="xl"
-      boxShadow="lg"
-      // ESTILO ATUALIZADO para consistência visual
-      borderTop="4px solid"
-      borderColor="brand.primary"
+      border="1px solid"
+      borderColor="gray.200"
+      alignItems="center"
+      transition="all 0.2s ease-in-out"
       _hover={{
         transform: "translateY(-4px)",
-        boxShadow: "xl",
+        boxShadow: "lg",
       }}
-      _dark={{ bg: "gray.800", borderColor: "brand.secondary" }}
-      style={{ transition: "all 0.2s ease-in-out" }}
     >
-      <Flex align="center" justify="space-between">
-        <VStack align="start">
-          <Text
-            fontSize="md"
-            color="gray.600"
-            fontWeight="medium"
-            _dark={{ color: "gray.400" }}
-          >
-            {title}
-          </Text>
-          <Text
-            fontSize="3xl"
-            fontWeight="bold"
-            color="gray.800"
-            _dark={{ color: "white" }}
-          >
-            {value}
-          </Text>
-        </VStack>
-        <Icon
-          as={icon}
-          boxSize={8}
-          color="gray.300"
-          _dark={{ color: "gray.500" }}
-        />
-      </Flex>
-    </MotionBox>
+      <Box mr={4} p={3} borderRadius="lg" bg={iconBg} color="white">
+        {icon}
+      </Box>
+      <Box>
+        <Text
+          fontFamily="body"
+          fontWeight="medium"
+          // CORREÇÃO: Trocamos 'brand.textSecondary' por um cinza mais escuro e legível
+          color="gray.600"
+        >
+          {title}
+        </Text>
+        <Text
+          fontFamily="heading"
+          fontSize="2xl"
+          fontWeight="bold"
+          // Garantindo que o texto principal seja bem escuro
+          color="brand.textPrimary"
+        >
+          {stat}
+        </Text>
+      </Box>
+    </Flex>
   );
 }
 
-interface DashboardStatsProps {
-  stats: {
-    totalPizzas: number;
-    pedidosHoje: number;
-    receitaTotal: number;
-    pizzasMaisVendidas: string;
-  };
-}
-
-export function DashboardStats({ stats }: DashboardStatsProps) {
-  const { GRID } = DASHBOARD_CONSTANTS;
-
-  const statsData = [
-    { title: "Total de Pizzas", value: stats.totalPizzas, icon: FaPizzaSlice },
-    { title: "Pedidos Hoje", value: stats.pedidosHoje, icon: FaShoppingCart },
-    {
-      title: "Receita Total",
-      value: formatCurrency(stats.receitaTotal),
-      icon: FaChartLine,
-    },
-  ];
-
+export function DashboardStats() {
   return (
-    <Box>
-      <Heading size="lg" color="gray.700" _dark={{ color: "white" }} mb={4}>
-        Estatísticas
-      </Heading>
-      <SimpleGrid columns={GRID.STATS_COLUMNS} gap={GRID.GAP}>
-        {statsData.map((stat, index) => (
-          <StatsCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            icon={stat.icon}
-            index={index}
-          />
-        ))}
-      </SimpleGrid>
-    </Box>
+    <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 5, lg: 8 }}>
+      <StatCard
+        title={"Faturamento do Dia"}
+        stat={"R$ 1.250,00"}
+        icon={<FiDollarSign size={"24px"} />}
+        iconBg="brand.secondary"
+      />
+      <StatCard
+        title={"Pedidos Hoje"}
+        stat={"42"}
+        icon={<FiPackage size={"24px"} />}
+        iconBg="brand.accent"
+      />
+      <StatCard
+        title={"Ticket Médio"}
+        stat={"R$ 29,76"}
+        icon={<FiClipboard size={"24px"} />}
+        iconBg="brand.primary"
+      />
+    </SimpleGrid>
   );
 }

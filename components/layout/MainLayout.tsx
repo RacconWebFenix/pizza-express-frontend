@@ -2,7 +2,7 @@
 
 import { Box } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import Header from "./Header";
+import { Header } from "./Header";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,11 +10,12 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <Box bg="yellow.200"  color="red.800" minH="100vh">
+    <Box>
       <Header />
-      <Box as="main" maxW="1200px" mx="auto" p={4}>
+      <Box as="main" p={4}>
         {children}
       </Box>
+      {/* <Footer /> */}
     </Box>
   );
 }

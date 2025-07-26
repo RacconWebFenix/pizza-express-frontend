@@ -1,201 +1,118 @@
+// /components/layout/Header.tsx
 "use client";
 
 import {
   Box,
   Flex,
   Heading,
-  Button,
-  Icon,
   HStack,
-  VStack,
   IconButton,
+  useDisclosure,
+  Stack,
+  Text,
+  Spacer,
 } from "@chakra-ui/react";
-import { FaPizzaSlice, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../auth/auth-context";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import NavItem from "./NavItem";
-import MobileNavItem from "./MobileNavItem";
 import CartWidget from "../cart/CartWidget";
+import MobileNavItem from "./MobileNavItem";
+import { PizzaButton } from "../ui";
+import Link from "next/link";
 
-export default function Header() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const NAV_ITEMS = [
+  { label: "Cardápio", href: "/cardapio" },
+  { label: "Dashboard", href: "/dashboard", requiresAuth: true },
+];
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
+export function Header() {
+  const { open, onOpen, onClose } = useDisclosure();
+  const { isAuthenticated, user, logout } = useAuth();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
+  const accessibleNavItems = NAV_ITEMS.filter(
+    (item) => !item.requiresAuth || isAuthenticated
+  );
 
   return (
     <Box
-      bg="white"
-      borderBottom="1px"
+      as="header"
+      bg="brand.surface"
+      px={4}
+      boxShadow="md"
+      borderBottomWidth="1px"
       borderColor="gray.200"
-      boxShadow="sm"
       position="sticky"
-      top="0"
-      zIndex="1000"
+      top={0}
+      zIndex="sticky"
     >
-      <Flex
-        maxW="1200px"
-        mx="auto"
-        px={4}
-        py={3}
-        justify="space-between"
-        align="center"
-      >
-        {/* Logo */}
-        <Heading
-          color="blue.800"
-          size="lg"
-          cursor="pointer"
-          onClick={() => router.push("/")}
-        >
-          <Flex align="center" gap={2}>
-            <Icon as={FaPizzaSlice} color="orange.600" />
-            Pizza Express
-          </Flex>
-        </Heading>
-
-        {/* Navegação Desktop */}
-        <HStack gap={4} display={{ base: "none", md: "flex" }}>
-          <NavItem href="/cardapio" label="Cardápio" />
-          <NavItem href="/pedidos" label="Meus Pedidos" />
-          <NavItem href="/dashboard" label="Dashboard" />
+      <Flex h={16} alignItems={"center"}>
+        <HStack gap={8} alignItems={"center"}>
+          <IconButton
+            size={"md"}
+            aria-label={"Abrir Menu"}
+            display={{ md: "none" }}
+            onClick={open ? onClose : onOpen}
+            variant="ghost"
+          >
+            {open ? <FaTimes /> : <FaBars />}
+          </IconButton>
+          <Link href="/" passHref>
+            <Heading size="md" fontFamily="heading" color="brand.primary">
+              Pizza Express
+            </Heading>
+          </Link>
+          <HStack as={"nav"} gap={4} display={{ base: "none", md: "flex" }}>
+            {accessibleNavItems.map((navItem) => (
+              <NavItem
+                key={navItem.label}
+                href={navItem.href}
+                label={navItem.label}
+              />
+            ))}
+          </HStack>
         </HStack>
 
-        {/* User Info & Logout - Desktop */}
-        {user ? (
-         
-          <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
-            <CartWidget />
-            <Box color="gray.800" fontSize="sm">
-              Olá, {user.email.split("@")[0]}!
-            </Box>
-            <Button
-              size="sm"
-              colorScheme="gray"
-              variant="outline"
-              color="gray.700"
-              borderColor="gray.400"
-              _hover={{ bg: "gray.100", borderColor: "blue.800" }}
-              onClick={handleLogout}
-            >
-              <Icon as={FaSignOutAlt} mr={2} />
-              Sair
-            </Button>
-          </Flex>
-        ) : (
-          <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
-            <Button
-              size="sm"
-              variant="solid"
-              bg="blue.800"
-              color="white"
-              _hover={{ bg: "blue.700" }}
-              onClick={() => router.push("/login")}
-            >
-              Entrar 
-            </Button>
-          </Flex>
-        )}
+        <Spacer />
 
-        {/* Mobile Menu Button */}
-        <IconButton
-          display={{ base: "flex", md: "none" }}
-          aria-label="Abrir menu"
-          variant="ghost"
-          color="blue.800"
-          onClick={toggleMobileMenu}
-          size="lg"
-        >
-          <Icon as={isMobileMenuOpen ? FaTimes : FaBars} />
-        </IconButton>
+        <Flex alignItems={"center"} gap={4}>
+          {/* CORREÇÃO: O CartWidget agora está fora da lógica condicional */}
+          <CartWidget />
+
+          {isAuthenticated ? (
+            // Se ESTIVER logado:
+            <>
+              <Text fontWeight="medium" display={{ base: "none", md: "block" }}>
+                {user?.email}
+              </Text>
+              <PizzaButton variant="ghost" size="sm" onClick={logout}>
+                Sair
+              </PizzaButton>
+            </>
+          ) : (
+            // Se NÃO ESTIVER logado:
+            <Link href="/login" passHref>
+              <PizzaButton as="a" variant="primary" size="sm">
+                Entrar
+              </PizzaButton>
+            </Link>
+          )}
+        </Flex>
       </Flex>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <Box
-          display={{ base: "block", md: "none" }}
-          bg="white"
-          borderTop="1px"
-          borderColor="gray.200"
-          py={4}
-          px={4}
-        >
-          <VStack gap={4} align="stretch">
-            {/* Navigation Links */}
-            <MobileNavItem
-              href="/cardapio"
-              label="Cardápio"
-              onClick={closeMobileMenu}
-            />
-            <MobileNavItem
-              href="/pedidos"
-              label="Meus Pedidos"
-              onClick={closeMobileMenu}
-            />
-            <MobileNavItem
-              href="/dashboard"
-              label="Dashboard"
-              onClick={closeMobileMenu}
-            />
-
-            {/* User Info */}
-            {user && (
-              <Box color="gray.800" fontSize="sm" py={2}>
-                Olá, {user.email.split("@")[0]}!
-              </Box>
-            )}
-
-            {/* Login/Logout Button */}
-            {user ? (
-              <>
-                <CartWidget />
-                <Button
-                  colorScheme="gray"
-                  variant="outline"
-                  color="gray.700"
-                  borderColor="gray.400"
-                  _hover={{ bg: "gray.100", borderColor: "blue.800" }}
-                  onClick={() => {
-                    handleLogout();
-                    closeMobileMenu();
-                  }}
-                  justifyContent="flex-start"
-                >
-                  <Icon as={FaSignOutAlt} mr={2} />
-                  Sair
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="solid"
-                bg="blue.800"
-                color="white"
-                _hover={{ bg: "blue.700" }}
-                onClick={() => {
-                  router.push("/login");
-                  closeMobileMenu();
-                }}
-                justifyContent="flex-start"
-              >
-                Entrar
-              </Button>
-            )}
-          </VStack>
+      {open ? (
+        <Box pb={4} display={{ md: "none" }}>
+          <Stack as={"nav"} gap={4}>
+            {accessibleNavItems.map((navItem) => (
+              <MobileNavItem
+                key={navItem.label}
+                href={navItem.href}
+                label={navItem.label}
+                onClick={onClose}
+              />
+            ))}
+          </Stack>
         </Box>
-      )}
+      ) : null}
     </Box>
   );
 }

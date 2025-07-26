@@ -11,10 +11,11 @@
     "prepare": "panda codegen"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.21.0",
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "^3.22.0",
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "framer-motion": "^12.18.1",
+    "@emotion/styled": "^11.14.1",
+    "framer-motion": "^12.23.9",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.525.0",

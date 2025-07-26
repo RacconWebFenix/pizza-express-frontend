@@ -1,30 +1,30 @@
+// /components/dashboard/DashboardActions.tsx
 "use client";
 
-import { SimpleGrid, Box, Icon } from "@chakra-ui/react";
+import { SimpleGrid, Box, Icon, Text, VStack, Heading } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { TbSettingsPlus } from "react-icons/tb";
 import { MdOutlineInventory, MdRestaurantMenu } from "react-icons/md";
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
-import { PizzaButton, PizzaCard, PizzaText } from "../ui";
+import { PizzaButton } from "../ui";
+import { ElementType } from "react";
 
 const MotionBox = motion(Box);
 
+// Props do nosso botão de ação, mantendo o onClick
 interface ActionButtonProps {
   title: string;
   description: string;
-  icon: React.ElementType;
-  variant: "solid" | "outline" | "ghost";
-  className?: string;
+  icon: ElementType;
   onClick: () => void;
   index: number;
 }
 
+// Componente ActionButton refatorado para parecer um card
 function ActionButton({
   title,
   description,
   icon,
-  variant,
-  className = "",
   onClick,
   index,
 }: ActionButtonProps) {
@@ -35,98 +35,95 @@ function ActionButton({
       animate={ANIMATIONS.FADE_IN.animate}
       transition={{ ...ANIMATIONS.FADE_IN.transition, delay: index * 0.1 }}
     >
+      {/* Usamos o seu PizzaButton como base para o card clicável */}
       <PizzaButton
-        variant={variant}
-        size="lg"
+        variant="outline" // Usamos 'outline' para ter uma borda visível
         onClick={onClick}
         w="full"
-        justifyContent="flex-start"
-        gap={6}
-        h="auto"
-        p={5}
-        borderWidth={variant === "outline" ? 2 : 0}
-        borderColor={variant === "outline" ? "brand.pizza" : undefined}
-        aria-label={title}
-        className={className}
+        h="auto" // Altura automática para se ajustar ao conteúdo
+        p={6}
+        borderRadius="xl"
+        borderWidth="1px"
+        borderColor="gray.200"
+        bg="brand.surface" // Fundo branco
+        color="brand.textPrimary" // Cor escura para o texto no estado padrão
         _hover={{
-          transform: "scale(1.03)",
-          boxShadow: "xl",
-          bg: variant === "ghost" ? "brand.light" : undefined,
+          transform: "translateY(-8px)",
+          boxShadow: "lg",
+          color: "brand.primary", // Cor do ícone e texto muda para vermelho
+          borderColor: "brand.primary", // Borda muda para vermelho
+          bg: "brand.surface", // Mantém o fundo branco no hover
         }}
       >
-        <Icon as={icon} boxSize={12} color="brand.primary" />
-        <Box textAlign="left" ml={2} flex="1">
-          <PizzaText variant="heading" fontSize="xl" color="brand.primary">
-            {title}
-          </PizzaText>
-          <PizzaText variant="caption" mt={2} color="brand.medium">
-            {description}
-          </PizzaText>
-        </Box>
+        {/* Usando VStack para alinhar ícone e texto verticalmente */}
+        <VStack spaceX={3}>
+          <Icon as={icon} boxSize={8} />
+          <Box textAlign="center">
+            <Text fontFamily="heading" fontWeight="bold" fontSize="lg">
+              {title}
+            </Text>
+            <Text fontSize="sm" color="gray.500" mt={1}>
+              {description}
+            </Text>
+          </Box>
+        </VStack>
       </PizzaButton>
     </MotionBox>
   );
 }
 
+// Props do componente principal
 interface DashboardActionsProps {
   onNavigateToCardapio: () => void;
   onNavigateToPedidos: () => void;
   onShowCreateForm: () => void;
 }
 
+// Componente principal que monta a seção
 export function DashboardActions({
   onNavigateToCardapio,
   onNavigateToPedidos,
   onShowCreateForm,
 }: DashboardActionsProps) {
-  const { GRID, TITLES } = DASHBOARD_CONSTANTS;
+  const { TITLES } = DASHBOARD_CONSTANTS;
   const actions = [
     {
       title: "Ver Cardápio",
-      description: "Visualizar todas as pizzas disponíveis",
+      description: "Visualizar todas as pizzas",
       icon: MdRestaurantMenu,
-      variant: "solid" as const,
-      className: "button-pizza",
       onClick: onNavigateToCardapio,
     },
     {
       title: "Ver Pedidos",
       description: "Gerenciar pedidos realizados",
       icon: MdOutlineInventory,
-      variant: "solid" as const,
-      className: "button-primary",
       onClick: onNavigateToPedidos,
     },
     {
       title: "Gerenciar Pizzas",
-      description: "Gerenciar pizzas do cardápio",
+      description: "Adicionar ou editar pizzas",
       icon: TbSettingsPlus,
-      variant: "solid" as const,
-      className: "button-primary",
       onClick: onShowCreateForm,
     },
   ];
   return (
-    <Box>
-      <PizzaText variant="heading" fontSize="xl" mb={4}>
+    <Box mt={10}>
+      <Heading fontFamily="heading" as="h2" size="lg" mb={4}>
         {TITLES.QUICK_ACTIONS}
-      </PizzaText>
-      <PizzaCard variant="pizza" p={6}>
-        <SimpleGrid columns={GRID.ACTIONS_COLUMNS} gap={GRID.GAP}>
-          {actions.map((action, index) => (
-            <ActionButton
-              key={action.title}
-              title={action.title}
-              description={action.description}
-              icon={action.icon}
-              variant={action.variant}
-              className={action.className}
-              onClick={action.onClick}
-              index={index}
-            />
-          ))}
-        </SimpleGrid>
-      </PizzaCard>
+      </Heading>
+      {/* Removemos o PizzaCard, já que cada botão agora é um card */}
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+        {actions.map((action, index) => (
+          <ActionButton
+            key={action.title}
+            title={action.title}
+            description={action.description}
+            icon={action.icon}
+            onClick={action.onClick}
+            index={index}
+          />
+        ))}
+      </SimpleGrid>
     </Box>
   );
 }

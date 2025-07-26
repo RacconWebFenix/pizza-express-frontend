@@ -1,12 +1,9 @@
+// /components/dashboard/DashboardHeader.tsx
 "use client";
 
-import {
-  Flex,
-  Heading,
-  Text,
-  Button, // O Avatar foi removido das importações
-} from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import { useAuth } from "../auth/auth-context";
+import { PizzaButton } from "../ui"; // Vamos usar nosso botão padrão
 
 export function DashboardHeader() {
   const { user, logout } = useAuth();
@@ -17,26 +14,38 @@ export function DashboardHeader() {
       align="center"
       justify="space-between"
       p={4}
-      bg="white"
+ 
+      bg="brand.surface" // Fundo branco
+      borderColor="gray.200"
+ 
       boxShadow="md"
       borderBottomWidth="1px"
-      borderColor="gray.200"
-      _dark={{ bg: "gray.800", borderColor: "gray.700" }}
       position="sticky"
       top={0}
       zIndex="sticky"
     >
-      <Heading size="md" color="brand.primary">
+      <Heading
+        as="h1"
+        size="md"
+        // Aplicando a fonte e a cor primária do tema
+        fontFamily="heading"
+        color="brand.primary" // Vermelho para destaque
+      >
         Pizza Express Dashboard
       </Heading>
       <Flex align="center" gap={4}>
-        {/* O Avatar foi removido e o email do usuário é exibido no lugar */}
-        <Text fontWeight="medium" display={{ base: "none", md: "block" }}>
+        <Text
+          fontWeight="medium"
+          // Cor de texto principal para o email
+          color="brand.textPrimary"
+          display={{ base: "none", md: "block" }}
+        >
           {user?.email}
         </Text>
-        <Button colorScheme="red" size="sm" variant="outline" onClick={logout}>
+        {/* Usando o PizzaButton para consistência visual */}
+        <PizzaButton variant="ghost" size="sm" onClick={logout}>
           Sair
-        </Button>
+        </PizzaButton>
       </Flex>
     </Flex>
   );
