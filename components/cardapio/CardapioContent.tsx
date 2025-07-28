@@ -28,7 +28,7 @@ export function CardapioContent({
 
   return (
     <Box
-      bg={LAYOUT.BACKGROUND_COLOR}
+      bgGradient="linear(to-br, yellow.100, orange.100)"
       minH={LAYOUT.MIN_HEIGHT}
       p={LAYOUT.PADDING}
     >

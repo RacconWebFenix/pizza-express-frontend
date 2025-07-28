@@ -16,13 +16,15 @@ export default function NavItem({ href, label }: NavItemProps) {
 
   return (
     <Button
-      variant={isActive ? "solid" : "ghost"}
-      colorScheme={isActive ? "blue" : "gray"}
+      variant="ghost"
+      colorScheme="whiteAlpha"
+      color={isActive ? "white" : "whiteAlpha.800"}
+      fontWeight={isActive ? "bold" : "normal"}
       size="sm"
       onClick={() => router.push(href)}
       _hover={{
-        bg: isActive ? "blue.800" : "gray.200",
-        color: isActive ? "white" : "gray.800",
+        bg: "whiteAlpha.200",
+        color: "white",
       }}
     >
       {label}

@@ -64,16 +64,17 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
       whileHover={{ scale: 1.03, y: -5 }}
     >
       <Box
-        bg="white"
+        bg="gray.900"
+        color="white"
         borderRadius="xl"
         boxShadow="lg"
         overflow="hidden"
-        border="2px"
-        borderColor="gray.100"
-        transition="all 0.2s"
+        border="1px"
+        borderColor="gray.700"
+        transition="all 0.3s"
         _hover={{
-          borderColor: "brand.pizza",
-          boxShadow: "xl",
+          borderColor: "orange.500",
+          boxShadow: "outline",
         }}
       >
         {/* Imagem da Pizza */}
@@ -98,7 +99,7 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
               position="absolute"
               top={3}
               right={3}
-              bg="brand.success"
+              bg="orange.500"
               color="white"
               px={3}
               py={1}
@@ -113,8 +114,13 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
         </AspectRatio>
 
         {/* Header da Pizza */}
-        <Box bg="brand.light" p={4} borderBottom="1px" borderColor="gray.200">
-          <Heading size="lg" color="brand.primary" textAlign="center">
+        <Box
+          bg="blackAlpha.400"
+          p={4}
+          borderBottom="1px"
+          borderColor="gray.700"
+        >
+          <Heading size="lg" color="whiteAlpha.900" textAlign="center">
             {pizza.nome}
           </Heading>
         </Box>
@@ -122,7 +128,7 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
         {/* Conteúdo */}
         <VStack p={6} gap={4} align="stretch">
           <Text
-            color="brand.medium"
+            color="whiteAlpha.700"
             fontSize="md"
             textAlign="center"
             minH="60px"
@@ -135,11 +141,10 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
           </Text>
 
           <Button
-            bg="brand.pizza"
-            color="white"
+            colorScheme="orange"
             size="lg"
             w="full"
-            _hover={{ bg: "brand.accent", transform: "translateY(-1px)" }}
+            _hover={{ bg: "orange.600" }}
             transition="all 0.2s"
             onClick={handleAddToCart}
           >

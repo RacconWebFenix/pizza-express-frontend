@@ -36,11 +36,13 @@ export function Header() {
   return (
     <Box
       as="header"
-      bg="brand.surface"
+      bg="gray.800"
+      bgGradient="linear(to-br, gray.800, black)"
+      color="white"
       px={4}
-      boxShadow="md"
+      boxShadow="lg"
       borderBottomWidth="1px"
-      borderColor="gray.200"
+      borderColor="gray.700"
       position="sticky"
       top={0}
       zIndex="sticky"
@@ -53,11 +55,12 @@ export function Header() {
             display={{ md: "none" }}
             onClick={open ? onClose : onOpen}
             variant="ghost"
+            _hover={{ bg: "whiteAlpha.200" }}
           >
-            {open ? <FaTimes /> : <FaBars />}
+            {open ? <FaTimes color="white" /> : <FaBars color="white" />}
           </IconButton>
           <Link href="/" passHref>
-            <Heading size="md" fontFamily="heading" color="brand.primary">
+            <Heading size="md" fontFamily="heading" color="whiteAlpha.900">
               Pizza Express
             </Heading>
           </Link>
@@ -75,23 +78,32 @@ export function Header() {
         <Spacer />
 
         <Flex alignItems={"center"} gap={4}>
-          {/* CORREÇÃO: O CartWidget agora está fora da lógica condicional */}
           <CartWidget />
 
           {isAuthenticated ? (
             // Se ESTIVER logado:
             <>
-              <Text fontWeight="medium" display={{ base: "none", md: "block" }}>
+              <Text
+                fontWeight="medium"
+                display={{ base: "none", md: "block" }}
+                color="whiteAlpha.800"
+              >
                 {user?.email}
               </Text>
-              <PizzaButton variant="ghost" size="sm" onClick={logout}>
+              <PizzaButton
+                variant="outline"
+                colorScheme="whiteAlpha"
+                size="sm"
+                onClick={logout}
+                _hover={{ bg: "whiteAlpha.200" }}
+              >
                 Sair
               </PizzaButton>
             </>
           ) : (
             // Se NÃO ESTIVER logado:
             <Link href="/login" passHref>
-              <PizzaButton as="a" variant="primary" size="sm">
+              <PizzaButton as="a" colorScheme="orange" size="sm">
                 Entrar
               </PizzaButton>
             </Link>
