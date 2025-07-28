@@ -10,9 +10,9 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <Box>
+    <Box bg="gray.900" color="white">
       <Header />
-      <Box as="main" p={4}>
+      <Box as="main" minH="calc(100vh - 64px)" p={{ base: 4, md: 8 }}>
         {children}
       </Box>
       {/* <Footer /> */}

@@ -2,7 +2,6 @@
 
 import { SimpleGrid, Box, Text } from "@chakra-ui/react";
 import { PedidoCard } from "./PedidoCard";
-import { PEDIDOS_CONSTANTS } from "../../constants/pedidos";
 import type { StatusConfig } from "../../hooks/usePedidos";
 import type { Pedido } from "../../types/pedidos";
 
@@ -12,20 +11,18 @@ interface PedidosGridProps {
 }
 
 export function PedidosGrid({ pedidos, getStatusConfig }: PedidosGridProps) {
-  const { MESSAGES, GRID } = PEDIDOS_CONSTANTS;
-
   if (pedidos.length === 0) {
     return (
       <Box textAlign="center" py={12}>
-        <Text color="brand.medium" fontSize="lg">
-          {MESSAGES.NO_ORDERS}
+        <Text color="gray.400" fontSize="lg">
+          Nenhum pedido encontrado para este status.
         </Text>
       </Box>
     );
   }
 
   return (
-    <SimpleGrid columns={GRID.COLUMNS} gap={GRID.GAP}>
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={{ base: 4, md: 6 }}>
       {pedidos.map((pedido, index) => (
         <PedidoCard
           key={pedido.id}

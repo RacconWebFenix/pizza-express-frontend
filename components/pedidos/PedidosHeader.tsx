@@ -2,9 +2,15 @@
 
 import { Box, Heading, Text, Flex, Button } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { PEDIDOS_CONSTANTS } from "../../constants/pedidos";
 
 const MotionBox = motion(Box);
+
+const FILTERS: { label: string; value: string }[] = [
+  { label: "Todos", value: "todos" },
+  { label: "Preparando", value: "preparando" },
+  { label: "Entregue", value: "entregue" },
+  { label: "Cancelado", value: "cancelado" },
+];
 
 interface PedidosHeaderProps {
   totalPedidos: number;
@@ -17,26 +23,24 @@ export function PedidosHeader({
   selectedStatus,
   onStatusFilter,
 }: PedidosHeaderProps) {
-  const { TITLES, FILTERS, ANIMATIONS } = PEDIDOS_CONSTANTS;
-
   return (
     <MotionBox
-      initial={ANIMATIONS.FADE_IN.initial}
-      animate={ANIMATIONS.FADE_IN.animate}
-      transition={ANIMATIONS.FADE_IN.transition}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <Box textAlign="center" mb={8}>
         <Heading
-          fontSize={{ base: "2xl", md: "4xl" }}
-          color="brand.dark"
+          fontSize={{ base: "3xl", md: "4xl" }}
+          color="whiteAlpha.900"
           mb={2}
           fontWeight="bold"
         >
-          {TITLES.MAIN}
+          Meus Pedidos
         </Heading>
         <Text
           fontSize={{ base: "md", md: "lg" }}
-          color="brand.medium"
+          color="whiteAlpha.700"
           fontWeight="medium"
         >
           Total de {totalPedidos} pedidos
@@ -44,25 +48,26 @@ export function PedidosHeader({
       </Box>
 
       <Box
-        bg="white"
+        bg="gray.800"
         p={6}
         borderRadius="xl"
-        boxShadow="md"
-        border="2px solid"
-        borderColor="brand.pizza"
+        boxShadow="lg"
+        border="1px solid"
+        borderColor="gray.700"
       >
-        <Text fontSize="lg" fontWeight="bold" color="brand.dark" mb={4}>
-          {TITLES.FILTERS}
+        <Text fontSize="lg" fontWeight="bold" color="whiteAlpha.900" mb={4}>
+          Filtrar por Status
         </Text>
-        <Flex gap={2} wrap="wrap" justify="center">
+        <Flex gap={3} wrap="wrap" justify="center">
           {FILTERS.map((filter) => (
             <Button
               key={filter.value}
               onClick={() => onStatusFilter(filter.value)}
-              colorScheme={selectedStatus === filter.value ? "blue" : "gray"}
+              colorScheme={selectedStatus === filter.value ? "orange" : "gray"}
               variant={selectedStatus === filter.value ? "solid" : "outline"}
               size="sm"
-              borderRadius="lg"
+              borderRadius="full"
+              px={4}
             >
               {filter.label}
             </Button>

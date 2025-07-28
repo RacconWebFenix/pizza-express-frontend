@@ -22,6 +22,7 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { label: "Cardápio", href: "/cardapio" },
+  { label: "Meus Pedidos", href: "/pedidos", requiresAuth: true },
   { label: "Dashboard", href: "/dashboard", requiresAuth: true },
 ];
 

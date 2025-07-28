@@ -10,7 +10,7 @@ export function DashboardContainer() {
   const dashboardProps = useDashboard();
 
   return (
-    <Box>
+    <Box bg="gray.900" minH="100vh" py={{ base: 6, md: 12 }}>
       {/* Removemos o DashboardHeader daqui */}
       <DashboardContent {...dashboardProps} />
     </Box>

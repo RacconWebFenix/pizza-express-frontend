@@ -4,18 +4,26 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "../constants";
 import { Pizza } from "../types"; // Importe o tipo Pizza
+import { formatCurrency } from "@/utils/format";
 
-// Interface para as estatísticas
-interface DashboardStats {
+// Interface para as estatísticas do backend
+interface DashboardStatsData {
   totalPizzas: number;
   pedidosHoje: number;
   receitaTotal: number;
   pizzasMaisVendidas: string;
 }
 
+// Interface para as estatísticas formatadas para a UI
+interface FormattedDashboardStats {
+  faturamentoDia: string;
+  pedidosHoje: string;
+  ticketMedio: string;
+}
+
 // Interface para o retorno completo do hook
 export interface UseDashboardReturn {
-  stats: DashboardStats;
+  stats: FormattedDashboardStats; // <<< Alterado para o tipo formatado
   isGerenciarView: boolean;
   isLoading: boolean;
   error: string | null;
@@ -42,7 +50,7 @@ export const useDashboard = (): UseDashboardReturn => {
 
   // --- Estados existentes ---
   const [isGerenciarView, setIsGerenciarView] = useState(false);
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats, setStats] = useState<DashboardStatsData>({
     totalPizzas: 0,
     pedidosHoje: 0,
     receitaTotal: 0,
@@ -58,7 +66,7 @@ export const useDashboard = (): UseDashboardReturn => {
     try {
       setIsLoading(true);
       setError(null);
-      const mockStats = {
+      const mockStats: DashboardStatsData = {
         totalPizzas: 12,
         pedidosHoje: 8,
         receitaTotal: 450.5,
@@ -85,6 +93,16 @@ export const useDashboard = (): UseDashboardReturn => {
     fetchDashboardStats();
   }, [fetchDashboardStats]);
 
+  // Formata os dados para a UI
+  const formattedStats: FormattedDashboardStats = {
+    faturamentoDia: formatCurrency(stats.receitaTotal),
+    pedidosHoje: stats.pedidosHoje.toString(),
+    ticketMedio:
+      stats.pedidosHoje > 0
+        ? formatCurrency(stats.receitaTotal / stats.pedidosHoje)
+        : formatCurrency(0),
+  };
+
   // --- Handlers existentes ---
   const handleNavigateToCardapio = useCallback(
     () => router.push(ROUTES.APP.CARDAPIO),
@@ -103,24 +121,24 @@ export const useDashboard = (): UseDashboardReturn => {
     []
   );
 
-  const handleOpenFormModal = useCallback((pizza?: Pizza) => {
-    setPizzaToEdit(pizza || null);
+  const handleOpenFormModal = (pizza: Pizza | null = null) => {
+    setPizzaToEdit(pizza);
     setIsFormModalOpen(true);
-  }, []);
+  };
 
-  const handleCloseFormModal = useCallback(() => {
+  const handleCloseFormModal = () => {
     setIsFormModalOpen(false);
     setPizzaToEdit(null);
-  }, []);
+  };
 
-  const handlePizzaSaved = useCallback(() => {
+  const handlePizzaSaved = () => {
     handleCloseFormModal();
-
-    router.refresh();
-  }, [handleCloseFormModal, router]);
+    // Idealmente, você deveria ter uma função para refazer o fetch das pizzas
+    // Por enquanto, apenas fechamos o modal.
+  };
 
   return {
-    stats,
+    stats: formattedStats, // <<< Retorna os dados formatados
     isGerenciarView,
     isLoading,
     error,
@@ -129,12 +147,10 @@ export const useDashboard = (): UseDashboardReturn => {
     handleShowGerenciarCardapio,
     handleHideGerenciarCardapio,
     refetch: fetchDashboardStats,
-
     isFormModalOpen,
     pizzaToEdit,
-
     handleOpenFormModal,
     handleCloseFormModal,
-    handlePizzaSaved, // Nome novo e mais claro!
+    handlePizzaSaved,
   };
 };

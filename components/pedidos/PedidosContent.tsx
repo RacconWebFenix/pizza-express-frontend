@@ -3,7 +3,6 @@
 import { Box, VStack } from "@chakra-ui/react";
 import { PedidosHeader } from "./PedidosHeader";
 import { PedidosGrid } from "./PedidosGrid";
-import { PEDIDOS_CONSTANTS } from "../../constants/pedidos";
 import type { StatusConfig } from "../../hooks/usePedidos";
 import type { Pedido } from "../../types/pedidos";
 
@@ -22,19 +21,13 @@ export function PedidosContent({
   getStatusConfig,
   onStatusFilter,
 }: PedidosContentProps) {
-  const { LAYOUT } = PEDIDOS_CONSTANTS;
-
   return (
-    <Box
-      bg={LAYOUT.BACKGROUND_COLOR}
-      minH={LAYOUT.MIN_HEIGHT}
-      p={LAYOUT.PADDING}
-    >
+    <Box bg="gray.900" minH="100vh" p={{ base: 4, md: 8 }}>
       <VStack
-        gap={LAYOUT.GAP}
+        gap={{ base: 6, md: 8 }}
         align="stretch"
         w="full"
-        maxW={LAYOUT.MAX_WIDTH}
+        maxW="1200px"
         mx="auto"
       >
         <PedidosHeader
