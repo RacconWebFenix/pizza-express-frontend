@@ -18,4 +18,3 @@ export interface Pedido {
   status: "novo" | "em preparo" | "entregue" | "cancelado";
   horario: string;
 }
-
