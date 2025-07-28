@@ -10,39 +10,43 @@ interface StatCardProps {
   iconBg: string;
 }
 
+interface DashboardStatsProps {
+  stats: {
+    faturamentoDia: string;
+    pedidosHoje: string;
+    ticketMedio: string;
+  };
+}
+
 function StatCard({ title, stat, icon, iconBg }: StatCardProps) {
   return (
     <Flex
       p={5}
-      bg="brand.surface"
+      bg="gray.900"
+      color="white"
       borderRadius="xl"
       border="1px solid"
-      borderColor="gray.200"
+      borderColor="gray.700"
       alignItems="center"
       transition="all 0.2s ease-in-out"
       _hover={{
         transform: "translateY(-4px)",
         boxShadow: "lg",
+        borderColor: "gray.600",
       }}
     >
       <Box mr={4} p={3} borderRadius="lg" bg={iconBg} color="white">
         {icon}
       </Box>
       <Box>
-        <Text
-          fontFamily="body"
-          fontWeight="medium"
-          // CORREÇÃO: Trocamos 'brand.textSecondary' por um cinza mais escuro e legível
-          color="gray.600"
-        >
+        <Text fontFamily="body" fontWeight="medium" color="whiteAlpha.700">
           {title}
         </Text>
         <Text
           fontFamily="heading"
           fontSize="2xl"
           fontWeight="bold"
-          // Garantindo que o texto principal seja bem escuro
-          color="brand.textPrimary"
+          color="whiteAlpha.900"
         >
           {stat}
         </Text>
@@ -51,26 +55,26 @@ function StatCard({ title, stat, icon, iconBg }: StatCardProps) {
   );
 }
 
-export function DashboardStats() {
+export function DashboardStats({ stats }: DashboardStatsProps) {
   return (
     <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 5, lg: 8 }}>
       <StatCard
         title={"Faturamento do Dia"}
-        stat={"R$ 1.250,00"}
+        stat={stats.faturamentoDia}
         icon={<FiDollarSign size={"24px"} />}
-        iconBg="brand.secondary"
+        iconBg="green.500"
       />
       <StatCard
         title={"Pedidos Hoje"}
-        stat={"42"}
+        stat={stats.pedidosHoje}
         icon={<FiPackage size={"24px"} />}
-        iconBg="brand.accent"
+        iconBg="blue.500"
       />
       <StatCard
         title={"Ticket Médio"}
-        stat={"R$ 29,76"}
+        stat={stats.ticketMedio}
         icon={<FiClipboard size={"24px"} />}
-        iconBg="brand.primary"
+        iconBg="orange.500"
       />
     </SimpleGrid>
   );

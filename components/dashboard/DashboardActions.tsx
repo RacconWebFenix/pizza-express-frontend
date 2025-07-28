@@ -44,25 +44,25 @@ function ActionButton({
         p={6}
         borderRadius="xl"
         borderWidth="1px"
-        borderColor="gray.200"
-        bg="brand.surface" // Fundo branco
-        color="brand.textPrimary" // Cor escura para o texto no estado padrão
+        borderColor="gray.700"
+        bg="gray.900" // Fundo escuro
+        color="whiteAlpha.800" // Cor clara para o texto
         _hover={{
           transform: "translateY(-8px)",
           boxShadow: "lg",
-          color: "brand.primary", // Cor do ícone e texto muda para vermelho
-          borderColor: "brand.primary", // Borda muda para vermelho
-          bg: "brand.surface", // Mantém o fundo branco no hover
+          color: "orange.400", // Cor do ícone e texto muda para laranja
+          borderColor: "orange.400", // Borda muda para laranja
+          bg: "gray.800", // Fundo levemente mais claro no hover
         }}
       >
         {/* Usando VStack para alinhar ícone e texto verticalmente */}
-        <VStack spaceX={3}>
+        <VStack spacing={3}>
           <Icon as={icon} boxSize={8} />
           <Box textAlign="center">
             <Text fontFamily="heading" fontWeight="bold" fontSize="lg">
               {title}
             </Text>
-            <Text fontSize="sm" color="gray.500" mt={1}>
+            <Text fontSize="sm" color="whiteAlpha.600" mt={1}>
               {description}
             </Text>
           </Box>
@@ -100,28 +100,21 @@ export function DashboardActions({
       onClick: onNavigateToPedidos,
     },
     {
-      title: "Gerenciar Pizzas",
+      title: "Gerenciar Cardápio",
       description: "Adicionar ou editar pizzas",
       icon: TbSettingsPlus,
       onClick: onShowCreateForm,
     },
   ];
+
   return (
-    <Box mt={10}>
-      <Heading fontFamily="heading" as="h2" size="lg" mb={4}>
+    <Box>
+      <Heading size="lg" mb={6} color="gray.700">
         {TITLES.QUICK_ACTIONS}
       </Heading>
-      {/* Removemos o PizzaCard, já que cada botão agora é um card */}
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
         {actions.map((action, index) => (
-          <ActionButton
-            key={action.title}
-            title={action.title}
-            description={action.description}
-            icon={action.icon}
-            onClick={action.onClick}
-            index={index}
-          />
+          <ActionButton key={action.title} {...action} index={index} />
         ))}
       </SimpleGrid>
     </Box>
