@@ -56,7 +56,7 @@ function ActionButton({
         }}
       >
         {/* Usando VStack para alinhar ícone e texto verticalmente */}
-        <VStack spacing={3}>
+        <VStack gap={3}>
           <Icon as={icon} boxSize={8} />
           <Box textAlign="center">
             <Text fontFamily="heading" fontWeight="bold" fontSize="lg">
