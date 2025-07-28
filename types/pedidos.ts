@@ -1,3 +1,5 @@
+import { Pizza } from "./pizza";
+
 export interface Pedido {
   id: string;
   cliente: {
@@ -11,9 +13,9 @@ export interface Pedido {
     updatedAt?: string;
   };
 
-  pizzas: string[];
+  pizzas: Pizza[];
   total: number;
-  status: "NOVO" | "EM_PREPARO" | "PRONTO_PARA_ENTREGA" | "FINALIZADO";
+  status: "novo" | "em preparo" | "entregue" | "cancelado";
   horario: string;
 }
 
