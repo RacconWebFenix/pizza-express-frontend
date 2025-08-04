@@ -10,6 +10,7 @@ interface UseLoginReturn {
   handleEmailChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
+  handleGoogleLogin: () => void;
   clearError: () => void;
 }
 
@@ -38,6 +39,12 @@ export const useLogin = (): UseLoginReturn => {
 
   const clearError = useCallback(() => {
     setError("");
+  }, []);
+
+  const handleGoogleLogin = useCallback(() => {
+    // Redireciona para a URL do Google OAuth
+    window.location.href =
+      "https://pizza-express-backend-1.onrender.com/auth/google";
   }, []);
 
   const handleSubmit = useCallback(
@@ -84,6 +91,7 @@ export const useLogin = (): UseLoginReturn => {
     handleEmailChange,
     handlePasswordChange,
     handleSubmit,
+    handleGoogleLogin,
     clearError,
   };
 };
