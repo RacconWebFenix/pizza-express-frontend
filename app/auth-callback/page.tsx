@@ -1,12 +1,13 @@
 "use client";
+export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Box, VStack, Heading, Text } from "@chakra-ui/react";
 import { PizzaSpinner } from "../../components/ui";
 import { useAuth } from "../../components/auth/auth-context";
 
-const AuthCallbackPage = () => {
+const AuthCallbackContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { login } = useAuth();
@@ -139,6 +140,44 @@ const AuthCallbackPage = () => {
         {renderContent()}
       </Box>
     </Box>
+  );
+};
+
+const AuthCallbackPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <Box
+          minH="100vh"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          bg="gray.50"
+          _dark={{ bg: "gray.900" }}
+        >
+          <Box
+            bg="white"
+            p={8}
+            borderRadius="xl"
+            boxShadow="xl"
+            w="full"
+            maxW="420px"
+            borderTop="4px solid"
+            borderColor="brand.primary"
+            _dark={{ bg: "gray.800", borderColor: "brand.secondary" }}
+          >
+            <VStack gap={6} py={8}>
+              <PizzaSpinner size={48} />
+              <Heading size="lg" color="brand.primary">
+                Carregando...
+              </Heading>
+            </VStack>
+          </Box>
+        </Box>
+      }
+    >
+      <AuthCallbackContent />
+    </Suspense>
   );
 };
 
