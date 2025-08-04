@@ -19,22 +19,34 @@ const AuthCallbackContent = () => {
   useEffect(() => {
     const processCallback = async () => {
       try {
+        console.log("🔍 Auth Callback - Current URL:", window.location.href);
+        console.log("🔍 Auth Callback - SearchParams:", window.location.search);
+
         // Verifica se há um token nos parâmetros da URL
         const token = searchParams.get("token");
         const error = searchParams.get("error");
 
+        console.log(
+          "🔍 Auth Callback - Token:",
+          token ? "Token encontrado" : "Token não encontrado"
+        );
+        console.log("🔍 Auth Callback - Error:", error);
+
         if (error) {
+          console.error("❌ Auth Callback - Erro recebido:", error);
           setStatus("error");
           setErrorMessage(decodeURIComponent(error));
           return;
         }
 
         if (!token) {
+          console.error("❌ Auth Callback - Token não encontrado na URL");
           setStatus("error");
           setErrorMessage("Token não encontrado na URL");
           return;
         }
 
+        console.log("✅ Auth Callback - Tentando fazer login com token");
         // Tenta fazer login com o token
         const loginSuccess = await login(token);
 

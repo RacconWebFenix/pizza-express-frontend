@@ -42,9 +42,14 @@ export const useLogin = (): UseLoginReturn => {
   }, []);
 
   const handleGoogleLogin = useCallback(() => {
-    // Redireciona para a URL do Google OAuth
-    window.location.href =
+    // Usa a variável de ambiente ou fallback para a URL hardcoded
+    const googleAuthUrl =
+      process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL ||
+      process.env.NEXT_PUBLIC_API_URL + "/auth/google" ||
       "https://pizza-express-backend-1.onrender.com/auth/google";
+
+    console.log("🔍 Redirecting to Google OAuth:", googleAuthUrl);
+    window.location.href = googleAuthUrl;
   }, []);
 
   const handleSubmit = useCallback(
