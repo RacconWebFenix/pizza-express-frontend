@@ -6,7 +6,8 @@ import type { NextRequest } from "next/server";
  */
 async function validateTokenWithBackend(token: string): Promise<boolean> {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
     if (!API_URL) return false;
 
     const response = await fetch(`${API_URL}/me`, {
@@ -52,16 +53,22 @@ export async function middleware(request: NextRequest) {
     "/register",
     "/access-denied",
     "/welcome",
+    "/auth-callback",
   ];
 
   if (publicPages.includes(pathname)) {
-    console.log(`[MIDDLEWARE] Public page accessed: ${pathname}`);
+
+
+    // Permitir acesso direto ao auth-callback
+    if (pathname === "/auth-callback") {
+      console.log(`[MIDDLEWARE] Allowing access to auth-callback`);
+      return NextResponse.next();
+    }
+
     // Se usuário está logado e tenta acessar login/register, redirecionar para dashboard
     const token = request.cookies.get("authToken")?.value;
     if (token && (pathname === "/login" || pathname === "/register")) {
-      console.log(
-        `[MIDDLEWARE] User with token trying to access ${pathname}, validating...`
-      );
+     
       const isValid = await validateTokenWithBackend(token);
       if (isValid) {
         console.log(`[MIDDLEWARE] Valid token, redirecting to /cardapio`);
@@ -75,32 +82,26 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Verificar se existe token
+
   const token = request.cookies.get("authToken")?.value;
-  console.log(
-    `[MIDDLEWARE] Protected route ${pathname}, token exists: ${!!token}`
-  );
+  
 
   if (!token) {
-    console.log(`[MIDDLEWARE] No token found, redirecting to /login`);
+   
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Validar token com o backend
-  console.log(`[MIDDLEWARE] Validating token for protected route: ${pathname}`);
+ 
   const isValidToken = await validateTokenWithBackend(token);
 
   if (!isValidToken) {
-    console.log(
-      `[MIDDLEWARE] Invalid token, removing cookie and redirecting to /login`
-    );
-    // Token inválido - remover cookie e redirecionar
+   
     const response = NextResponse.redirect(new URL("/login", request.url));
     response.cookies.delete("authToken");
     return response;
   }
 
-  console.log(`[MIDDLEWARE] Valid token, allowing access to ${pathname}`);
+  
   return NextResponse.next();
 }
 

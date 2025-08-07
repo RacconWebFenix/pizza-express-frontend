@@ -89,7 +89,7 @@ export function Header() {
                 display={{ base: "none", md: "block" }}
                 color="whiteAlpha.800"
               >
-                {user?.email}
+                {user?.nome}
               </Text>
               <PizzaButton
                 variant="outline"

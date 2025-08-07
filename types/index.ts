@@ -1,9 +1,7 @@
-
 // Types para upload de imagem
 export interface UploadImageData {
   imagem: File;
 }
-
 
 // Types para Usuário
 export interface User {
@@ -58,3 +56,6 @@ export * from "./pedidos";
 export * from "./cart";
 
 export * from "./pizza";
+
+// Exporta todos os tipos relacionados a usuarios
+export * from "./usuario";

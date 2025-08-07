@@ -2,124 +2,102 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "../constants";
-import { Pizza } from "../types"; // Importe o tipo Pizza
+
+// Tipos e serviços que sabemos que existem
+
+// Utilitários e constantes do seu projeto
 import { formatCurrency } from "@/utils/format";
+import { ROUTES } from "@/constants";
+import { Pizza } from "@/types";
+import { getPedidos } from "@/services/pedido-service";
+import { toaster } from "@/components/ui/toaster";
 
-// Interface para as estatísticas do backend
-interface DashboardStatsData {
-  totalPizzas: number;
-  pedidosHoje: number;
-  receitaTotal: number;
-  pizzasMaisVendidas: string;
-}
-
-// Interface para as estatísticas formatadas para a UI
+// Interfaces para as estatísticas
 interface FormattedDashboardStats {
   faturamentoDia: string;
   pedidosHoje: string;
   ticketMedio: string;
 }
 
-// Interface para o retorno completo do hook
-export interface UseDashboardReturn {
-  stats: FormattedDashboardStats; // <<< Alterado para o tipo formatado
-  isGerenciarView: boolean;
-  isLoading: boolean;
-  error: string | null;
-  handleNavigateToCardapio: () => void;
-  handleNavigateToPedidos: () => void;
-  handleShowGerenciarCardapio: () => void;
-  handleHideGerenciarCardapio: () => void;
-  refetch: () => Promise<void>;
-  // --- Novas propriedades para os modais ---
-  isFormModalOpen: boolean;
-  pizzaToEdit: Pizza | null;
-
-  handleOpenFormModal: (pizza?: Pizza) => void;
-  handleCloseFormModal: () => void;
-  handlePizzaSaved: () => void;
-}
-
 /**
- * Hook com a responsabilidade única (SRP) de gerenciar toda a lógica
- * de estado e ações da página de dashboard.
+ * Hook para gerenciar o estado e a lógica da página de Dashboard.
+ * Versão corrigida para buscar dados reais e calcular estatísticas.
  */
-export const useDashboard = (): UseDashboardReturn => {
+export const useDashboard = () => {
   const router = useRouter();
 
-  // --- Estados existentes ---
-  const [isGerenciarView, setIsGerenciarView] = useState(false);
-  const [stats, setStats] = useState<DashboardStatsData>({
-    totalPizzas: 0,
-    pedidosHoje: 0,
-    receitaTotal: 0,
-    pizzasMaisVendidas: "Carregando...",
-  });
+  // --- SEUS ESTADOS DE UI (INTOCADOS) ---
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [isGerenciarView, setIsGerenciarView] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [pizzaToEdit, setPizzaToEdit] = useState<Pizza | null>(null);
+  const [stats, setStats] = useState<FormattedDashboardStats>({
+    faturamentoDia: formatCurrency(0),
+    pedidosHoje: "0",
+    ticketMedio: formatCurrency(0),
+  });
 
-  const fetchDashboardStats = useCallback(async () => {
+  // --- PASSO 1 e 2: NOVA FUNÇÃO PARA BUSCAR DADOS E CALCULAR STATS ---
+  const fetchAndCalculateStats = useCallback(async () => {
     try {
       setIsLoading(true);
-      setError(null);
-      const mockStats: DashboardStatsData = {
-        totalPizzas: 12,
-        pedidosHoje: 8,
-        receitaTotal: 450.5,
-        pizzasMaisVendidas: "Margherita",
-      };
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      setStats(mockStats);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Erro ao carregar estatísticas"
+      // Busca a fonte de dados correta
+      const todosOsPedidos = await getPedidos();
+
+      // Calcula as estatísticas
+      const hoje = new Date().toISOString().split("T")[0];
+      const pedidosDeHoje = todosOsPedidos.filter(
+        (p) => p.criadoEm.split("T")[0] === hoje
       );
+
+      const faturamentoDoDia = pedidosDeHoje.reduce((total, pedido) => {
+        const valorDoPedido = pedido.pizzas.reduce(
+          (soma, pizza) => soma + pizza.preco,
+          0
+        );
+        return total + valorDoPedido;
+      }, 0);
+
+      const numeroDePedidosHoje = pedidosDeHoje.length;
+      const ticketMedio =
+        numeroDePedidosHoje > 0 ? faturamentoDoDia / numeroDePedidosHoje : 0;
+
+      // Atualiza o estado com os dados calculados
       setStats({
-        totalPizzas: 0,
-        pedidosHoje: 0,
-        receitaTotal: 0,
-        pizzasMaisVendidas: "Não disponível",
+        faturamentoDia: formatCurrency(faturamentoDoDia),
+        pedidosHoje: numeroDePedidosHoje.toString(),
+        ticketMedio: formatCurrency(ticketMedio),
+      });
+
+      setError(null);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Falha ao carregar dados do dashboard.";
+      setError(errorMessage);
+      // Usando o toaster com a sintaxe correta que você especificou
+      toaster.create({
+        title: "Erro ao carregar dados",
+        description: errorMessage,
+        type: "error",
       });
     } finally {
       setIsLoading(false);
     }
   }, []);
 
+  // --- PASSO 3: INTEGRAÇÃO ---
   useEffect(() => {
-    fetchDashboardStats();
-  }, [fetchDashboardStats]);
+    fetchAndCalculateStats();
+  }, [fetchAndCalculateStats]);
 
-  // Formata os dados para a UI
-  const formattedStats: FormattedDashboardStats = {
-    faturamentoDia: formatCurrency(stats.receitaTotal),
-    pedidosHoje: stats.pedidosHoje.toString(),
-    ticketMedio:
-      stats.pedidosHoje > 0
-        ? formatCurrency(stats.receitaTotal / stats.pedidosHoje)
-        : formatCurrency(0),
-  };
-
-  // --- Handlers existentes ---
-  const handleNavigateToCardapio = useCallback(
-    () => router.push(ROUTES.APP.CARDAPIO),
-    [router]
-  );
-  const handleNavigateToPedidos = useCallback(
-    () => router.push(ROUTES.APP.PEDIDOS),
-    [router]
-  );
-  const handleShowGerenciarCardapio = useCallback(
-    () => setIsGerenciarView(true),
-    []
-  );
-  const handleHideGerenciarCardapio = useCallback(
-    () => setIsGerenciarView(false),
-    []
-  );
+  // --- SUAS FUNÇÕES DE CONTROLE (INTOCADAS) ---
+  const handleNavigateToCardapio = () => router.push(ROUTES.APP.CARDAPIO);
+  const handleNavigateToPedidos = () => router.push(ROUTES.APP.PEDIDOS);
+  const handleShowGerenciarCardapio = () => setIsGerenciarView(true);
+  const handleHideGerenciarCardapio = () => setIsGerenciarView(false);
 
   const handleOpenFormModal = (pizza: Pizza | null = null) => {
     setPizzaToEdit(pizza);
@@ -131,26 +109,29 @@ export const useDashboard = (): UseDashboardReturn => {
     setPizzaToEdit(null);
   };
 
+  // Quando uma pizza é salva, re-calculamos os stats (pode ser útil no futuro)
   const handlePizzaSaved = () => {
+    fetchAndCalculateStats();
     handleCloseFormModal();
-    // Idealmente, você deveria ter uma função para refazer o fetch das pizzas
-    // Por enquanto, apenas fechamos o modal.
   };
 
   return {
-    stats: formattedStats, // <<< Retorna os dados formatados
-    isGerenciarView,
+    stats,
     isLoading,
     error,
+    isGerenciarView,
+    isFormModalOpen,
+    pizzaToEdit,
     handleNavigateToCardapio,
     handleNavigateToPedidos,
     handleShowGerenciarCardapio,
     handleHideGerenciarCardapio,
-    refetch: fetchDashboardStats,
-    isFormModalOpen,
-    pizzaToEdit,
     handleOpenFormModal,
     handleCloseFormModal,
     handlePizzaSaved,
+    // A função refetch agora chama a lógica correta
+    refetch: fetchAndCalculateStats,
   };
 };
+
+export type UseDashboardReturn = ReturnType<typeof useDashboard>;

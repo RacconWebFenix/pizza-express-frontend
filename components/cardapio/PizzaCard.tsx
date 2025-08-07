@@ -10,7 +10,9 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
 import { formatCurrency } from "../../utils/format";
+import { IMAGE_CONFIG, isUnreliableDomain } from "../../utils/image-config";
 import { Pizza } from "@/types";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "../auth/auth-context";
@@ -26,11 +28,51 @@ interface PizzaCardProps {
 export function PizzaCard({ pizza, index }: PizzaCardProps) {
   const { addToCart } = useCart();
   const { user } = useAuth();
-  // URL da imagem - prioriza imagemUrl (Cloudinary) ou imagem local
-  const imageUrl = pizza.imagemUrl || pizza.imagem || "/pizza.png";
+  const [imageError, setImageError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Array de imagens em ordem de prioridade
+  const imageSources = [
+    pizza.imagemUrl,
+    pizza.imagem,
+    IMAGE_CONFIG.DEFAULT_PIZZA_IMAGE, // Fallback final
+  ].filter(Boolean); // Remove valores undefined/null
+
+  // URL da imagem com fallback seguro
+  const getImageUrl = () => {
+    if (imageError && retryCount < imageSources.length - 1) {
+      return imageSources[retryCount + 1] || IMAGE_CONFIG.DEFAULT_PIZZA_IMAGE;
+    }
+
+    const currentUrl =
+      imageSources[retryCount] || IMAGE_CONFIG.DEFAULT_PIZZA_IMAGE;
+
+    // Se é um domínio não confiável, adiciona warning
+    if (isUnreliableDomain(currentUrl)) {
+      console.warn(`[PizzaCard] Usando domínio não confiável: ${currentUrl}`);
+    }
+
+    return currentUrl;
+  };
+
+  const imageUrl = getImageUrl();
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = "/pizza.png"; // Fallback para imagem padrão
+    console.warn(
+      `[PizzaCard] Falha ao carregar imagem: ${imageUrl} (tentativa ${retryCount + 1})`
+    );
+
+    if (retryCount < imageSources.length - 1) {
+      setRetryCount((prev) => prev + 1);
+      setImageError(true);
+      // Tenta a próxima imagem da lista
+      const nextImage = imageSources[retryCount + 1];
+      e.currentTarget.src = nextImage || IMAGE_CONFIG.DEFAULT_PIZZA_IMAGE;
+    } else {
+      // Última tentativa: força a imagem padrão
+      e.currentTarget.src = IMAGE_CONFIG.DEFAULT_PIZZA_IMAGE;
+      setImageError(true);
+    }
   };
 
   const handleAddToCart = () => {
@@ -92,7 +134,27 @@ export function PizzaCard({ pizza, index }: PizzaCardProps) {
               }}
               priority={index < 3} // Prioridade para as 3 primeiras imagens
               onError={handleImageError}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
+
+            {/* Overlay de erro de imagem */}
+            {imageError && retryCount >= imageSources.length - 1 && (
+              <Box
+                position="absolute"
+                top={2}
+                left={2}
+                bg="red.500"
+                color="white"
+                px={2}
+                py={1}
+                borderRadius="md"
+                fontSize="xs"
+                opacity={0.8}
+              >
+                📷 Imagem indisponível
+              </Box>
+            )}
 
             {/* Overlay com preço */}
             <Box

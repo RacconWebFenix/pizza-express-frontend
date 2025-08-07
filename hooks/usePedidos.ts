@@ -1,131 +1,76 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { FaClock, FaCheckCircle, FaTimes } from "react-icons/fa";
-import { getAuthToken } from "../services/auth-service";
-import type { Pedido } from "../types/pedidos";
+import { useState, useEffect, useCallback } from "react";
+import { Pedido, StatusPedido } from "@/types/pedidos";
+import { getPedidos, updatePedidoStatus } from "@/services/pedido-service";
+import { toaster } from "@/components/ui/toaster";
 
-export interface StatusConfig {
-  color: string;
-  icon: React.ElementType;
-  label: string;
-  bgColor: string;
-  borderColor: string;
-  badgeScheme: string;
-}
-
-interface UsePedidosReturn {
-  pedidos: Pedido[];
-  selectedStatus: string;
-  isLoading: boolean;
-  error: string | null;
-  getStatusConfig: (status: string) => StatusConfig;
-  handleStatusFilter: (status: string) => void;
-  filteredPedidos: Pedido[];
-  refetch: () => Promise<void>;
-}
-
-export const usePedidos = (): UsePedidosReturn => {
+export const usePedidos = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState("todos");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPedidos = async () => {
+  const fetchPedidos = useCallback(async () => {
     try {
       setIsLoading(true);
-      setError(null);
-
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
-      if (!API_URL) {
-        throw new Error("URL da API não configurada");
-      }
-
-      const token = getAuthToken();
-
-      const response = await fetch(`${API_URL}/pedidos`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await getPedidos(); // Função que já existia no seu projeto
       setPedidos(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar pedidos");
+      setError(null);
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Falha ao buscar os pedidos.";
+      setError(errorMessage);
+      toaster.create({
+        title: "Erro na atualização",
+        description: errorMessage,
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPedidos();
-  }, []);
+  }, [fetchPedidos]);
 
-  const getStatusConfig = useCallback((status: string): StatusConfig => {
-    switch (status) {
-      case "preparando":
-        return {
-          color: "brand.warning",
-          icon: FaClock,
-          label: "Preparando",
-          bgColor: "brand.cream",
-          borderColor: "brand.pizza",
-          badgeScheme: "yellow",
-        };
-      case "entregue":
-        return {
-          color: "brand.success",
-          icon: FaCheckCircle,
-          label: "Entregue",
-          bgColor: "brand.success",
-          borderColor: "brand.success",
-          badgeScheme: "green",
-        };
-      case "cancelado":
-        return {
-          color: "brand.danger",
-          icon: FaTimes,
-          label: "Cancelado",
-          bgColor: "brand.danger",
-          borderColor: "brand.danger",
-          badgeScheme: "red",
-        };
-      default:
-        return {
-          color: "gray.500",
-          icon: FaClock,
-          label: "Pendente",
-          bgColor: "gray.100",
-          borderColor: "gray.300",
-          badgeScheme: "gray",
-        };
+  // Lógica para atualizar o status do pedido
+  const handleUpdateStatus = async (pedidoId: number, status: StatusPedido) => {
+    const originalPedidos = [...pedidos];
+    // Atualização otimista
+    setPedidos((currentPedidos) =>
+      currentPedidos.map((p) => (p.id === pedidoId ? { ...p, status } : p))
+    );
+
+    try {
+      await updatePedidoStatus(pedidoId, status);
+      toaster.create({
+        title: "Sucesso!",
+        description: `Pedido #${pedidoId} foi atualizado.`,
+        type: "success",
+        duration: 3000,
+        closable: true,
+      });
+    } catch (err) {
+      // Reverte em caso de erro
+      setPedidos(originalPedidos);
+      const errorMessage =
+        err instanceof Error ? err.message : "Falha ao atualizar o status.";
+      toaster.create({
+        title: "Erro na atualização",
+        description: errorMessage,
+        type: "error",
+        duration: 3000,
+        closable: true,
+      });
     }
-  }, []);
-
-  const handleStatusFilter = useCallback((status: string) => {
-    setSelectedStatus(status);
-  }, []);
-
-  const filteredPedidos = useMemo(() => {
-    if (selectedStatus === "todos") {
-      return pedidos;
-    }
-    return pedidos.filter((pedido) => pedido.status === selectedStatus);
-  }, [pedidos, selectedStatus]);
+  };
 
   return {
     pedidos,
-    selectedStatus,
     isLoading,
     error,
-    getStatusConfig,
-    handleStatusFilter,
-    filteredPedidos,
-    refetch: fetchPedidos,
+    fetchPedidos,
+    handleUpdateStatus, // Expondo a nova função
   };
 };

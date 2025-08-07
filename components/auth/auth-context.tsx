@@ -1,116 +1,155 @@
 "use client";
 
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from "react";
 import {
-  validateToken,
-  getAuthToken,
-  saveAuthToken,
-  removeAuthToken,
-  User,
-} from "../../services/auth-service";
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { getMe, authService } from "@/services/auth-service";
+import { useRouter } from "next/navigation";
+import { setCookie, getCookie, deleteCookie } from "@/utils/cookies";
 
-interface AuthContextType {
-  token: string | null;
+// Definindo a tipagem do usuário para corresponder ao backend
+interface User {
+  id: number;
+  nome: string;
+  email: string;
+  avatar?: string | null;
+  role: string;
+}
+
+// Definindo a tipagem para as propriedades do contexto
+interface AuthContextProps {
   user: User | null;
-  login: (token: string) => Promise<boolean>;
-  logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  signInWithGoogle: () => void;
+  handleAuthentication: (token: string) => Promise<void>;
+  login: (token: string) => Promise<boolean>;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    // Inicializa o token do cookie ao montar o componente
-    return getAuthToken();
-  });
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-  // Valida o token existente no cookie quando o componente monta
+  // Esta função é chamada para validar um token e buscar os dados do usuário
+  const handleAuthentication = useCallback(
+    async (token: string, redirect: boolean = true) => {
+      setIsLoading(true);
+      try {
+        console.log("[AUTH] Salvando token:", token.substring(0, 20) + "...");
+
+        // 1. Guarda o token no localStorage E nos cookies
+        localStorage.setItem("authToken", token);
+        setCookie("authToken", token, 7); // Expira em 7 dias
+
+        // 2. Busca os dados do usuário no backend usando o token
+        const userData = await getMe(token);
+        setUser(userData);
+
+        console.log("[AUTH] Usuário autenticado:", userData.email);
+
+        // 3. Se for um login novo, redireciona para o dashboard
+        if (redirect) {
+          router.push("/dashboard");
+        }
+      } catch (error) {
+        console.error("Falha na autenticação:", error);
+        // Limpa o estado e o storage em caso de erro (token inválido)
+        localStorage.removeItem("authToken");
+        deleteCookie("authToken");
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router]
+  );
+
+  // Função simplificada de login para compatibilidade com useLogin
+  const login = useCallback(
+    async (token: string): Promise<boolean> => {
+      try {
+        await handleAuthentication(token, false);
+        return true;
+      } catch (error) {
+        console.error("Erro no login:", error);
+        return false;
+      }
+    },
+    [handleAuthentication]
+  );
+
+  // Efeito que roda uma vez quando a aplicação carrega
   useEffect(() => {
-    const initializeAuth = async () => {
-      const existingToken = getAuthToken();
-
-      if (existingToken) {
-        const userData = await validateToken(existingToken);
-        if (userData) {
-          setUser(userData);
-          setToken(existingToken);
-        } else {
-          // Token inválido, remove o cookie
-          removeAuthToken();
-          setToken(null);
+    const initAuth = async () => {
+      // Tenta primeiro do localStorage, depois dos cookies
+      let token = localStorage.getItem("authToken");
+      if (!token) {
+        token = getCookie("authToken");
+        if (token) {
+          // Se encontrou nos cookies, sincroniza com localStorage
+          localStorage.setItem("authToken", token);
         }
       }
 
-      setIsLoading(false);
+      if (token) {
+        console.log("[AUTH] Token encontrado, validando sessão...");
+        // Se um token existe, tenta validar a sessão sem redirecionar
+        await handleAuthentication(token, false);
+      } else {
+        console.log("[AUTH] Nenhum token encontrado");
+        // Se não há token, encerra o loading
+        setIsLoading(false);
+      }
     };
 
-    initializeAuth();
-  }, []);
+    initAuth();
+  }, [handleAuthentication]); // Agora handleAuthentication é uma dependência estável
 
-  const login = async (newToken: string): Promise<boolean> => {
-    if (!newToken) {
-      return false;
-    }
-
-    // Validar o token com a rota /me
-    const userData = await validateToken(newToken);
-
-    if (!userData) {
-      return false;
-    }
-
-    // Se o token é válido, salva o usuário e o token
-    setUser(userData);
-    setToken(newToken);
-
-    // Salva o token no cookie
-    saveAuthToken(newToken);
-
-    return true;
+  // Função para iniciar o login com o Google
+  const signInWithGoogle = () => {
+    // Redireciona para a URL de autenticação do backend
+    window.location.href = authService.getGoogleSignInUrl();
   };
 
+  // Função para fazer logout
   const logout = () => {
-    setToken(null);
     setUser(null);
-
-    // Remove o token do cookie
-    removeAuthToken();
-
-    // Redireciona para a home
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
+    localStorage.removeItem("authToken");
+    deleteCookie("authToken");
+    router.push("/"); // Redireciona para a home após o logout
   };
-
-  const isAuthenticated = !!token && !!user;
 
   return (
     <AuthContext.Provider
-      value={{ token, user, login, logout, isAuthenticated, isLoading }}
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        signInWithGoogle,
+        handleAuthentication,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = (): AuthContextType => {
+// Hook customizado para facilitar o uso do contexto nas páginas
+export const useAuth = (): AuthContextProps => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
   return context;
 };

@@ -13,7 +13,7 @@ interface FormErrors {
   confirmPassword?: string;
   nome?: string;
   telefone?: string;
-  endereco?: string;
+  // endereco removido - não será coletado no cadastro conforme documentação
 }
 
 const RegisterPage = () => {
@@ -23,7 +23,7 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
     telefone: "",
-    endereco: "",
+    // endereco removido - não será coletado no cadastro conforme documentação
   });
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -59,10 +59,7 @@ const RegisterPage = () => {
         newErrors.telefone = "Telefone deve estar no formato (99) 9999-9999";
     }
 
-    if (!formData.endereco.trim())
-      newErrors.endereco = "Endereço é obrigatório";
-    else if (formData.endereco.trim().length < 5)
-      newErrors.endereco = "Endereço deve ter pelo menos 5 caracteres";
+    // Endereço removido - não será validado no cadastro conforme documentação
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -112,7 +109,7 @@ const RegisterPage = () => {
             email: formData.email.toLowerCase().trim(),
             password: formData.password,
             telefone: formData.telefone.trim(),
-            endereco: formData.endereco.trim(),
+            // endereco removido - não será enviado no cadastro conforme documentação
           }),
         }
       );
@@ -227,14 +224,7 @@ const RegisterPage = () => {
               maxLength={15}
               required
             />
-            <PizzaInput
-              label="Endereço"
-              type="text"
-              value={formData.endereco}
-              onChange={handleInputChange("endereco")}
-              error={errors.endereco}
-              required
-            />
+            {/* Campo endereço removido - não será coletado no cadastro conforme documentação */}
             <PizzaInput
               label="Senha"
               type="password"

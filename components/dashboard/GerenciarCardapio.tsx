@@ -5,8 +5,9 @@ import { deletePizza } from "../../services/pizza-service";
 import { uploadPizzaImage } from "../../services/pizza-service";
 import { PizzaFormContainer } from "./PizzaFormContainer";
 import { Pizza } from "../../types";
-import { PizzaButton, PizzaCard, PizzaLoading, PizzaText } from "../ui";
+import { PizzaButton, PizzaLoading } from "../ui";
 import { PlusCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   Box,
   Button,
@@ -16,9 +17,14 @@ import {
   Icon,
   Image,
   VStack,
+  HStack,
+  AspectRatio,
+  Text,
 } from "@chakra-ui/react";
 import { formatCurrency } from "@/utils/format";
 import { TbArrowBack } from "react-icons/tb";
+
+const MotionBox = motion(Box);
 
 interface GerenciarCardapioProps {
   onNavigateBack: () => void; // Função para voltar ao dashboard principal
@@ -27,10 +33,11 @@ interface GerenciarCardapioProps {
 export const GerenciarCardapio = ({
   onNavigateBack,
 }: GerenciarCardapioProps) => {
-  const { pizzas, setPizzas, isLoading, error } = usePizzas();
+  const { pizzas, setPizzas, isLoading, error, refetch } = usePizzas();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [pizzaToEdit, setPizzaToEdit] = useState<Pizza | null>(null);
   const [removingPizzaId, setRemovingPizzaId] = useState<string | null>(null);
+  const [isRefetching, setIsRefetching] = useState(false); // Loading para refetch
   // Estado para upload isolado de imagem
   const [imageModalPizza, setImageModalPizza] = useState<Pizza | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -47,18 +54,32 @@ export const GerenciarCardapio = ({
     setIsFormOpen(true);
   };
 
-  const handleFormSuccess = (updatedOrCreatedPizza: Pizza) => {
-    setPizzas((prev: Pizza[]) => {
-      const index: number = prev.findIndex(
-        (p: Pizza) => p.id === updatedOrCreatedPizza.id
-      );
-      if (index > -1) {
-        const newPizzas: Pizza[] = [...prev];
-        newPizzas[index] = updatedOrCreatedPizza;
-        return newPizzas;
-      }
-      return [updatedOrCreatedPizza, ...prev];
-    });
+  const handleFormSuccess = async (updatedOrCreatedPizza: Pizza) => {
+    // Mostra loading durante o refetch
+    setIsRefetching(true);
+
+    try {
+      // Faz refetch para garantir que temos os dados mais atualizados do servidor
+      await refetch();
+    } catch (error) {
+      console.error("Erro ao atualizar lista de pizzas:", error);
+      // Fallback: atualiza manualmente se o refetch falhar
+      setPizzas((prev: Pizza[]) => {
+        const index: number = prev.findIndex(
+          (p: Pizza) => p.id === updatedOrCreatedPizza.id
+        );
+        if (index > -1) {
+          // Atualização: substitui a pizza existente
+          const newPizzas: Pizza[] = [...prev];
+          newPizzas[index] = { ...updatedOrCreatedPizza };
+          return newPizzas;
+        }
+        // Criação: adiciona nova pizza
+        return [updatedOrCreatedPizza, ...prev];
+      });
+    } finally {
+      setIsRefetching(false);
+    }
   };
   // setRemovingPizzaId("3"); // Inicia loading
 
@@ -81,15 +102,15 @@ export const GerenciarCardapio = ({
     setImageUploadLoading(true);
     setImageUploadError(null);
     try {
-      const updatedPizza = await uploadPizzaImage(
-        imageModalPizza.id,
-        imageFile
-      );
-      setPizzas((prev) =>
-        prev.map((p) => (p.id === updatedPizza.id ? updatedPizza : p))
-      );
+      await uploadPizzaImage(imageModalPizza.id, imageFile);
+
+      // Fecha o modal primeiro
       setImageModalPizza(null);
       setImageFile(null);
+
+      // Mostra loading e faz refetch para garantir dados atualizados
+      setIsRefetching(true);
+      await refetch();
     } catch (error) {
       setImageUploadError(
         error instanceof Error
@@ -98,15 +119,23 @@ export const GerenciarCardapio = ({
       );
     } finally {
       setImageUploadLoading(false);
+      setIsRefetching(false);
     }
   };
 
-  if (isLoading) return <PizzaLoading message="Carregando cardápio..." />;
+  if (isLoading || isRefetching)
+    return (
+      <PizzaLoading
+        message={
+          isRefetching ? "Atualizando lista..." : "Carregando cardápio..."
+        }
+      />
+    );
   if (error)
     return (
-      <PizzaText variant="danger" textAlign="center">
-        {error}
-      </PizzaText>
+      <Text color="red.500" textAlign="center">
+        Erro ao carregar pizzas: {error}
+      </Text>
     );
 
   return (
@@ -134,59 +163,121 @@ export const GerenciarCardapio = ({
         }}
         gap={6}
       >
-        {pizzas.map((pizza) => (
-          <PizzaCard
+        {pizzas.map((pizza, index) => (
+          <MotionBox
             key={pizza.id}
-            display="flex" // 1. Tornar o card um contêiner flex
-            flexDirection="column" // 2. Organizar itens em coluna
-            height="100%" // 3. Fazer o card ocupar toda a altura da célula do grid
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            whileHover={{ scale: 1.03, y: -5 }}
           >
-            {/* Imagem não muda */}
-            <Image
-              src={pizza.imagemUrl || "/pizza.png"}
-              alt={`Imagem da pizza ${pizza.nome}`}
-              borderRadius="md"
-              height="200px"
-              objectFit="cover"
-            />
-
-            {/* Contêiner para o conteúdo de texto que vai crescer */}
-            <VStack
-              flex="1" // 4. ESSENCIAL: Faz esta área crescer e empurrar os botões para baixo
-              align="stretch"
-              p={4} // Adicione um padding para espaçamento interno
+            <Box
+              bg="gray.900"
+              color="white"
+              borderRadius="xl"
+              boxShadow="lg"
+              overflow="hidden"
+              border="1px"
+              borderColor="gray.700"
+              transition="all 0.3s"
+              _hover={{
+                borderColor: "orange.500",
+                boxShadow: "outline",
+              }}
+              height="100%" // Para manter altura consistente
+              display="flex"
+              flexDirection="column"
             >
-              <Heading size="md">{pizza.nome}</Heading>
-              <PizzaText fontSize="sm" color="gray.600">
-                {pizza.descricao}
-              </PizzaText>
-              <PizzaText fontWeight="bold" fontSize="lg" color="brand.success">
-                {formatCurrency(pizza.preco)}
-              </PizzaText>
-            </VStack>
+              {/* Imagem da Pizza - Mesmo estilo do cardápio */}
+              <AspectRatio ratio={4 / 3}>
+                <Box position="relative" w="full" h="full">
+                  <Image
+                    key={`${pizza.id}-${pizza.imagemUrl}`} // Force re-render when image changes
+                    src={pizza.imagemUrl || "/pizza.png"}
+                    alt={`Imagem da pizza ${pizza.nome}`}
+                    width="100%"
+                    height="100%"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{
+                      objectFit: "cover",
+                      borderTopLeftRadius: "12px",
+                      borderTopRightRadius: "12px",
+                    }}
+                  />
 
-            {/* Contêiner dos botões de ação */}
-            <Flex justify="space-between" align="center" p={4} pt={0} gap={2}>
-              <Button
-                colorPalette="orange"
-                variant="solid"
-                onClick={() => handleOpenEditModal(pizza)}
-                flex="1"
+                  {/* Overlay com preço - Mesmo estilo do cardápio */}
+                  <Box
+                    position="absolute"
+                    top={3}
+                    right={3}
+                    bg="orange.500"
+                    color="white"
+                    px={3}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    boxShadow="md"
+                  >
+                    {formatCurrency(pizza.preco)}
+                  </Box>
+                </Box>
+              </AspectRatio>
+
+              {/* Header da Pizza - Mesmo estilo do cardápio */}
+              <Box
+                bg="blackAlpha.400"
+                p={4}
+                borderBottom="1px"
+                borderColor="gray.700"
               >
-                Editar
-              </Button>
-              <Button
-                colorPalette="red"
-                variant="solid"
-                onClick={() => handleRemovePizza(pizza)}
-                loading={removingPizzaId === pizza.id}
-                flex="1"
-              >
-                Remover
-              </Button>
-              {/* O terceiro botão provavelmente deveria ser um ícone ou estar em um menu */}
-            </Flex>
-          </PizzaCard>
+                <Heading size="lg" color="whiteAlpha.900" textAlign="center">
+                  {pizza.nome}
+                </Heading>
+              </Box>
+
+              {/* Conteúdo - Adaptado para gerenciamento */}
+              <VStack p={6} gap={4} align="stretch" flex="1">
+                <Text
+                  color="whiteAlpha.700"
+                  fontSize="md"
+                  textAlign="center"
+                  minH="60px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  lineHeight="1.5"
+                >
+                  {pizza.descricao}
+                </Text>
+
+                {/* Botões de gerenciamento - Substitui o botão "Pedir Agora" */}
+                <HStack w="full" gap={2}>
+                  <Button
+                    colorScheme="orange"
+                    size="lg"
+                    onClick={() => handleOpenEditModal(pizza)}
+                    flex="1"
+                    _hover={{ bg: "orange.600" }}
+                    transition="all 0.2s"
+                  >
+                    ✏️ Editar
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    size="lg"
+                    onClick={() => handleRemovePizza(pizza)}
+                    loading={removingPizzaId === pizza.id}
+                    flex="1"
+                    _hover={{ bg: "red.600" }}
+                    transition="all 0.2s"
+                  >
+                    🗑️ Remover
+                  </Button>
+                </HStack>
+              </VStack>
+            </Box>
+          </MotionBox>
         ))}
       </Grid>
 
@@ -221,9 +312,9 @@ export const GerenciarCardapio = ({
               disabled={imageUploadLoading}
             />
             {imageUploadError && (
-              <PizzaText variant="danger" mt={2}>
+              <Text color="red.500" mt={2}>
                 {imageUploadError}
-              </PizzaText>
+              </Text>
             )}
             <Flex mt={4} gap={2}>
               <PizzaButton

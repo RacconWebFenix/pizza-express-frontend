@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PizzaModal } from "../ui/PizzaModal";
-import { PizzaFormPresentation } from "../ui/PizzaFormPresentation";
+import { PizzaFormCard } from "./PizzaFormCard";
 import { validatePizzaData, validateImageFile } from "../../utils/validation";
 import { createPizza, updatePizza } from "../../services/pizza-service";
 import { Pizza, CreatePizzaWithImageData } from "../../types";
@@ -12,7 +12,6 @@ interface PizzaFormContainerProps {
   onClose: () => void;
   onSuccess: (pizza: Pizza) => void;
   pizzaToEdit?: Pizza | null;
-
 }
 
 export const PizzaFormContainer = ({
@@ -31,7 +30,6 @@ export const PizzaFormContainer = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const isEditing = !!pizzaToEdit;
 
   useEffect(() => {
@@ -133,20 +131,18 @@ export const PizzaFormContainer = ({
       onClose={onClose}
       title={isEditing ? "Editar Pizza" : "Cadastrar Nova Pizza"}
     >
-      <PizzaFormPresentation
+      <PizzaFormCard
         formData={formData}
         errors={errors}
         imagePreview={imagePreview}
         isLoading={isLoading}
         apiError={apiError}
-        isImageModalOpen={isImageModalOpen}
+        isEditing={isEditing}
         onInputChange={handleInputChange}
         onImageChange={handleImageChange}
         onSubmit={handleSubmit}
+        onImageRemove={handleRemoveImage}
         onCancel={onClose}
-        onImageModalOpen={() => setIsImageModalOpen(true)}
-        onImageModalClose={() => setIsImageModalOpen(false)}
-        onImageRemove={handleRemoveImage} 
       />
     </PizzaModal>
   );

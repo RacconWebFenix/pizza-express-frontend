@@ -4,7 +4,7 @@ import { Flex, Icon, VStack, HStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { formatCurrency } from "../../utils/format";
 import { PizzaCard, PizzaText, PizzaBadge } from "../ui";
-import type { StatusConfig } from "../../hooks/usePedidos";
+https://nextjs.org/docs/app/getting-started
 import type { Pedido } from "../../types/pedidos";
 
 const MotionBox = motion(PizzaCard);
@@ -70,7 +70,7 @@ export function PedidoCard({ pedido, statusConfig, index }: PedidoCardProps) {
             Cliente
           </PizzaText>
           <PizzaText variant="body" fontWeight="medium" color="whiteAlpha.900">
-            {pedido.cliente.nome}
+            {pedido.user.nome}
           </PizzaText>
         </VStack>
 

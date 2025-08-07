@@ -25,14 +25,25 @@ export function PizzaModal({
         <Box as={Dialog.Backdrop} bg="" backdropFilter="blur(2px)" />
         <Dialog.Positioner>
           <Dialog.Content
-            bg="yellow.100"
+            bg="white"
+            _dark={{ bg: "gray.800" }}
             borderRadius="xl"
             boxShadow="xl"
-            maxW="lg"
+            maxW={{ base: "90vw", md: "80vw", lg: "6xl" }}
+            w="full"
+            maxH="90vh"
+            overflowY="auto"
             p={0}
           >
-            <Dialog.Header borderBottomWidth="1px" borderColor="gray.200" p={4}>
-              <Dialog.Title color="blue.700">{title}</Dialog.Title>
+            <Dialog.Header
+              borderBottomWidth="1px"
+              borderColor="gray.200"
+              _dark={{ borderColor: "gray.600" }}
+              p={4}
+            >
+              <Dialog.Title color="gray.800" _dark={{ color: "white" }}>
+                {title}
+              </Dialog.Title>
               <Dialog.CloseTrigger
                 position="absolute"
                 top="12px"
@@ -44,9 +55,10 @@ export function PizzaModal({
                   variant="ghost"
                   size="sm"
                   aria-label="Close"
-                  _hover={{ bg: "gray.400" }}
+                  _hover={{ bg: "gray.100" }}
+                  _dark={{ _hover: { bg: "gray.700" } }}
                 >
-                  <X size={40} color="black" />
+                  <X size={20} color="currentColor" />
                 </Button>
               </Dialog.CloseTrigger>
             </Dialog.Header>

@@ -28,7 +28,7 @@ export const createPizza = async (
 ): Promise<Pizza> => {
   const token = getAuthToken();
   const formData = createPizzaFormData(data);
-  const response = await fetch(`${API_URL}/pizzas`, {
+  const response = await fetch(`${API_URL}/pizzas/with-image`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,

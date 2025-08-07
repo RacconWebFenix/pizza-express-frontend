@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { UsuarioService } from "@/services/usuario-service";
+import { CreateUsuarioData } from "@/types";
 
 interface FormData {
   nome: string;
@@ -7,7 +9,7 @@ interface FormData {
   password: string;
   confirmPassword: string;
   telefone: string;
-  endereco: string;
+  // endereco removido - não deve ser enviado no cadastro conforme documentação
 }
 
 interface FormErrors {
@@ -16,7 +18,7 @@ interface FormErrors {
   confirmPassword?: string;
   nome?: string;
   telefone?: string;
-  endereco?: string;
+  // endereco removido
 }
 
 interface UseRegisterReturn {
@@ -37,7 +39,7 @@ export const useRegister = (): UseRegisterReturn => {
     password: "",
     confirmPassword: "",
     telefone: "",
-    endereco: "",
+    // endereco removido - não deve ser enviado no cadastro conforme documentação
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -83,12 +85,7 @@ export const useRegister = (): UseRegisterReturn => {
       newErrors.telefone = "Telefone deve estar no formato (XX) XXXX-XXXX";
     }
 
-    // Validação do endereço
-    if (!formData.endereco.trim()) {
-      newErrors.endereco = "Endereço é obrigatório";
-    } else if (formData.endereco.trim().length < 10) {
-      newErrors.endereco = "Endereço deve ter pelo menos 10 caracteres";
-    }
+    // Endereço removido - não validado no cadastro conforme documentação
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -129,6 +126,17 @@ export const useRegister = (): UseRegisterReturn => {
       setSuccessMessage("");
 
       try {
+        // Preparar dados do usuário conforme documentação (sem endereço)
+        const usuarioData: CreateUsuarioData = {
+          nome: formData.nome,
+          email: formData.email,
+          telefone: formData.telefone,
+        };
+
+        // Cadastrar usuário usando o serviço
+        await UsuarioService.cadastrarUsuario(usuarioData);
+
+        // Ainda precisamos fazer o registro de autenticação separadamente
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
           {
@@ -141,7 +149,7 @@ export const useRegister = (): UseRegisterReturn => {
               email: formData.email,
               password: formData.password,
               telefone: formData.telefone,
-              endereco: formData.endereco,
+              // endereco removido conforme documentação
             }),
           }
         );

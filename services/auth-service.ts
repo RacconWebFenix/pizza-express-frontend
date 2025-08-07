@@ -1,47 +1,46 @@
-/**
- * Serviço de Autenticação
- *
- * Centraliza todas as operações de autenticação
- * Integra com o backend e gerencia tokens
- */
+// Definindo a tipagem do usuário para corresponder ao backend
+interface User {
+  id: number;
+  nome: string;
+  email: string;
+  avatar?: string | null;
+  role: string;
+}
 
-import Cookies from "js-cookie";
+const getBackendUrl = (): string => {
+  const url =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "http://localhost:10000";
+  console.log("[AUTH-SERVICE] Backend URL:", url);
+  console.log(
+    "[AUTH-SERVICE] NEXT_PUBLIC_API_URL:",
+    process.env.NEXT_PUBLIC_API_URL
+  );
+  console.log(
+    "[AUTH-SERVICE] NEXT_PUBLIC_BACKEND_URL:",
+    process.env.NEXT_PUBLIC_BACKEND_URL
+  );
+  return url;
+};
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-export interface LoginCredentials {
+// Interface para dados de login
+interface LoginCredentials {
   email: string;
   password: string;
 }
 
-export interface RegisterData {
-  email: string;
-  password: string;
-  name?: string;
-}
-
-export interface User {
-  userId: number;
-  email: string;
-  name?: string;
-}
-
-export interface AuthResponse {
+// Interface para resposta de login
+interface LoginResponse {
   access_token: string;
-  user?: User;
+  user: User;
 }
 
-/**
- * Realizar login
- */
+// Função para fazer login com email/senha
 export const loginUser = async (
   credentials: LoginCredentials
-): Promise<AuthResponse> => {
-  if (!API_URL) {
-    throw new Error("URL da API não configurada");
-  }
-
-  const response = await fetch(`${API_URL}/auth/login`, {
+): Promise<LoginResponse> => {
+  const response = await fetch(`${getBackendUrl()}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -50,132 +49,54 @@ export const loginUser = async (
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => null);
     throw new Error(
-      errorData.message || "Erro no login. Verifique suas credenciais."
+      errorData?.message || "Credenciais inválidas. Verifique email e senha."
     );
   }
 
-  const data = await response.json();
+  const data: LoginResponse = await response.json();
   return data;
 };
 
-/**
- * Registrar novo usuário
- */
-export const registerUser = async (
-  userData: RegisterData
-): Promise<AuthResponse> => {
-  if (!API_URL) {
-    throw new Error("URL da API não configurada");
-  }
+// Função para buscar os dados do usuário, agora com a tipagem correta
+export const getMe = async (token: string): Promise<User> => {
+  const url = `${getBackendUrl()}/me`;
+  console.log("[AUTH-SERVICE] Fazendo request para:", url);
+  console.log("[AUTH-SERVICE] Token:", token.substring(0, 20) + "...");
 
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
+  const response = await fetch(url, {
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(userData),
   });
+  console.log("[AUTH-SERVICE] Response status:", response.status);
+  console.log("[AUTH-SERVICE] Response ok:", response.ok);
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erro no registro. Tente novamente.");
+    const errorText = await response.text().catch(() => "Erro desconhecido");
+    console.error("[AUTH-SERVICE] Error response:", errorText);
+    throw new Error(
+      "Falha ao buscar dados do usuário. O token pode ser inválido."
+    );
   }
 
-  const data = await response.json();
+  const data: User = await response.json();
+  console.log("[AUTH-SERVICE] User data:", data);
   return data;
 };
 
-/**
- * Validar token com endpoint /me
- */
-export const validateToken = async (token: string): Promise<User | null> => {
-  if (!API_URL || !token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API_URL}/me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const userData = await response.json();
-    return userData;
-  } catch (error) {
-    return null;
-  }
-};
-
-/**
- * Salvar token no cookie
- */
-export const saveAuthToken = (token: string): void => {
-  // Em produção, só usar secure se não for localhost
-  const isLocalhost =
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1");
-
-  const cookieOptions = {
-    expires: 1, // 1 dia
-    path: "/",
-    sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production" && !isLocalhost,
-  };
-
-  Cookies.set("authToken", token, cookieOptions);
-};
-
-/**
- * Obter token do cookie
- */
+// Função para obter o token salvo
 export const getAuthToken = (): string | null => {
-  if (typeof window === "undefined") return null;
-  return Cookies.get("authToken") || null;
-};
-
-/**
- * Remover token do cookie
- */
-export const removeAuthToken = (): void => {
-  // Em produção, só usar secure se não for localhost
-  const isLocalhost =
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1");
-
-  Cookies.remove("authToken", {
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production" && !isLocalhost,
-  });
-};
-
-/**
- * Verificar se usuário está autenticado
- */
-export const isUserAuthenticated = (): boolean => {
-  const token = getAuthToken();
-  return !!token;
-};
-
-/**
- * Fazer logout completo
- */
-export const logoutUser = (): void => {
-  removeAuthToken();
-
-  // Redirecionar para home
   if (typeof window !== "undefined") {
-    window.location.href = "/";
+    return localStorage.getItem("authToken");
   }
+  return null;
+};
+
+// Objeto que exporta a URL de login do Google
+export const authService = {
+  getGoogleSignInUrl: (): string => {
+    return `${getBackendUrl()}/auth/google`;
+  },
 };

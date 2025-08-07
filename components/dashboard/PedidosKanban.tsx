@@ -43,7 +43,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
         </Text>
       </Flex>
       <Text fontSize="sm" color="whiteAlpha.700" mt={2}>
-        {pedido.cliente.nome}
+        {pedido.user.nome}
       </Text>
     </Box>
   );
