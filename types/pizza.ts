@@ -5,7 +5,7 @@ export interface Pizza {
   descricao: string;
   preco: number;
   imagemUrl?: string; // URL da imagem vinda do backend
-  imagem?: string; // Campo opcional para o nome do arquivo
+  image?: string; // Campo opcional para o nome do arquivo
   createdAt: string;
   updatedAt: string;
 }
@@ -17,5 +17,5 @@ export interface CreatePizzaData {
 }
 
 export interface CreatePizzaWithImageData extends CreatePizzaData {
-  imagem: File;
+  image: File | null; // Pode ser um arquivo ou null se não houver imagem
 }

@@ -3,13 +3,12 @@
 import { VStack } from "@chakra-ui/react";
 import { DashboardStats } from "./DashboardStats";
 import { DashboardActions } from "./DashboardActions";
-import { GerenciarCardapio } from "./GerenciarCardapio";
-import { PizzaFormContainer } from "./PizzaFormContainer";
-// 1. Importe o NOVO container de lógica
+
 import { PedidosKanbanContainer } from "./PedidosKanbanContainer";
 
 import { UseDashboardReturn } from "../../hooks/useDashboard";
 import { DASHBOARD_CONSTANTS } from "../../constants/dashboard";
+import { GerenciarCardapio, PizzaFormContainer } from ".";
 
 export function DashboardContent({
   stats,
@@ -39,7 +38,7 @@ export function DashboardContent({
         ) : (
           <>
             <DashboardStats stats={stats} />
-            {/* 2. Adicione o container que busca dados reais */}
+
             <PedidosKanbanContainer />
             <DashboardActions
               onNavigateToPedidos={handleNavigateToPedidos}
@@ -55,6 +54,8 @@ export function DashboardContent({
         onClose={handleCloseFormModal}
         pizzaToEdit={pizzaToEdit}
         onSuccess={handlePizzaSaved}
+        isLoading={false}
+        apiError={null}
       />
     </>
   );
