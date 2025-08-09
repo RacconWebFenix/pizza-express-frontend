@@ -1,6 +1,7 @@
-import { Pizza, User } from ".";
+import { User } from ".";
 import { Endereco } from "./endereco";
-
+import { Entregador } from "./entregador";
+import { Pizza } from "./pizzas";
 
 // Enum para os status do pedido, deve ser idêntico ao do backend
 export enum StatusPedido {

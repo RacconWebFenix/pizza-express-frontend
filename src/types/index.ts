@@ -55,7 +55,15 @@ export * from "./pedidos";
 // Exporta todos os tipos relacionados ao carrinho de compras
 export * from "./cart";
 
-export * from "./pizza";
-
 // Exporta todos os tipos relacionados a usuarios
 export * from "./usuario";
+
+export * from "./pizzas";
+
+// Exporta todos os tipos relacionados a pedidos
+export * from "./pedidos";
+
+// Exporta todos os tipos relacionados a usuarios e endereços
+export * from "./cliente"; // <<< ADICIONADO
+export * from "./endereco"; // <<< ADICIONADO
+export * from "./entregador"; // <<< ADICIONADO
