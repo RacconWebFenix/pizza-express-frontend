@@ -1,5 +1,5 @@
 import { getAuthToken } from "@/services/auth-service"; // Assumindo que o auth-service ficará em /services por enquanto
-import { CreatePizzaWithImageData, Pizza } from "@/types";
+import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -10,7 +10,7 @@ const createPizzaFormData = (
   if (data.nome) formData.append("nome", data.nome);
   if (data.descricao) formData.append("descricao", data.descricao);
   if (data.preco !== undefined) formData.append("preco", String(data.preco));
-  if (data.imagem) formData.append("image", data.imagem);
+  if (data.image) formData.append("image", data.image);
   return formData;
 };
 

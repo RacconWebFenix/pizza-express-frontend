@@ -8,9 +8,9 @@ import {
   getPizzas,
   updatePizza,
 } from "../services/pizzasService";
-import { CreatePizzaWithImageData, Pizza } from "@/types";
-import { toaster } from "@/components/ui/toaster";
 
+import { toaster } from "@/components/ui/toaster";
+import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
 
 export type UsePizzasReturn = ReturnType<typeof usePizzas>;
 
@@ -53,7 +53,7 @@ export const usePizzas = () => {
     // Adicionaremos um try-catch aqui para robustez
     try {
       await deletePizza(pizzaId);
-      setPizzas((prevPizzas) => prevPizzas.filter((p) => p.id !== String(pizzaId)));
+      setPizzas((prevPizzas) => prevPizzas.filter((p) => p.id !== pizzaId));
       toaster.create({
         title: "Sucesso!",
         description: "Pizza deletada.",

@@ -4,7 +4,7 @@ import { AspectRatio, Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 
 import { formatCurrency } from "@/utils/format";
 import { PizzaButton } from "@/components/ui"; // Usando seu botão genérico
-import { Pizza } from "@/types";
+import { Pizza } from "@/types/pizzas";
 
 // O componente agora só precisa saber como é uma Pizza
 interface PizzaCardProps {

@@ -1,15 +1,13 @@
 import { Pedido, StatusPedido } from "@/types/pedidos";
-import { getAuthToken } from "./auth-service";
+import { getAuthToken } from "@/services/auth-service";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-// DTO (Data Transfer Object) para a criação de um pedido
-// Corresponde ao que o backend espera receber
+// DTO para a criação de um pedido
 interface CreatePedidoPayload {
   clienteId: number;
   enderecoId: number;
   pizzasIds: number[];
-  observacoes?: string;
 }
 
 /**
@@ -17,20 +15,12 @@ interface CreatePedidoPayload {
  */
 export const getPedidos = async (): Promise<Pedido[]> => {
   const token = getAuthToken();
-  if (!token) {
-    throw new Error("Usuário não autenticado para buscar pedidos.");
-  }
+  if (!token) throw new Error("Usuário não autenticado.");
 
   const response = await fetch(`${API_URL}/pedidos`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
-
-  if (!response.ok) {
-    throw new Error("Falha ao buscar os pedidos do servidor.");
-  }
-
+  if (!response.ok) throw new Error("Falha ao buscar os pedidos.");
   return response.json();
 };
 
@@ -42,9 +32,7 @@ export const updatePedidoStatus = async (
   status: StatusPedido
 ): Promise<Pedido> => {
   const token = getAuthToken();
-  if (!token) {
-    throw new Error("Usuário não autenticado.");
-  }
+  if (!token) throw new Error("Usuário não autenticado.");
 
   const response = await fetch(`${API_URL}/pedidos/${pedidoId}/status`, {
     method: "PATCH",
@@ -56,9 +44,8 @@ export const updatePedidoStatus = async (
   });
 
   const responseData = await response.json();
-  if (!response.ok) {
+  if (!response.ok)
     throw new Error(responseData.message || "Falha ao atualizar o status.");
-  }
   return responseData.data;
 };
 
@@ -69,9 +56,7 @@ export const createPedido = async (
   payload: CreatePedidoPayload
 ): Promise<Pedido> => {
   const token = getAuthToken();
-  if (!token) {
-    throw new Error("Usuário não autenticado para criar um pedido.");
-  }
+  if (!token) throw new Error("Usuário não autenticado.");
 
   const response = await fetch(`${API_URL}/pedidos`, {
     method: "POST",
@@ -83,8 +68,7 @@ export const createPedido = async (
   });
 
   const responseData = await response.json();
-  if (!response.ok) {
+  if (!response.ok)
     throw new Error(responseData.message || "Falha ao criar o pedido.");
-  }
   return responseData.data;
 };
