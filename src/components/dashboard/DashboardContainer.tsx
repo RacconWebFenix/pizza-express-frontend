@@ -3,33 +3,54 @@
 import { Box } from "@chakra-ui/react";
 import { DashboardContent } from "./DashboardContent";
 import { GerenciarCardapio } from "@/features/pizzas/components/GerenciarCardapio";
+import { PizzaFormContainer } from "@/features/pizzas/components/PizzaFormContainer";
 
-// Importando os tipos dos nossos hooks para tipar as props
+// Importando os tipos dos hooks para tipar as props
 import { UseDashboardReturn } from "@/hooks/useDashboard";
 import { UsePizzasReturn } from "@/features/pizzas/hooks/usePizzas";
 
-// O Container agora espera receber os hooks como props
+// A interface de props agora é explícita
 interface DashboardContainerProps {
+  isGerenciarView: boolean;
+  onShowGerenciarCardapio: () => void;
+  onHideGerenciarCardapio: () => void;
   dashboardHook: UseDashboardReturn;
   pizzaHook: UsePizzasReturn;
 }
 
 export const DashboardContainer = ({
+  isGerenciarView,
+  onShowGerenciarCardapio,
+  onHideGerenciarCardapio,
   dashboardHook,
   pizzaHook,
 }: DashboardContainerProps) => {
   return (
     <Box>
-      {dashboardHook.isGerenciarView ? (
-        // Se a visão de "Gerenciar" estiver ativa, renderiza o componente de gerenciamento
+      {isGerenciarView ? (
         <GerenciarCardapio
-          onNavigateBack={dashboardHook.handleHideGerenciarCardapio}
-          pizzaHook={pizzaHook} // Passa a lógica de pizza para o componente de gerenciamento
+          onNavigateBack={onHideGerenciarCardapio}
+          pizzaHook={pizzaHook}
         />
       ) : (
-        // Caso contrário, mostra o conteúdo principal do dashboard
-        <DashboardContent {...dashboardHook} />
+        <DashboardContent
+          onShowGerenciarCardapio={onShowGerenciarCardapio}
+          // Passando apenas o que o DashboardContent precisa do hook de dashboard
+          stats={dashboardHook.stats}
+          handleNavigateToCardapio={dashboardHook.handleNavigateToCardapio}
+          handleNavigateToPedidos={dashboardHook.handleNavigateToPedidos}
+        />
       )}
+
+      {/* O Modal continua sendo orquestrado aqui, controlado pela lógica do pizzaHook */}
+      <PizzaFormContainer
+        isOpen={pizzaHook.isFormModalOpen}
+        onClose={pizzaHook.handleCloseFormModal}
+        pizzaToEdit={pizzaHook.pizzaToEdit}
+        onSuccess={pizzaHook.handleSavePizza}
+        isLoading={pizzaHook.isLoading}
+        apiError={pizzaHook.error}
+      />
     </Box>
   );
 };

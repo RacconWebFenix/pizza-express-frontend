@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { useDashboard } from "@/hooks/useDashboard";
 import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
-import { DashboardContent } from "@/components/dashboard/DashboardContent";
-import { GerenciarCardapio } from "@/features/pizzas/components/GerenciarCardapio";
-import { PizzaFormContainer } from "@/features/pizzas/components/PizzaFormContainer";
+
+// O DashboardContainer se torna o componente principal da página
+import { DashboardContainer } from "@/components/dashboard/DashboardContainer";
 
 export default function DashboardPage() {
-  // Estado local para controlar a visualização de gerenciamento de cardápio
+  // O estado da UI agora vive aqui, na página que o controla.
   const [isGerenciarView, setIsGerenciarView] = useState(false);
 
   // Cada hook com sua responsabilidade única
@@ -18,26 +18,14 @@ export default function DashboardPage() {
 
   return (
     <Box w="full" minH="100vh" bg="gray.100" p={8}>
-      {isGerenciarView ? (
-        <GerenciarCardapio
-          onNavigateBack={() => setIsGerenciarView(false)}
-          pizzaHook={pizzaHook}
-        />
-      ) : (
-        <DashboardContent
-          {...dashboardHook}
-          onShowGerenciarCardapio={() => setIsGerenciarView(true)}
-        />
-      )}
-
-      {/* Modal para adicionar ou editar pizzas */}
-      <PizzaFormContainer
-        isOpen={pizzaHook.isFormModalOpen}
-        onClose={pizzaHook.handleCloseFormModal}
-        pizzaToEdit={pizzaHook.pizzaToEdit}
-        onSuccess={pizzaHook.handleSavePizza}
-        isLoading={pizzaHook.isLoading}
-        apiError={pizzaHook.error}
+      <DashboardContainer
+        // Passando o estado da UI e suas funções de controle
+        isGerenciarView={isGerenciarView}
+        onShowGerenciarCardapio={() => setIsGerenciarView(true)}
+        onHideGerenciarCardapio={() => setIsGerenciarView(false)}
+        // Passando os hooks para o container distribuir
+        dashboardHook={dashboardHook}
+        pizzaHook={pizzaHook}
       />
     </Box>
   );

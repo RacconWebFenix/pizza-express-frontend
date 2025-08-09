@@ -2,11 +2,10 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-import { getPedidos } from "@/features/pedidos/services/pedidosService"; // Usando o serviço refatorado
+import { getPedidos } from "@/features/pedidos/services/pedidosService";
 import { formatCurrency } from "@/utils/format";
 import { ROUTES } from "@/constants";
-import { Pedido } from "@/types/pedidos"; // Importando o tipo Pedido
+import { Pedido } from "@/types/pedidos";
 import { toaster } from "@/components/ui/toaster";
 
 // Interfaces para as estatísticas
@@ -38,7 +37,7 @@ export const useDashboard = () => {
   const fetchAndCalculateStats = useCallback(async () => {
     try {
       setIsLoading(true);
-      const todosOsPedidos: Pedido[] = await getPedidos(); // Tipando a resposta
+      const todosOsPedidos: Pedido[] = await getPedidos();
 
       const hoje = new Date().toISOString().split("T")[0];
       const pedidosDeHoje = todosOsPedidos.filter(
@@ -79,13 +78,11 @@ export const useDashboard = () => {
     fetchAndCalculateStats();
   }, [fetchAndCalculateStats]);
 
-  // A responsabilidade deste hook agora se resume a isto:
   return {
     stats,
     isLoading,
     error,
     refetch: fetchAndCalculateStats,
-    // As funções de navegação são uma responsabilidade válida para este hook
     handleNavigateToCardapio: () => router.push(ROUTES.APP.CARDAPIO),
     handleNavigateToPedidos: () => router.push(ROUTES.APP.PEDIDOS),
   };
