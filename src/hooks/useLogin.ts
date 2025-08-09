@@ -1,6 +1,6 @@
+import { useAuth } from "@/features/auth/contexts/AuthContext";
+import { loginUser } from "@/features/auth/services/authService";
 import { useState, useCallback } from "react";
-import { useAuth } from "../components/auth/auth-context";
-import { loginUser } from "../services/auth-service";
 
 interface UseLoginReturn {
   email: string;

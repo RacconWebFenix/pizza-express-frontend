@@ -1,28 +1,38 @@
+// src/utils/cookies.ts
+"use client";
+
+import Cookies from "js-cookie";
+
+// A chave que usamos para armazenar o token de autenticação
+const AUTH_TOKEN_KEY = "authToken";
+
 /**
- * Utilitários para gerenciamento de cookies no client-side
+ * Salva o token de autenticação nos cookies.
+ * @param token O token a ser salvo.
+ * @param options Opções adicionais para o cookie (ex: expiração).
  */
-
-export const setCookie = (name: string, value: string, days: number = 7) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+export const setAuthToken = (
+  token: string,
+  options?: Cookies.CookieAttributes
+): void => {
+  Cookies.set(AUTH_TOKEN_KEY, token, {
+    expires: 1, // Expira em 1 dias
+    path: "/",
+    ...options,
+  });
 };
 
-export const getCookie = (name: string): string | null => {
-  if (typeof document === "undefined") return null;
-
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(";");
-
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === " ") c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-
-  return null;
+/**
+ * Busca o token de autenticação dos cookies.
+ * @returns O token, se existir, ou undefined.
+ */
+export const getAuthToken = (): string | undefined => {
+  return Cookies.get(AUTH_TOKEN_KEY);
 };
 
-export const deleteCookie = (name: string) => {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+/**
+ * Remove o token de autenticação dos cookies.
+ */
+export const deleteAuthToken = (): void => {
+  Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
 };
