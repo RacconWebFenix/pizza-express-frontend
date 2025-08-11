@@ -1,37 +1,21 @@
+// src/components/ui/PizzaButton.tsx
 "use client";
 
-import { Button, ButtonProps } from "@chakra-ui/react";
+import { Button, ButtonProps, Flex, Icon, Text } from "@chakra-ui/react";
+import { ElementType } from "react";
 
-type PizzaButtonVariant = "primary" | "pizza" | "ghost" | "outline" | "solid";
-
-interface PizzaButtonProps extends Omit<ButtonProps, "variant"> {
-  variant?: PizzaButtonVariant;
+interface PizzaButtonProps extends ButtonProps {
+  icon?: ElementType;
 }
 
-export function PizzaButton({
-  variant = "primary",
-  className = "",
-  ...props
-}: PizzaButtonProps) {
-  // Mapeia variantes customizadas para classes do tema
-  const variantClass =
-    variant === "pizza"
-      ? "button-pizza"
-      : variant === "primary"
-      ? "button-primary"
-      : variant === "ghost"
-      ? "button-ghost"
-      : "";
-  // Usa variant do Chakra apenas para tipos aceitos
-  const chakraVariant: ButtonProps["variant"] =
-    variant === "outline" || variant === "ghost" || variant === "solid"
-      ? variant
-      : "solid";
+// Um botão genérico que aceita um ícone e texto de forma limpa
+export const PizzaButton = ({ icon, children, ...props }: PizzaButtonProps) => {
   return (
-    <Button
-      variant={chakraVariant}
-      className={`${variantClass} ${className}`}
-      {...props}
-    />
+    <Button {...props}>
+      <Flex align="center" gap="2">
+        {icon && <Icon as={icon} />}
+        <Text>{children}</Text>
+      </Flex>
+    </Button>
   );
-}
+};

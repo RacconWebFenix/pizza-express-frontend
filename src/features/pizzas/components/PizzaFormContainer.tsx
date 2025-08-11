@@ -7,8 +7,9 @@ import { PizzaFormData, pizzaFormSchema } from "@/utils/validation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PizzaForm } from "./PizzaForm";
-import { PizzaModal } from "@/components/ui/PizzaModal";
+
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
+import { PizzaModal } from "@/components/ui";
 
 interface PizzaFormContainerProps {
   isOpen: boolean;

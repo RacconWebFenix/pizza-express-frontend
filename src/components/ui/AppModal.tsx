@@ -2,27 +2,36 @@
 
 import { Box, Button, Dialog, Portal } from "@chakra-ui/react";
 import { X } from "lucide-react";
+import { ReactNode } from "react";
 
-interface PizzaModalProps {
+// A interface de props agora tem um nome genérico
+interface AppModalProps {
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
 }
 
-export function PizzaModal({
+/**
+ * Componente de Modal genérico para toda a aplicação.
+ */
+export const AppModal = ({
   isOpen,
   onClose,
   title,
   children,
-}: PizzaModalProps) {
+}: AppModalProps) => {
   return (
     <Dialog.Root
       open={isOpen}
       onOpenChange={(details) => !details.open && onClose()}
     >
       <Portal>
-        <Box as={Dialog.Backdrop} bg="" backdropFilter="blur(2px)" />
+        <Box
+          as={Dialog.Backdrop}
+          bg="blackAlpha.600"
+          backdropFilter="blur(2px)"
+        />
         <Dialog.Positioner>
           <Dialog.Content
             bg="white"
@@ -55,8 +64,6 @@ export function PizzaModal({
                   variant="ghost"
                   size="sm"
                   aria-label="Close"
-                  _hover={{ bg: "gray.100" }}
-                  _dark={{ _hover: { bg: "gray.700" } }}
                 >
                   <X size={20} color="currentColor" />
                 </Button>
@@ -68,4 +75,4 @@ export function PizzaModal({
       </Portal>
     </Dialog.Root>
   );
-}
+};

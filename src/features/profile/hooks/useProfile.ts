@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { User } from "@/types/users";
-
 import { getMyProfile } from "../services/profileService";
 import { toaster } from "@/components/ui/toaster";
 
