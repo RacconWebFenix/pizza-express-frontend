@@ -14,7 +14,7 @@ import { PizzaLoading } from "@/components/ui";
 
 /**
  * Componente visual principal para a página de perfil.
- * Corrigido para a sintaxe do Chakra UI v3.
+ * Ele usa o hook 'useProfile' para buscar e exibir os dados.
  */
 export const ProfilePageLayout = () => {
   const { user, isLoading, error } = useProfile();
@@ -61,7 +61,6 @@ export const ProfilePageLayout = () => {
             Meus Endereços
           </Heading>
           {user.enderecos && user.enderecos.length > 0 ? (
-            // CORREÇÃO: 'spacing' alterado para 'gap'
             <VStack align="stretch" gap={4}>
               {user.enderecos.map((endereco) => (
                 <Box

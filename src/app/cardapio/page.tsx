@@ -3,8 +3,9 @@
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 
 import { PizzaLoading } from "@/components/ui";
-import { usePizzas } from "@/src/features/pizzas/hooks/usePizzas";
-import { PizzaCard } from "@/src/features/pizzas/components/PizzaCard";
+import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
+import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
+
 
 /**
  * Página do Cardápio.

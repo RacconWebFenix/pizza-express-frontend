@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useAuth } from "@/components/auth/auth-context";
 import { Flex } from "@chakra-ui/react";
 import { PizzaLoading } from "@/components/ui";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 
 export default function AuthCallback() {
   const searchParams = useSearchParams();

@@ -1,5 +1,5 @@
-import { getAuthToken } from "@/services/auth-service"; // Assumindo que o auth-service ficará em /services por enquanto
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
+import { getAuthToken } from "@/utils/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 

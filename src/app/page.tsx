@@ -3,11 +3,11 @@
 import { Box, Flex, Icon, VStack, Image, Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
-import { useAuth } from "../components/auth/auth-context";
-import AuthLoading from "../components/auth/AuthLoading";
+
 import { useEffect } from "react";
 import { PizzaBadge } from "../components/ui/PizzaBadge";
 import { PizzaText } from "../components/ui/PizzaText";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 
 export default function Home() {
   const router = useRouter();
@@ -30,9 +30,9 @@ export default function Home() {
   };
 
   // Mostra loading enquanto verifica autenticação
-  if (isLoading) {
-    return <AuthLoading message="Verificando login..." />;
-  }
+  // if (isLoading) {
+  //   return <AuthLoading message="Verificando login..." />;
+  // }
 
   return (
     <Box

@@ -1,5 +1,5 @@
 import { Pedido, StatusPedido } from "@/types/pedidos";
-import { getAuthToken } from "@/services/auth-service";
+import { getAuthToken } from "@/utils/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 

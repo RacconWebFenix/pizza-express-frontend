@@ -1,10 +1,11 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
-import { useAuth } from "../../components/auth/auth-context";
+
 import { useRouter } from "next/navigation";
 import { PizzaLoading } from "../../components/ui";
 import MainLayout from "../../components/layout/MainLayout";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 
 interface CardapioLayoutProps {
   children: ReactNode;

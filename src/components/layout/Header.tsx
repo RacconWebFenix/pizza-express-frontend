@@ -13,7 +13,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { useAuth } from "../auth/auth-context";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 import NavItem from "./NavItem";
 import CartWidget from "../cart/CartWidget";
 import MobileNavItem from "./MobileNavItem";

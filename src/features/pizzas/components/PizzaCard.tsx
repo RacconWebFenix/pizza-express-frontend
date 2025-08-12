@@ -2,9 +2,12 @@
 
 import { AspectRatio, Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 
-import { formatCurrency } from "@/utils/format";
 import { PizzaButton } from "@/components/ui"; // Usando seu botão genérico
 import { Pizza } from "@/types/pizzas";
+
+// Simple currency formatter for BRL
+const formatCurrency = (value: number) =>
+  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 // O componente agora só precisa saber como é uma Pizza
 interface PizzaCardProps {

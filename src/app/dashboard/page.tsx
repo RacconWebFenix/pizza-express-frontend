@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import { Box } from "@chakra-ui/react";
-import { useDashboard } from "@/hooks/useDashboard";
+
 import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
 
-// O DashboardContainer se torna o componente principal da página
-import { DashboardContainer } from "@/components/dashboard/DashboardContainer";
 
 export default function DashboardPage() {
   // O estado da UI agora vive aqui, na página que o controla.

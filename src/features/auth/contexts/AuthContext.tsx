@@ -1,4 +1,3 @@
-// src/features/auth/contexts/AuthContext.tsx
 "use client";
 
 import {
@@ -10,18 +9,22 @@ import {
   ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { setCookie, getCookie, deleteCookie } from "@/utils/cookies";
+import { setCookie, getAuthToken, deleteCookie } from "@/utils/cookies";
 import { User } from "@/types/users";
-import { getMe } from "../services/authService";
+import { getMe, loginUser, getGoogleSignInUrl } from "../services/authService";
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
 interface AuthContextProps {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   signInWithGoogle: () => void;
-  // CORREÇÃO: A função agora retorna Promise<boolean>
   handleAuthentication: (token: string, redirect?: boolean) => Promise<boolean>;
-  login: (token: string) => Promise<boolean>;
+  login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -36,18 +39,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async (token: string, redirect: boolean = true): Promise<boolean> => {
       setIsLoading(true);
       try {
-        setCookie("authToken", token, 1); // Define o cookie com validade de 1 dia
+        // No nosso utilitário, setCookie agora é mais simples
+        setCookie(token);
         const userData = await getMe(token);
         setUser(userData);
         if (redirect) {
           router.push("/dashboard");
         }
-        return true; // Retorna sucesso
+        return true;
       } catch (error) {
         console.error("Falha na autenticação:", error);
         setUser(null);
-        deleteCookie("authToken");
-        return false; // Retorna falha
+        deleteCookie();
+        return false;
       } finally {
         setIsLoading(false);
       }
@@ -55,9 +59,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [router]
   );
 
+  const login = async (credentials: LoginCredentials): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      // 1. Chama o serviço de API para obter o token
+      const { access_token } = await loginUser(credentials);
+      // 2. Usa o token para autenticar e buscar os dados do usuário
+      return await handleAuthentication(access_token, true);
+    } catch (error) {
+      console.error("Falha no login:", error);
+      setIsLoading(false);
+      // Propaga o erro para que a página de login possa exibi-lo
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const initAuth = async () => {
-      const token = getCookie("authToken");
+      const token = getAuthToken();
       if (token) {
         await handleAuthentication(token, false);
       } else {
@@ -68,13 +87,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [handleAuthentication]);
 
   const signInWithGoogle = () => {
-    // A URL do Google SignIn deve vir do authService
-    // window.location.href = authService.getGoogleSignInUrl();
+    window.location.href = getGoogleSignInUrl();
   };
 
   const logout = () => {
     setUser(null);
-    deleteCookie("authToken");
+    deleteCookie();
     router.push("/");
   };
 
@@ -86,7 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         signInWithGoogle,
         handleAuthentication,
-        login: handleAuthentication, // A função login pode ser um alias direto
+        login,
         logout,
       }}
     >

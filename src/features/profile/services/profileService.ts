@@ -1,9 +1,7 @@
 import { User } from "@/types/users";
 import { getAuthToken } from "@/utils/cookies";
 
-// Assumindo que o auth-service agora está em /lib ou /features/auth
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
 
 /**
  * Busca os dados do perfil do usuário logado.
@@ -19,7 +17,6 @@ export const getMyProfile = async (): Promise<User> => {
   if (!response.ok) {
     throw new Error("Falha ao buscar os dados do perfil.");
   }
-  // O backend retorna os dados do usuário diretamente neste endpoint
   return response.json();
 };
 

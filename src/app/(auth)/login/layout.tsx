@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 import { Box } from "@chakra-ui/react";
 
-// Este será o layout principal para todas as telas de autenticação.
-// Ele cria um fundo gradiente e centraliza o conteúdo.
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <Box
