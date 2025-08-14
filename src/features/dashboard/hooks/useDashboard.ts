@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getPedidos } from "@/features/pedidos/services/pedidosService";
-import { formatCurrency } from "@/utils/format"; // Supondo que a função de formatação está em /utils
-import { ROUTES } from "@/constants";
-import { Pedido } from "@/types/pedidos";
-import { toaster } from "@/components/ui/toaster";
+import { useState, useCallback, useEffect } from 'react';
+
+import { getPedidos } from '@/features/pedidos/services/pedidosService';
+import { formatCurrency } from '@/utils/format';
+import { Pedido } from '@/types/pedidos';
+import { toaster } from '@/components/ui/toaster';
 
 interface FormattedDashboardStats {
   faturamentoTotal: string;
@@ -15,14 +14,11 @@ interface FormattedDashboardStats {
   ticketMedio: string;
 }
 
-export type UseDashboardReturn = ReturnType<typeof useDashboard>;
-
-export const useDashboard = () => {
-  const router = useRouter();
+export const useDashboardStats = () => {
   const [stats, setStats] = useState<FormattedDashboardStats>({
     faturamentoTotal: formatCurrency(0),
-    pedidosHoje: "0",
-    totalDePedidos: "0",
+    pedidosHoje: '0',
+    totalDePedidos: '0',
     ticketMedio: formatCurrency(0),
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -32,18 +28,12 @@ export const useDashboard = () => {
     try {
       setIsLoading(true);
       const todosOsPedidos: Pedido[] = await getPedidos();
-      const hoje = new Date().toISOString().split("T")[0];
-      const pedidosDeHoje = todosOsPedidos.filter(
-        (p) => p.criadoEm.split("T")[0] === hoje
-      );
-      const faturamentoTotal = todosOsPedidos.reduce(
-        (total, p) =>
-          total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0),
-        0
-      );
+      const hoje = new Date().toISOString().split('T')[0];
+      const pedidosDeHoje = todosOsPedidos.filter(p => p.criadoEm.split('T')[0] === hoje);
+      const faturamentoTotal = todosOsPedidos.reduce((total, p) => total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0), 0);
       const totalDePedidos = todosOsPedidos.length;
-      const ticketMedio =
-        totalDePedidos > 0 ? faturamentoTotal / totalDePedidos : 0;
+      const ticketMedio = totalDePedidos > 0 ? faturamentoTotal / totalDePedidos : 0;
+
       setStats({
         faturamentoTotal: formatCurrency(faturamentoTotal),
         pedidosHoje: pedidosDeHoje.length.toString(),
@@ -52,10 +42,9 @@ export const useDashboard = () => {
       });
       setError(null);
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Falha ao carregar estatísticas.";
+      const msg = err instanceof Error ? err.message : 'Falha ao carregar estatísticas.';
       setError(msg);
-      toaster.create({ title: "Erro", description: msg, type: "error" });
+      toaster.create({ title: 'Erro', description: msg, type: 'error' });
     } finally {
       setIsLoading(false);
     }
@@ -65,12 +54,5 @@ export const useDashboard = () => {
     fetchAndCalculateStats();
   }, [fetchAndCalculateStats]);
 
-  return {
-    stats,
-    isLoading,
-    error,
-    refetch: fetchAndCalculateStats,
-    handleNavigateToCardapio: () => router.push(ROUTES.APP.CARDAPIO),
-    handleNavigateToPedidos: () => router.push(ROUTES.APP.PEDIDOS),
-  };
+  return { stats, isLoading, error, refetch: fetchAndCalculateStats };
 };
