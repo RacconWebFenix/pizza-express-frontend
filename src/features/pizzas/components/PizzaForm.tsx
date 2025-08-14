@@ -2,7 +2,8 @@
 "use client";
 
 import { PizzaFileInput, PizzaInput, PizzaTextarea } from "@/components/ui";
-import { PizzaFormData } from "@/utils/validation";
+import { PizzaFormInputData } from "@/utils/validation";
+
 import {
   Box,
   Heading,
@@ -50,15 +51,14 @@ const Field = {
   ),
 };
 
-// As props agora usam o tipo PizzaFormData consistente
 export interface PizzaFormProps {
   onSubmit: (e: FormEvent) => void;
   onCancel: () => void;
   isSubmitting: boolean;
   isEditing: boolean;
-  errors: FieldErrors<PizzaFormData>;
-  register: UseFormRegister<PizzaFormData>;
-  control: Control<PizzaFormData>;
+  errors: FieldErrors<PizzaFormInputData>;
+  register: UseFormRegister<PizzaFormInputData>;
+  control: Control<PizzaFormInputData>;
 }
 
 export const PizzaForm = ({
