@@ -1,21 +1,27 @@
-import { pizzaTheme } from "@/theme/theme";
-import { defineConfig } from "@pandacss/dev";
+import { defineConfig } from '@pandacss/dev';
+import chakraPreset from '@chakra-ui/panda-preset';
+import { theme } from './src/theme'; // Importamos nosso objeto de tema
 
 export default defineConfig({
-  // Limpa os estilos padrão do navegador
   preflight: true,
+  // Usamos o preset do Chakra para ter a base de componentes
+  presets: [chakraPreset],
+  
+  // Incluímos todos os arquivos que usarão os estilos
+  include: ['./src/**/*.{js,jsx,ts,tsx}', './src/app/**/*.{js,jsx,ts,tsx}'],
+  exclude: [],
 
-  // Onde o PandaCSS deve procurar por seu código para analisar o uso de estilos
-  include: ["./{app,components}/**/*.{js,jsx,ts,tsx}"],
-
-  // O diretório de saída para os tipos e CSS gerados
-  outdir: "styled-system",
-
-  // Importar o preset de configurações do Chakra UI
-  presets: ["@chakra-ui/panda-preset"],
-
-  // Usa o tema importado para estender o preset do Chakra
+  // Esta é a parte mais importante: estendemos o tema base com nossas customizações
   theme: {
-    extend: pizzaTheme,
+    extend: {
+      // Nossos tokens (cores base)
+      tokens: theme.tokens,
+      // Nossos tokens semânticos (nomes de uso)
+      semanticTokens: theme.semanticTokens,
+      // Nossas receitas (estilos de componentes)
+      recipes: theme.recipes,
+    },
   },
+
+  outdir: 'styled-system',
 });
