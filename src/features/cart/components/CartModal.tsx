@@ -15,7 +15,7 @@ import {
 import { IoMdClose, IoMdTrash, IoMdAdd, IoMdRemove } from "react-icons/io";
 
 interface CartItem {
-  id: string;
+  id: number;
   name: string;
   price: number;
   quantity: number;
@@ -25,9 +25,9 @@ interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onRemoveItem: (itemId: string) => void;
+  onRemoveItem: (itemId: number) => void;
   onCheckout: () => void;
-  onUpdateQuantity: (itemId: string, newQuantity: number) => void;
+  onUpdateQuantity: (itemId: number, newQuantity: number) => void;
 }
 
 const CartModal: React.FC<CartModalProps> = ({

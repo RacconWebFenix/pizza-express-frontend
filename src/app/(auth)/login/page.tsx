@@ -5,7 +5,11 @@ import { Box, VStack, Heading, Text, Button, Flex } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
-import { PizzaInput, PizzaButton, PizzaLoading } from "@/components/ui";
+import {
+  PizzaInput,
+  PizzaButton,
+  PizzaLoading,
+} from "@/features/cart/components/ui";
 
 /**
  * Página de Login.

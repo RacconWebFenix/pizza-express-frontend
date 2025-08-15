@@ -1,7 +1,26 @@
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
 import { getAuthToken } from "@/utils/cookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// Helper para criar o cabeçalho de autorização (CORRIGIDO)
+const getAuthHeaders = () => {
+  // Inicializamos o objeto de cabeçalhos com o tipo explícito que o fetch espera.
+  const headers: Record<string, string> = {
+    // Podemos adicionar outros cabeçalhos padrão aqui se necessário,
+    // por exemplo: 'Content-Type': 'application/json'
+  };
+
+  const token = getAuthToken();
+  if (token) {
+    // Se o token existir, adicionamos a propriedade Authorization.
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // O objeto retornado agora sempre será do tipo Record<string, string>,
+  // mesmo que esteja vazio, o que satisfaz o TypeScript.
+  return headers;
+};
 
 const createPizzaFormData = (
   data: Partial<CreatePizzaWithImageData>
@@ -14,8 +33,12 @@ const createPizzaFormData = (
   return formData;
 };
 
+// --- FUNÇÕES USANDO O HELPER CORRIGIDO ---
+
 export const getPizzas = async (): Promise<Pizza[]> => {
-  const response = await fetch(`${API_URL}/pizzas`);
+  const response = await fetch(`${API_URL}/pizzas`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error("Erro ao buscar as pizzas.");
   return response.json();
 };
@@ -23,11 +46,10 @@ export const getPizzas = async (): Promise<Pizza[]> => {
 export const createPizza = async (
   data: CreatePizzaWithImageData
 ): Promise<Pizza> => {
-  const token = getAuthToken();
   const formData = createPizzaFormData(data);
   const response = await fetch(`${API_URL}/pizzas/with-image`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeaders(),
     body: formData,
   });
 
@@ -41,11 +63,10 @@ export const updatePizza = async (
   id: number,
   data: Partial<CreatePizzaWithImageData>
 ): Promise<Pizza> => {
-  const token = getAuthToken();
   const formData = createPizzaFormData(data);
   const response = await fetch(`${API_URL}/pizzas/${id}`, {
     method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeaders(),
     body: formData,
   });
 
@@ -56,10 +77,9 @@ export const updatePizza = async (
 };
 
 export const deletePizza = async (id: number): Promise<void> => {
-  const token = getAuthToken();
   const response = await fetch(`${API_URL}/pizzas/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     const responseData = await response.json();

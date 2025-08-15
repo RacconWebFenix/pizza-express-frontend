@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from "react";
 
-import { getPedidos } from '@/features/pedidos/services/pedidosService';
-import { formatCurrency } from '@/utils/format';
-import { Pedido } from '@/types/pedidos';
-import { toaster } from '@/components/ui/toaster';
+import { getPedidos } from "@/features/pedidos/services/pedidosService";
+import { formatCurrency } from "@/utils/format";
+import { Pedido } from "@/types/pedidos";
+import { toaster } from "@/components/ui/toaster";
 
 interface FormattedDashboardStats {
   faturamentoTotal: string;
@@ -17,8 +17,8 @@ interface FormattedDashboardStats {
 export const useDashboardStats = () => {
   const [stats, setStats] = useState<FormattedDashboardStats>({
     faturamentoTotal: formatCurrency(0),
-    pedidosHoje: '0',
-    totalDePedidos: '0',
+    pedidosHoje: "0",
+    totalDePedidos: "0",
     ticketMedio: formatCurrency(0),
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -28,11 +28,18 @@ export const useDashboardStats = () => {
     try {
       setIsLoading(true);
       const todosOsPedidos: Pedido[] = await getPedidos();
-      const hoje = new Date().toISOString().split('T')[0];
-      const pedidosDeHoje = todosOsPedidos.filter(p => p.criadoEm.split('T')[0] === hoje);
-      const faturamentoTotal = todosOsPedidos.reduce((total, p) => total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0), 0);
+      const hoje = new Date().toISOString().split("T")[0];
+      const pedidosDeHoje = todosOsPedidos.filter(
+        (p) => p.criadoEm.split("T")[0] === hoje
+      );
+      const faturamentoTotal = todosOsPedidos.reduce(
+        (total, p) =>
+          total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0),
+        0
+      );
       const totalDePedidos = todosOsPedidos.length;
-      const ticketMedio = totalDePedidos > 0 ? faturamentoTotal / totalDePedidos : 0;
+      const ticketMedio =
+        totalDePedidos > 0 ? faturamentoTotal / totalDePedidos : 0;
 
       setStats({
         faturamentoTotal: formatCurrency(faturamentoTotal),
@@ -42,9 +49,10 @@ export const useDashboardStats = () => {
       });
       setError(null);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Falha ao carregar estatísticas.';
+      const msg =
+        err instanceof Error ? err.message : "Falha ao carregar estatísticas.";
       setError(msg);
-      toaster.create({ title: 'Erro', description: msg, type: 'error' });
+      toaster.create({ title: "Erro", description: msg, type: "error" });
     } finally {
       setIsLoading(false);
     }

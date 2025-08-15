@@ -2,7 +2,7 @@
 
 import { Flex, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { CartItem } from "@/types";
-import { useCart } from "@/contexts/CartContext";
+import { useCart } from "@/features/cart/context/CartContext";
 import { formatCurrency } from "@/utils/format";
 import { PizzaButton } from "@/components/ui";
 
@@ -18,12 +18,11 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleIncrease = () => {
-    updateQuantity(item.pizza.id, item.quantity + 1);
+    updateQuantity(item.pizza.id.toString(), item.quantity + 1);
   };
 
   const handleDecrease = () => {
-    // A lógica no contexto já previne que a quantidade seja < 1
-    updateQuantity(item.pizza.id, item.quantity - 1);
+    updateQuantity(item.pizza.id.toString(), item.quantity - 1);
   };
 
   return (
@@ -39,7 +38,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
     >
       <HStack gap={4}>
         <Image
-          src={item.pizza.imagem}
+          src={item.pizza.image || "/placeholder-image.png"}
           alt={`Imagem da pizza ${item.pizza.nome}`}
           boxSize="60px"
           objectFit="cover"
@@ -81,7 +80,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
           aria-label="Remover item do carrinho"
           color="red.500"
           variant="solid"
-          onClick={() => removeFromCart(item.pizza.id)}
+          onClick={() => removeFromCart(item.pizza.id.toString())}
         />
       </HStack>
     </Flex>

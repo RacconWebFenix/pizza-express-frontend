@@ -15,7 +15,7 @@ import {
 import { FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import NavItem from "./NavItem";
-import CartWidget from "../cart/CartWidget";
+import CartWidget from "../../features/cart/components/CartWidget";
 import MobileNavItem from "./MobileNavItem";
 import { PizzaButton } from "../ui";
 import Link from "next/link";

@@ -8,7 +8,6 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-// Este é o schema que o Zod usa para validar e transformar os dados.
 export const pizzaFormSchema = z.object({
   nome: z
     .string()
@@ -17,28 +16,18 @@ export const pizzaFormSchema = z.object({
     .string()
     .min(10, { message: "A descrição deve ter no mínimo 10 caracteres." }),
 
-  // O campo 'preco' entra como string, é validado e sai como número.
-  preco: z
-    .string()
-    .min(1, { message: "O preço é obrigatório." })
-    .transform((val, ctx) => {
-      const parsed = parseFloat(val.replace(",", "."));
-      if (isNaN(parsed)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Deve ser um número válido.",
-        });
-        return z.NEVER;
-      }
-      if (parsed <= 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "O preço deve ser maior que zero.",
-        });
-        return z.NEVER;
-      }
-      return parsed;
+  // --- CORREÇÃO FINAL AQUI ---
+  preco: z.coerce
+    .number() // 1. Tenta converter a entrada para número (ex: "abc" vira NaN)
+    .refine((val) => !isNaN(val), {
+      // 2. Valida se a conversão resultou em um número válido (não NaN)
+      message: "O preço deve ser um número válido.",
+    })
+    .min(0.01, {
+      // 3. Aplica a regra de negócio apenas se for um número
+      message: "O preço deve ser maior que R$ 0,00.",
     }),
+  // -------------------------
 
   image: z
     .any()
@@ -50,12 +39,9 @@ export const pizzaFormSchema = z.object({
     .refine(
       (files) =>
         !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files[0].type),
-      "Formatos suportados."
+      "Apenas formatos .jpg, .jpeg, .png e .webp são suportados."
     ),
 });
 
-// TIPO PARA OS DADOS DE SAÍDA (DEPOIS DA VALIDAÇÃO) -> preco é 'number'
 export type PizzaFormOutputData = z.output<typeof pizzaFormSchema>;
-
-// TIPO PARA OS DADOS DE ENTRADA (NO FORMULÁRIO) -> preco é 'string'
 export type PizzaFormInputData = z.input<typeof pizzaFormSchema>;

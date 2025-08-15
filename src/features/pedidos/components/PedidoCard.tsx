@@ -9,10 +9,11 @@ import {
   IconButton,
   Icon,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+
 import { FiMoreVertical, FiArrowRight, FiCheck } from "react-icons/fi";
 // Importando os tipos e a lógica de transição que já existem
 import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
+import { motion } from "framer-motion";
 
 // Mapeia as transições de status permitidas no frontend (lógica de negócio)
 const transicoesStatus: Record<StatusPedido, StatusPedido[]> = {

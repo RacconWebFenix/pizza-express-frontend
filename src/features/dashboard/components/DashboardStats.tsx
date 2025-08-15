@@ -1,10 +1,11 @@
 "use client";
 
+import { PizzaLoading } from "@/components/ui";
 import {
   SimpleGrid,
   Stat, // Importa apenas o objeto principal 'Stat'
 } from "@chakra-ui/react";
-import { PizzaLoading } from "@/components/ui";
+
 
 interface DashboardStatsProps {
   stats: {

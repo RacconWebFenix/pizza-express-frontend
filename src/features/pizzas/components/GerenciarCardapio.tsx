@@ -16,10 +16,10 @@ import { motion } from "framer-motion";
 import { PlusCircle } from "lucide-react";
 import { TbArrowBack } from "react-icons/tb";
 
-import { PizzaButton, PizzaLoading } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
 
 import { UsePizzasReturn } from "../hooks/usePizzas";
+import { PizzaButton, PizzaLoading } from "@/components/ui";
 
 const MotionBox = motion(Box);
 

@@ -3,8 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { PizzaLoading } from "../../components/ui";
-
+import { PizzaLoading } from "@/components/ui";
 import MainLayout from "@/components/layout/MainLayout";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

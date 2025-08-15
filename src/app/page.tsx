@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { FaPizzaSlice, FaLeaf, FaFire } from "react-icons/fa";
 
 import { useEffect } from "react";
-import { PizzaBadge } from "../components/ui/PizzaBadge";
-import { PizzaText } from "../components/ui/PizzaText";
+
 import { useAuth } from "@/features/auth/contexts/AuthContext";
+import { PizzaBadge, PizzaText } from "@/components/ui";
 
 export default function Home() {
   const router = useRouter();
@@ -107,10 +107,15 @@ export default function Home() {
         </Flex>
 
         {/* Descrição */}
-        <PizzaText color="gray.300" fontSize={{ base: "md", md: "lg" }} lineHeight="1.6">
-          Descubra as melhores pizzas artesanais, feitas com ingredientes frescos{" "}
-          <Icon as={FaLeaf} boxSize={5} color="green.600" aria-hidden="true" /> e
-          assadas em nosso tradicional forno a lenha{" "}
+        <PizzaText
+          color="gray.300"
+          fontSize={{ base: "md", md: "lg" }}
+          lineHeight="1.6"
+        >
+          Descubra as melhores pizzas artesanais, feitas com ingredientes
+          frescos{" "}
+          <Icon as={FaLeaf} boxSize={5} color="green.600" aria-hidden="true" />{" "}
+          e assadas em nosso tradicional forno a lenha{" "}
           <Icon as={FaFire} boxSize={5} color="orange.600" aria-hidden="true" />
           , garantindo sabor e qualidade excepcionais.
         </PizzaText>

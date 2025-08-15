@@ -3,9 +3,10 @@
 import { ReactNode, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
-import { PizzaLoading } from "../../components/ui";
-import MainLayout from "../../components/layout/MainLayout";
+
 import { useAuth } from "@/features/auth/contexts/AuthContext";
+import { PizzaLoading } from "@/components/ui";
+import MainLayout from "@/components/layout/MainLayout";
 
 interface PedidosLayoutProps {
   children: ReactNode;

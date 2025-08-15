@@ -56,7 +56,6 @@ export * from "./pedidos";
 export * from "./cart";
 
 // Exporta todos os tipos relacionados a usuarios
-export * from "./usuario";
 
 export * from "./pizzas";
 
@@ -64,6 +63,6 @@ export * from "./pizzas";
 export * from "./pedidos";
 
 // Exporta todos os tipos relacionados a usuarios e endereços
-export * from "./cliente"; // <<< ADICIONADO
+
 export * from "./endereco"; // <<< ADICIONADO
 export * from "./entregador"; // <<< ADICIONADO

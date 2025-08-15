@@ -1,7 +1,7 @@
 // src/components/PizzaForm/PizzaForm.tsx
 "use client";
 
-import { PizzaFileInput, PizzaInput, PizzaTextarea } from "@/components/ui";
+import { PizzaInput, PizzaTextarea, PizzaFileInput } from "@/components/ui";
 import { PizzaFormInputData } from "@/utils/validation";
 
 import {

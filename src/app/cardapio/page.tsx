@@ -1,11 +1,9 @@
 "use client";
 
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
-
-import { PizzaLoading } from "@/components/ui";
 import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
 import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
-
+import { PizzaLoading } from "@/components/ui";
 
 /**
  * Página do Cardápio.

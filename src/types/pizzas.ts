@@ -1,7 +1,6 @@
 // src/types/pizzas.ts
 
-import { PizzaFormInputData } from "@/utils/validation";
-
+import { PizzaFormOutputData } from "@/utils/validation";
 
 // A interface principal que representa uma Pizza vinda do backend (sem alterações)
 export interface Pizza {
@@ -14,6 +13,6 @@ export interface Pizza {
   updatedAt: string;
 }
 // Tipo para criação de pizza com imagem opcional
-export type CreatePizzaWithImageData = Omit<PizzaFormInputData, "image"> & {
+export type CreatePizzaWithImageData = Omit<PizzaFormOutputData, "image"> & {
   image?: File;
 };

@@ -1,15 +1,17 @@
-// src/components/PizzaForm/PizzaFormContainer.tsx
-
 "use client";
 
 import { useEffect } from "react";
-import { PizzaFormData, pizzaFormSchema } from "@/utils/validation";
-import { useForm } from "react-hook-form";
+import {
+  pizzaFormSchema,
+  PizzaFormInputData,
+  PizzaFormOutputData,
+} from "@/utils/validation";
+import { useForm } from "react-hook-form"; // Não precisamos mais do SubmitHandler aqui
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PizzaForm } from "./PizzaForm";
 
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
-import { PizzaModal } from "@/components/ui";
+import { AppModal } from "@/components/ui/AppModal";
 
 interface PizzaFormContainerProps {
   isOpen: boolean;
@@ -32,13 +34,13 @@ export const PizzaFormContainer = ({
     reset,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<PizzaFormData>({
+  } = useForm<PizzaFormInputData>({
     resolver: zodResolver(pizzaFormSchema),
     mode: "onChange",
     defaultValues: {
       nome: "",
       descricao: "",
-      preco: 0,
+      preco: "",
     },
   });
 
@@ -48,15 +50,20 @@ export const PizzaFormContainer = ({
         reset({
           nome: pizzaToEdit.nome,
           descricao: pizzaToEdit.descricao || "",
-          preco: pizzaToEdit.preco,
+          preco: String(pizzaToEdit.preco),
         });
       } else {
-        reset({ nome: "", descricao: "", preco: 0 });
+        reset({
+          nome: "",
+          descricao: "",
+          preco: "",
+        });
       }
     }
   }, [isOpen, pizzaToEdit, reset]);
 
-  const processSubmit = (data: PizzaFormData) => {
+  // Esta função, que lida com a lógica de negócio, permanece a mesma.
+  const processSubmit = (data: PizzaFormOutputData) => {
     const dataToSend: CreatePizzaWithImageData = {
       ...data,
       image: data.image?.[0],
@@ -64,14 +71,37 @@ export const PizzaFormContainer = ({
     onSuccess(dataToSend, pizzaToEdit?.id);
   };
 
+  // Função `onSubmit` aceita os dados como o `handleSubmit` os vê
+  // (com `preco: unknown`) e usa o `safeParse` do Zod como uma "ponte segura" de tipagem.
+  const onSubmit = (data: PizzaFormInputData) => {
+    // Usamos `safeParse` para validar os dados novamente.
+    // Isso serve como uma verificação em tempo de execução e, mais importante,
+    // como um "type guard" para o TypeScript.
+    const validationResult = pizzaFormSchema.safeParse(data);
+
+    if (validationResult.success) {
+      // Se a validação for bem-sucedida, `validationResult.data` agora
+      // é GARANTIDO que seja do tipo `PizzaFormOutputData`, com `preco: number`.
+      // Agora podemos chamar nossa função de lógica de negócio com segurança.
+      processSubmit(validationResult.data);
+    } else {
+      // Este bloco é uma segurança. Teoricamente, o `zodResolver`
+      // já deveria ter impedido dados inválidos de chegar até aqui.
+      console.error(
+        "A validação falhou dentro do onSubmit, o que não deveria acontecer:",
+        validationResult.error
+      );
+    }
+  };
+
   return (
-    <PizzaModal
+    <AppModal
       isOpen={isOpen}
       onClose={onClose}
       title={pizzaToEdit ? "Editar Pizza" : "Nova Pizza"}
     >
       <PizzaForm
-        onSubmit={handleSubmit(processSubmit)}
+        onSubmit={handleSubmit(onSubmit)} // Passamos a nova função segura
         register={register}
         control={control}
         errors={errors}
@@ -79,6 +109,6 @@ export const PizzaFormContainer = ({
         isEditing={!!pizzaToEdit}
         onCancel={onClose}
       />
-    </PizzaModal>
+    </AppModal>
   );
 };

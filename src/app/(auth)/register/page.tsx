@@ -5,7 +5,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { PizzaButton, PizzaInput, PizzaLoading } from "../../../components/ui";
+import {
+  PizzaButton,
+  PizzaInput,
+  PizzaLoading,
+} from "../../../features/cart/components/ui";
 
 interface FormErrors {
   email?: string;

@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Pedido, StatusPedido } from "@/types/pedidos";
-import { toaster } from "@/components/ui/toaster";
-// Importando do novo serviço centralizado
+
 import { getPedidos, updatePedidoStatus } from "../services/pedidosService";
+import { toaster } from "@/components/ui/toaster";
 
 export type UsePedidosReturn = ReturnType<typeof usePedidos>;
 

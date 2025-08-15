@@ -9,8 +9,8 @@ import {
   updatePizza,
 } from "../services/pizzasService";
 
-import { toaster } from "@/components/ui/toaster";
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
+import { toaster } from "@/components/ui/toaster";
 
 export type UsePizzasReturn = ReturnType<typeof usePizzas>;
 

@@ -1,41 +1,12 @@
-"use client";
-
-import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { Flex } from "@chakra-ui/react";
+
+import AuthCallbackView from "./auth-callback-view";
 import { PizzaLoading } from "@/components/ui";
-import { useAuth } from "@/features/auth/contexts/AuthContext";
 
-export default function AuthCallback() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const { handleAuthentication } = useAuth();
-
-  useEffect(() => {
-    const token = searchParams.get("token");
-    const error = searchParams.get("error");
-
-    if (error) {
-      console.error("Falha na autenticação do Google:", error);
-      // Opcional: Adicionar uma notificação de erro aqui (com Chakra Toast, por exemplo)
-      router.push("/login?error=true");
-      return;
-    }
-
-    if (token) {
-      console.log("[AUTH-CALLBACK] Processando token...");
-      // Chama a função do contexto para salvar o token, buscar o usuário e redirecionar
-      handleAuthentication(token);
-    } else {
-      console.error("[AUTH-CALLBACK] Nenhum token encontrado na URL");
-      // Se por algum motivo não houver token nem erro, volta para o login
-      router.push("/login?error=true");
-    }
-    // As dependências garantem que o efeito rode apenas quando necessário
-  }, [searchParams, handleAuthentication, router]);
-
-  // Enquanto o handleAuthentication está rodando, o `isLoading` do contexto
-  // estará true, mas podemos mostrar um spinner simples aqui de qualquer forma.
+// O fallback é a UI de carregamento que o servidor envia.
+// Podemos usar o mesmo componente de loading para uma experiência consistente.
+function LoadingFallback() {
   return (
     <Flex
       height="100vh"
@@ -47,5 +18,13 @@ export default function AuthCallback() {
     >
       <PizzaLoading />
     </Flex>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthCallbackView />
+    </Suspense>
   );
 }

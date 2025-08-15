@@ -10,7 +10,7 @@ import {
   Separator,
 } from "@chakra-ui/react";
 import { useProfile } from "../hooks/useProfile";
-import { PizzaLoading } from "@/components/ui";
+import { PizzaLoading } from "@/features/cart/components/ui";
 
 /**
  * Componente visual principal para a página de perfil.
