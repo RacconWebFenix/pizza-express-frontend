@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "prepare": "panda codegen"
+    "test": "jest"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.24.2",
@@ -29,9 +28,7 @@
     "zod": "^4.0.16"
   },
   "devDependencies": {
-    "@chakra-ui/panda-preset": "^3.22.0",
     "@eslint/eslintrc": "^3",
-    "@pandacss/dev": "^0.54.0",
     "@swc/jest": "^0.2.38",
     "@testing-library/jest-dom": "^5.0.0",
     "@testing-library/react": "^16.3.0",

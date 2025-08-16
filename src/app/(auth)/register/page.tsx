@@ -5,11 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  PizzaButton,
-  PizzaInput,
-  PizzaLoading,
-} from "../../../features/cart/components/ui";
+import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
 
 interface FormErrors {
   email?: string;
@@ -264,7 +260,6 @@ const RegisterPage = () => {
                 _dark={{ color: "gray.300" }}
               >
                 Já tem uma conta?{" "}
-                {/* CORRIGIDO: O Button agora está dentro do Link */}
                 <Link href="/login">
                   <Button variant="ghost" colorScheme="yellow" size="sm">
                     Fazer login

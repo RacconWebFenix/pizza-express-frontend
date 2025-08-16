@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { User } from "@/types/users";
 import { getMyProfile } from "../services/profileService";
-import { toaster } from "@/features/cart/components/ui/toaster";
+import { toaster } from "@/components/ui/toaster";
 
 export const useProfile = () => {
   const [user, setUser] = useState<User | null>(null);

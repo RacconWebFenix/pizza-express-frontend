@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Flex, Icon, Text } from "@chakra-ui/react";
+import { Button, Flex, Icon } from "@chakra-ui/react";
 import { Utensils, ClipboardList, Pizza } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
@@ -13,38 +13,44 @@ export const DashboardActions = ({
   onShowGerenciarCardapio,
 }: DashboardActionsProps) => {
   const router = useRouter();
+
+  const secondaryButtonStyle = {
+    bg: "background.secondary",
+    color: "text.primary",
+    _hover: { bg: "background.tertiary" },
+  } as const;
+
   return (
-    <Flex direction={{ base: "column", md: "row" }} gap={4}>
+    <Flex direction={{ base: "column", md: "row" }} gap={4} w="full">
+      {/* Botões Secundários: Usam apenas o secondaryButtonStyle */}
       <Button
+        size="lg"
+        flex="1"
+        {...secondaryButtonStyle}
         onClick={() => router.push(ROUTES.APP.PEDIDOS)}
-        size="lg"
-        flex="1"
       >
-        <Flex align="center" gap="2">
-          <Icon as={ClipboardList} />
-          <Text>Ver Pedidos</Text>
-        </Flex>
+        <Icon as={ClipboardList} mr={2} />
+        Ver Pedidos
       </Button>
       <Button
-        onClick={() => router.push(ROUTES.APP.CARDAPIO)}
         size="lg"
         flex="1"
+        {...secondaryButtonStyle}
+        onClick={() => router.push(ROUTES.APP.CARDAPIO)}
       >
-        <Flex align="center" gap="2">
-          <Icon as={Utensils} />
-          <Text>Ver Cardápio</Text>
-        </Flex>
+        <Icon as={Utensils} mr={2} />
+        Ver Cardápio
       </Button>
+
+      {/* Botão Primário: Usa apenas a variant="solid" do tema */}
       <Button
         onClick={onShowGerenciarCardapio}
         size="lg"
-        colorScheme="orange"
         flex="1"
+        variant="solid"
       >
-        <Flex align="center" gap="2">
-          <Icon as={Pizza} />
-          <Text>Gerenciar Cardápio</Text>
-        </Flex>
+        <Icon as={Pizza} mr={2} />
+        Gerenciar Cardápio
       </Button>
     </Flex>
   );

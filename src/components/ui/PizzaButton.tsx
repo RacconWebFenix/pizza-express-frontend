@@ -1,4 +1,5 @@
 // src/components/ui/PizzaButton.tsx
+
 "use client";
 
 import { Button, ButtonProps, Flex, Icon } from "@chakra-ui/react";
@@ -8,10 +9,16 @@ interface PizzaButtonProps extends ButtonProps {
   icon?: ElementType;
 }
 
-// Um botão genérico que aceita um ícone e texto de forma limpa
-export const PizzaButton = ({ icon, children, ...props }: PizzaButtonProps) => {
+export const PizzaButton = ({
+  icon,
+  children,
+  // ALTERADO: O valor padrão agora é "solid", que é um tipo válido para o Button do Chakra
+  variant = "solid",
+  size = "md",
+  ...props
+}: PizzaButtonProps) => {
   return (
-    <Button {...props}>
+    <Button variant={variant} size={size} {...props}>
       <Flex align="center" gap="2">
         {icon && <Icon as={icon} />}
         {children}

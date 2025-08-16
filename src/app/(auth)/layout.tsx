@@ -5,7 +5,8 @@ import { ReactNode, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { PizzaLoading } from "@/features/cart/components/ui";
+import { PizzaLoading } from "@/components/ui";
+
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();

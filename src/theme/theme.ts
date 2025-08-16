@@ -1,28 +1,21 @@
-import { defineRecipe } from "@pandacss/dev";
+// src/theme/theme.ts
 
-// =================================================================
-// 1. DEFINIÇÃO DOS TOKENS (Cores, Fontes, z-index, etc.)
-// =================================================================
 export const pizzaTheme = {
   tokens: {
     colors: {
       brand: {
-        // Cores revisadas para a identidade da pizzaria
-        primary: { value: "#D92B2B" }, // Vermelho principal (tomate, paixão)
-        secondary: { value: "#2E7D32" }, // Verde (ingredientes frescos, manjericão)
-        accent: { value: "#FFC107" }, // Amarelo/Mostarda (queijo, alegria)
-
-        // Mantendo tons neutros para UI
-        background: { value: "#F5F5F5" }, // Fundo principal da aplicação
-        surface: { value: "#FFFFFF" }, // Fundo para cards e elementos elevados
-        textPrimary: { value: "#212121" }, // Texto principal, escuro
-        textSecondary: { value: "#757575" }, // Texto de apoio, mais claro
-
-        // Cores de feedback
-        success: { value: "#2E7D32" }, // Verde para sucesso
-        warning: { value: "#ECC94B" }, // Amarelo para alertas
-        error: { value: "#D92B2B" }, // Vermelho para erros
+        primary: { value: "#D92B2B" }, // Vermelho principal
+        secondary: { value: "#2E7D32" }, // Verde
+        accent: { value: "#FFC107" }, // Amarelo/Mostarda
       },
+      white: { value: "#FFFFFF" },
+      background: { value: "#F5F5F5" },
+      surface: { value: "#FFFFFF" },
+      textPrimary: { value: "#212121" },
+      textSecondary: { value: "#757575" },
+      success: { value: "#2E7D32" },
+      warning: { value: "#ECC94B" },
+      error: { value: "#D92B2B" },
     },
     fonts: {
       heading: { value: "'Roboto Slab', serif" },
@@ -36,7 +29,7 @@ export const pizzaTheme = {
     },
   },
   recipes: {
-    button: defineRecipe({
+    button: {
       className: "button",
       description: "The styles for the Button component",
       base: {
@@ -47,30 +40,30 @@ export const pizzaTheme = {
         borderRadius: "lg",
         transition: "all 0.2s ease",
         cursor: "pointer",
-        fontFamily: "body", // Usando a fonte do corpo para consistência
+        fontFamily: "body",
         _disabled: { opacity: 0.6, cursor: "not-allowed" },
       },
       variants: {
         variant: {
-          primary: {
+          // ALTERADO: Renomeamos 'primary' para 'solid' para sobrescrever a variante padrão do Chakra
+          solid: {
             bg: "brand.primary",
             color: "white",
             _hover: {
-              bg: "#C62828", // Um tom de vermelho um pouco mais escuro para o hover
+              bg: "#C62828", // Vermelho mais escuro para o hover
             },
           },
-          // Renomeei 'pizza' para 'accent' para um nome mais semântico
           accent: {
             bg: "brand.accent",
-            color: "brand.textPrimary",
+            color: "textPrimary",
             _hover: {
-              bg: "#FFB300", // Um tom de amarelo um pouco mais escuro
+              bg: "#FFB300",
             },
           },
           ghost: {
             bg: "transparent",
             color: "gray.600",
-            _hover: { bg: "rgba(217, 43, 43, 0.1)" }, // Fundo vermelho bem sutil no hover
+            _hover: { bg: "rgba(217, 43, 43, 0.1)" },
           },
         },
         size: {
@@ -79,8 +72,6 @@ export const pizzaTheme = {
           sm: { px: 2, h: 8, fontSize: "sm" },
         },
       },
-      defaultVariants: { variant: "primary", size: "md" },
-    }),
-    // Adicione aqui as recipes para Card, Badge, etc. quando precisar
+    },
   },
 };

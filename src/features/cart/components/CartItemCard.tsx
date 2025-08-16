@@ -18,11 +18,11 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleIncrease = () => {
-    updateQuantity(item.pizza.id.toString(), item.quantity + 1);
+    updateQuantity(item.pizza.id, item.quantity + 1);
   };
 
   const handleDecrease = () => {
-    updateQuantity(item.pizza.id.toString(), item.quantity - 1);
+    updateQuantity(item.pizza.id, item.quantity - 1);
   };
 
   return (
@@ -80,7 +80,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
           aria-label="Remover item do carrinho"
           color="red.500"
           variant="solid"
-          onClick={() => removeFromCart(item.pizza.id.toString())}
+          onClick={() => removeFromCart(item.pizza.id)}
         />
       </HStack>
     </Flex>

@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { Box, VStack } from "@chakra-ui/react";
-
-// Importando os hooks e componentes de suas novas casas
+import { DollarSign, ListOrdered, BarChart, ShoppingCart } from "lucide-react";
 
 import { DashboardStats } from "@/features/dashboard/components/DashboardStats";
 import { DashboardActions } from "@/features/dashboard/components/DashboardActions";
@@ -19,8 +18,24 @@ export default function DashboardPage() {
   const { stats, isLoading: isLoadingStats } = useDashboardStats();
   const pizzaHook = usePizzas();
 
+  // Criamos o array de estatísticas com os ícones
+  const formattedStats = [
+    {
+      label: "Faturamento Total",
+      value: stats.faturamentoTotal,
+      icon: DollarSign,
+    },
+    { label: "Pedidos Hoje", value: stats.pedidosHoje, icon: ShoppingCart },
+    {
+      label: "Total de Pedidos",
+      value: stats.totalDePedidos,
+      icon: ListOrdered,
+    },
+    { label: "Ticket Médio", value: stats.ticketMedio, icon: BarChart },
+  ];
+
   return (
-    <Box w="full" minH="100vh" bg="gray.100" p={8}>
+    <Box w="full" minH="100vh" bg="background.primary" p={{ base: 4, md: 8 }}>
       {isGerenciarView ? (
         <GerenciarCardapio
           onNavigateBack={() => setIsGerenciarView(false)}
@@ -28,7 +43,7 @@ export default function DashboardPage() {
         />
       ) : (
         <VStack gap={8} align="stretch">
-          <DashboardStats stats={stats} isLoading={isLoadingStats} />
+          <DashboardStats stats={formattedStats} isLoading={isLoadingStats} />
           <DashboardActions
             onShowGerenciarCardapio={() => setIsGerenciarView(true)}
           />
