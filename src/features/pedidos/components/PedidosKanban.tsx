@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Heading, SimpleGrid, Tag, Flex, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Flex,
+  VStack,
+  TagRoot,
+} from "@chakra-ui/react";
 import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
 import { PedidoCard } from "./PedidoCard";
 
@@ -20,16 +27,24 @@ const KanbanColumn = ({
   pedidos: Pedido[];
   onUpdateStatus: (pedidoId: number, status: StatusPedido) => void;
 }) => (
-  <Box bg="gray.50" p={4} borderRadius="md" minH="300px">
+  <Box
+    bg="background.secondary"
+    p={4}
+    borderRadius="lg"
+    minH="400px"
+    borderWidth="1px"
+    borderColor="background.tertiary"
+  >
     <Flex align="center" mb={4}>
-      <Tag.Root
+      <TagRoot
         size="lg"
         variant="solid"
         colorScheme={statusConfig[status].colorScheme}
       >
-        <Tag.Label>{pedidos.length}</Tag.Label>
-      </Tag.Root>
-      <Heading size="md" color="gray.700" ml={2}>
+        {pedidos.length}
+      </TagRoot>
+
+      <Heading size="md" color="text.primary" ml={3}>
         {title}
       </Heading>
     </Flex>

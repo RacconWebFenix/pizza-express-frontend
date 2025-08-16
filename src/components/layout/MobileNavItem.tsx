@@ -26,18 +26,14 @@ export default function MobileNavItem({
 
   return (
     <Button
-      variant={isActive ? "solid" : "ghost"}
-      colorScheme={isActive ? "blue" : "gray"}
+      // ALTERADO: Lógica de estilo para o estado ativo
+      variant="ghost"
+      bg={isActive ? "brand.accent" : "transparent"}
+      color={isActive ? "textPrimary" : "gray.700"}
       size="md"
       onClick={handleClick}
       justifyContent="flex-start"
       w="100%"
-      _hover={{
-        bg: isActive ? "blue.800" : "gray.200",
-        color: isActive ? "white" : "blue.800",
-      }}
-      bg={isActive ? "blue.700" : "transparent"}
-      color={isActive ? "white" : "gray.700"}
     >
       {label}
     </Button>

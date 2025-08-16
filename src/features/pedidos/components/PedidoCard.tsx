@@ -9,13 +9,10 @@ import {
   IconButton,
   Icon,
 } from "@chakra-ui/react";
-
 import { FiMoreVertical, FiArrowRight, FiCheck } from "react-icons/fi";
-// Importando os tipos e a lógica de transição que já existem
 import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
 import { motion } from "framer-motion";
 
-// Mapeia as transições de status permitidas no frontend (lógica de negócio)
 const transicoesStatus: Record<StatusPedido, StatusPedido[]> = {
   [StatusPedido.PENDENTE]: [StatusPedido.EM_PREPARO],
   [StatusPedido.EM_PREPARO]: [StatusPedido.A_CAMINHO],
@@ -24,7 +21,6 @@ const transicoesStatus: Record<StatusPedido, StatusPedido[]> = {
   [StatusPedido.CANCELADO]: [],
 };
 
-// A interface de props agora aceita a função de atualização
 interface PedidoCardProps {
   pedido: Pedido;
   onUpdateStatus: (pedidoId: number, status: StatusPedido) => void;
@@ -33,7 +29,6 @@ interface PedidoCardProps {
 const MotionBox = motion(Box);
 
 export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
-  // Determina quais são os próximos status possíveis para este pedido
   const proximosStatus = transicoesStatus[pedido.status];
   const isFuncionario = true; // Placeholder para sua lógica de permissão
 
@@ -45,18 +40,21 @@ export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
       borderWidth="1px"
       borderRadius="lg"
       p={4}
-      bg="white"
+      // ALTERADO: Estilos alinhados com o tema escuro
+      bg="background.primary"
+      borderColor="background.tertiary"
       shadow="sm"
     >
       <Flex justify="space-between" align="center">
         <Box>
+          {/* O Heading herdará a cor 'text.primary' do tema global */}
           <Heading size="md">Pedido #{pedido.id}</Heading>
-          <Text fontSize="sm" color="gray.600">
-            Cliente: {pedido.user.nome}
+          {/* ALTERADO: Cor do texto secundário */}
+          <Text fontSize="sm" color="text.secondary">
+            Cliente: {pedido.user.nome || "Cliente não identificado"}
           </Text>
         </Box>
 
-        {/* O menu de ações só aparece se o usuário for autorizado e se houver um próximo status */}
         {isFuncionario && proximosStatus.length > 0 && (
           <Menu.Root>
             <Menu.Trigger asChild>
@@ -69,6 +67,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
               </IconButton>
             </Menu.Trigger>
             <Menu.Positioner>
+              {/* O Menu.Content herdará os estilos de fundo e cor corretos do tema */}
               <Menu.Content>
                 {proximosStatus.map((status) => (
                   <Menu.Item
@@ -98,6 +97,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
 
       <Box mt={3}>
         {pedido.pizzas.map((pizza) => (
+          // O texto das pizzas também herdará a cor correta
           <Text key={pizza.id} fontSize="sm">
             - {pizza.nome}
           </Text>

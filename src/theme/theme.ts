@@ -45,12 +45,20 @@ export const pizzaTheme = {
       },
       variants: {
         variant: {
-          // ALTERADO: Renomeamos 'primary' para 'solid' para sobrescrever a variante padrão do Chakra
           solid: {
             bg: "brand.primary",
             color: "white",
             _hover: {
               bg: "#C62828", // Vermelho mais escuro para o hover
+            },
+          },
+          // Variante adicionada para botões com borda no tema escuro
+          outline: {
+            borderWidth: "1px",
+            borderColor: "brand.primary",
+            color: "brand.primary",
+            _hover: {
+              bg: "rgba(217, 43, 43, 0.1)",
             },
           },
           accent: {
