@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
-
+import { FcGoogle } from "react-icons/fc";
 
 /**
  * Página de Login.
@@ -74,7 +74,7 @@ export default function LoginPage() {
           {/* O Google Login continua usando a função do AuthContext */}
           <PizzaButton onClick={signInWithGoogle} w="full" variant="outline">
             <Flex align="center" gap="2">
-              {/* SVG do Google Icon aqui */}
+              <FcGoogle size={24} />
               <Text>Entrar com Google</Text>
             </Flex>
           </PizzaButton>

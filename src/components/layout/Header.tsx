@@ -9,16 +9,26 @@ import {
   IconButton,
   useDisclosure,
   Stack,
-  Text,
   Spacer,
+  Button,
+  Text,
+  Avatar,
+  Menu,
 } from "@chakra-ui/react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignOutAlt,
+  FaChevronDown,
+} from "react-icons/fa";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import NavItem from "./NavItem";
-import CartWidget from "../../features/cart/components/CartWidget";
+import CartWidget from "@/features/cart/components/CartWidget";
 import MobileNavItem from "./MobileNavItem";
 import { PizzaButton } from "../ui";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const NAV_ITEMS = [
   { label: "Cardápio", href: "/cardapio" },
@@ -29,6 +39,7 @@ const NAV_ITEMS = [
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, user, logout } = useAuth();
+  const router = useRouter();
 
   const accessibleNavItems = NAV_ITEMS.filter(
     (item) => !item.requiresAuth || isAuthenticated
@@ -48,11 +59,11 @@ export function Header() {
       top={0}
       zIndex="sticky"
     >
-      <Flex h={16} alignItems={"center"}>
-        <HStack gap={8} alignItems={"center"}>
+      <Flex h={16} alignItems="center">
+        <HStack gap={8} alignItems="center">
           <IconButton
-            size={"md"}
-            aria-label={"Abrir Menu"}
+            size="md"
+            aria-label="Abrir Menu"
             display={{ md: "none" }}
             onClick={open ? onClose : onOpen}
             variant="ghost"
@@ -65,7 +76,7 @@ export function Header() {
               Pizza Express
             </Heading>
           </Link>
-          <HStack as={"nav"} gap={4} display={{ base: "none", md: "flex" }}>
+          <HStack as="nav" gap={4} display={{ base: "none", md: "flex" }}>
             {accessibleNavItems.map((navItem) => (
               <NavItem
                 key={navItem.label}
@@ -78,31 +89,57 @@ export function Header() {
 
         <Spacer />
 
-        <Flex alignItems={"center"} gap={4}>
+        <Flex alignItems="center" gap={4}>
           <CartWidget />
 
           {isAuthenticated ? (
-            // Se ESTIVER logado:
-            <>
-              <Text
-                fontWeight="medium"
-                display={{ base: "none", md: "block" }}
-                color="whiteAlpha.800"
-              >
-                {user?.nome}
-              </Text>
-              <PizzaButton
-                variant="outline"
-                colorScheme="whiteAlpha"
-                size="sm"
-                onClick={logout}
-                _hover={{ bg: "whiteAlpha.200" }}
-              >
-                Sair
-              </PizzaButton>
-            </>
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button variant="ghost" _hover={{ bg: "whiteAlpha.200" }} p={2}>
+                  <HStack gap={2}>
+                    <Avatar.Root size="sm">
+                      <Avatar.Image
+                        src={user?.avatar || ""}
+                        alt={user?.nome || ""}
+                      />
+                      <Avatar.Fallback>
+                        {user?.nome?.charAt(0) || "U"}
+                      </Avatar.Fallback>
+                    </Avatar.Root>
+                    <Text
+                      display={{ base: "none", md: "block" }}
+                      color="whiteAlpha.800"
+                      fontSize="sm"
+                    >
+                      {user?.nome}
+                    </Text>
+                    <FaChevronDown size={12} />
+                  </HStack>
+                </Button>
+              </Menu.Trigger>
+              <Menu.Positioner>
+                <Menu.Content bg="gray.800" borderColor="gray.700" minW="200px">
+                  <Menu.Item
+                    value="profile"
+                    onClick={() => router.push("/profile")}
+                  >
+                    <HStack gap={2}>
+                      <FaUser />
+                      <Text>Meu Perfil</Text>
+                    </HStack>
+                  </Menu.Item>
+                  <Menu.Separator />
+                  <Menu.Item value="logout" onClick={logout}>
+                    <HStack gap={2} color="red.400">
+                      <FaSignOutAlt />
+                      <Text>Sair</Text>
+                    </HStack>
+                  </Menu.Item>
+                  <Menu.Arrow />
+                </Menu.Content>
+              </Menu.Positioner>
+            </Menu.Root>
           ) : (
-            // Se NÃO ESTIVER logado:
             <Link href="/login" passHref>
               <PizzaButton as="a" colorScheme="orange" size="sm">
                 Entrar
@@ -114,7 +151,7 @@ export function Header() {
 
       {open ? (
         <Box pb={4} display={{ md: "none" }}>
-          <Stack as={"nav"} gap={4}>
+          <Stack as="nav" gap={4}>
             {accessibleNavItems.map((navItem) => (
               <MobileNavItem
                 key={navItem.label}
@@ -123,6 +160,32 @@ export function Header() {
                 onClick={onClose}
               />
             ))}
+            {isAuthenticated && (
+              <>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  color="white"
+                  onClick={() => {
+                    router.push("/profile");
+                    onClose();
+                  }}
+                >
+                  Meu Perfil
+                </Button>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  color="red.300"
+                  onClick={() => {
+                    logout();
+                    onClose();
+                  }}
+                >
+                  Sair
+                </Button>
+              </>
+            )}
           </Stack>
         </Box>
       ) : null}
