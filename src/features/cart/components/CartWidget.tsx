@@ -3,20 +3,22 @@
 import { Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useCart } from "../context/CartContext";
 import CartModal from "./CartModal";
+import { CheckoutForm } from "./CheckoutForm";
+import { AppModal } from "@/components/ui";
 import { FaShoppingCart } from "react-icons/fa";
 
 const CartWidget = () => {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
   const { open, onOpen, onClose } = useDisclosure();
+  const { open: isCheckoutOpen, onOpen: onOpenCheckout, onClose: onCloseCheckout } = useDisclosure();
 
   // --- ADICIONADO PARA DEBUG ---
   console.log("[CartWidget] Estado do carrinho recebido pelo header:", cart);
   // ----------------------------
 
   const handleCheckout = () => {
-    alert("Pedido finalizado!");
-    clearCart();
-    onClose();
+    onClose(); // fechar modal do carrinho
+    onOpenCheckout(); // abrir checkout
   };
 
   const modalCartItems = cart.items.map((item) => ({
@@ -64,6 +66,14 @@ const CartWidget = () => {
         onCheckout={handleCheckout}
         onUpdateQuantity={updateQuantity}
       />
+
+      <AppModal
+        isOpen={isCheckoutOpen}
+        onClose={onCloseCheckout}
+        title="Finalizar Pedido"
+      >
+        <CheckoutForm onClose={onCloseCheckout} />
+      </AppModal>
     </>
   );
 };

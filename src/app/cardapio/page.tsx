@@ -4,6 +4,8 @@ import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
 import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
 import { PizzaLoading } from "@/components/ui";
+import { useCart } from "@/features/cart/context/CartContext";
+import { toaster } from "@/components/ui/toaster";
 
 /**
  * Página do Cardápio.
@@ -11,11 +13,19 @@ import { PizzaLoading } from "@/components/ui";
  */
 export default function CardapioPage() {
   const { pizzas, isLoading, error } = usePizzas();
+  const { addToCart } = useCart();
 
-  // Função placeholder para o botão "Adicionar"
+  // Função para adicionar pizza ao carrinho
   const handleAddToCart = (pizzaId: number) => {
-    console.log(`Pizza ${pizzaId} adicionada ao carrinho!`);
-    // Aqui viria a lógica para adicionar ao estado do carrinho
+    const pizza = pizzas.find((p) => p.id === pizzaId);
+    if (pizza) {
+      addToCart(pizza);
+      toaster.create({
+        title: "Pizza adicionada!",
+        description: `${pizza.nome} foi adicionada ao carrinho.`,
+        type: "success",
+      });
+    }
   };
 
   if (isLoading) {
