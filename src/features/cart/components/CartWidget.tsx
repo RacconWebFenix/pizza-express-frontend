@@ -8,9 +8,13 @@ import { AppModal } from "@/components/ui";
 import { FaShoppingCart } from "react-icons/fa";
 
 const CartWidget = () => {
-  const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
+  const { cart, removeFromCart, updateQuantity } = useCart();
   const { open, onOpen, onClose } = useDisclosure();
-  const { open: isCheckoutOpen, onOpen: onOpenCheckout, onClose: onCloseCheckout } = useDisclosure();
+  const {
+    open: isCheckoutOpen,
+    onOpen: onOpenCheckout,
+    onClose: onCloseCheckout,
+  } = useDisclosure();
 
   // --- ADICIONADO PARA DEBUG ---
   console.log("[CartWidget] Estado do carrinho recebido pelo header:", cart);

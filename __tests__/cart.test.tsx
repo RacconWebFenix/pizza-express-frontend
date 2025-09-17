@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import { CartProvider, useCart } from "../src/features/cart/context/CartContext";
+import {
+  CartProvider,
+  useCart,
+} from "../src/features/cart/context/CartContext";
 import { Pizza } from "../src/types/pizzas";
 
 // Mock do localStorage
@@ -10,7 +13,7 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 const mockPizza: Pizza = {
   id: 1,
