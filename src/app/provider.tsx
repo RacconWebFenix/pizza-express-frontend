@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { CartProvider } from "@/features/cart/context/CartContext";
 
 import { AuthProvider } from "@/features/auth/contexts/AuthContext";
+import { StripeProvider } from "@/features/payments/contexts/StripeContext";
 import { Toaster } from "@/components/ui/toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -14,8 +15,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ChakraProvider value={pizzaExpressSystem}>
       <AuthProvider>
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <CartProvider>{children}</CartProvider>
-          <Toaster />
+          <StripeProvider>
+            <CartProvider>{children}</CartProvider>
+            <Toaster />
+          </StripeProvider>
         </ThemeProvider>
       </AuthProvider>
     </ChakraProvider>

@@ -8,6 +8,7 @@ import {
   Text,
   Heading,
   Separator,
+  Dialog,
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
@@ -15,6 +16,7 @@ import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { createPedido } from "@/features/pedidos/services/pedidosService";
 import { toaster } from "@/components/ui/toaster";
 import { EnderecoSelectionModal } from "@/features/profile/components/EnderecoSelectionModal";
+import { CreditCardForm } from "@/features/payments/components/CreditCardForm";
 import type { Endereco } from "@/types/endereco";
 
 interface CheckoutFormProps {
@@ -29,6 +31,13 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     null
   );
   const [isEnderecoModalOpen, setIsEnderecoModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  // Debug: verificar autenticação
+  React.useEffect(() => {
+    console.log("🔍 DEBUG CheckoutForm: User autenticado:", !!user);
+    console.log("🔍 DEBUG CheckoutForm: User data:", user);
+  }, [user]);
 
   const handleSubmitOrder = async () => {
     if (!user) {
@@ -49,14 +58,23 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
       return;
     }
 
+    // Abrir modal de pagamento em vez de criar pedido diretamente
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = async (intentId: string) => {
+    setIsPaymentModalOpen(false);
+
+    // Agora criar o pedido após pagamento aprovado
     setIsSubmitting(true);
     try {
       const orderData = {
-        clienteId: user.id,
-        enderecoId: selectedEndereco.id,
+        clienteId: user!.id,
+        enderecoId: selectedEndereco!.id,
         pizzasIds: cart.items.flatMap((item) =>
           Array(item.quantity).fill(item.pizza.id)
         ),
+        paymentIntentId: intentId, // Adicionar ID do pagamento
       };
 
       await createPedido(orderData);
@@ -80,6 +98,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handlePaymentCancel = () => {
+    setIsPaymentModalOpen(false);
   };
 
   const handleSelectEndereco = (endereco: Endereco) => {
@@ -189,6 +211,26 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
         onSelect={handleSelectEndereco}
         selectedEnderecoId={selectedEndereco?.id}
       />
+
+      {/* Modal de Pagamento */}
+      <Dialog.Root
+        open={isPaymentModalOpen}
+        onOpenChange={(details) => setIsPaymentModalOpen(details.open)}
+      >
+        <Dialog.Backdrop />
+        <Dialog.Content>
+          <Dialog.Header>
+            <Dialog.Title>Pagamento</Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body style={{ pointerEvents: "auto" }}>
+            <CreditCardForm
+              amount={Math.round(cart.totalPrice * 100)} // Converter para centavos
+              onSuccess={handlePaymentSuccess}
+              onCancel={handlePaymentCancel}
+            />
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Root>
     </Box>
   );
 };

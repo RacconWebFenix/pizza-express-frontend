@@ -8,6 +8,7 @@ interface CreatePedidoPayload {
   clienteId: number;
   enderecoId: number;
   pizzasIds: number[];
+  paymentIntentId?: string; // Adicionar ID do pagamento
 }
 
 /**
