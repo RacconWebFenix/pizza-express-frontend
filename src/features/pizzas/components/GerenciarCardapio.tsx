@@ -96,20 +96,33 @@ export const GerenciarCardapio = ({
                 {formatCurrency(pizza.preco)}
               </Text>
             </Box>
-            <HStack borderTopWidth="1px" p={2} justify="space-around">
+            <HStack borderTopWidth="1px" p={2} gap={3}>
               <Button
-                variant="ghost"
-                colorScheme="blue"
+                variant="solid"
+                bg="green.600"
+                color="white"
+                size="sm"
+                flex={1}
+                _hover={{ bg: "green.700" }}
                 onClick={() => handleOpenFormModal(pizza)}
               >
                 Editar
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 colorScheme="red"
+                size="sm"
+                borderColor="red.500"
+                color="red.600"
+                flex={1}
+                _hover={{
+                  bg: "transparent",
+                  borderColor: "red.700",
+                  color: "red.700",
+                }}
                 onClick={() => handleDelete(Number(pizza.id))}
               >
-                Deletar
+                Remover
               </Button>
             </HStack>
           </Box>

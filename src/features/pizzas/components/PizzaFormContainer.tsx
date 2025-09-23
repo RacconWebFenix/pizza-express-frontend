@@ -34,6 +34,7 @@ export const PizzaFormContainer = ({
     reset,
     control,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<PizzaFormInputData>({
     resolver: zodResolver(pizzaFormSchema),
     mode: "onChange",
@@ -63,17 +64,17 @@ export const PizzaFormContainer = ({
   }, [isOpen, pizzaToEdit, reset]);
 
   // Esta função, que lida com a lógica de negócio, permanece a mesma.
-  const processSubmit = (data: PizzaFormOutputData) => {
+  const processSubmit = async (data: PizzaFormOutputData) => {
     const dataToSend: CreatePizzaWithImageData = {
       ...data,
       image: data.image?.[0],
     };
-    onSuccess(dataToSend, pizzaToEdit?.id);
+    await onSuccess(dataToSend, pizzaToEdit?.id);
   };
 
   // Função `onSubmit` aceita os dados como o `handleSubmit` os vê
   // (com `preco: unknown`) e usa o `safeParse` do Zod como uma "ponte segura" de tipagem.
-  const onSubmit = (data: PizzaFormInputData) => {
+  const onSubmit = async (data: PizzaFormInputData) => {
     // Usamos `safeParse` para validar os dados novamente.
     // Isso serve como uma verificação em tempo de execução e, mais importante,
     // como um "type guard" para o TypeScript.
@@ -83,7 +84,7 @@ export const PizzaFormContainer = ({
       // Se a validação for bem-sucedida, `validationResult.data` agora
       // é GARANTIDO que seja do tipo `PizzaFormOutputData`, com `preco: number`.
       // Agora podemos chamar nossa função de lógica de negócio com segurança.
-      processSubmit(validationResult.data);
+      await processSubmit(validationResult.data);
     } else {
       // Este bloco é uma segurança. Teoricamente, o `zodResolver`
       // já deveria ter impedido dados inválidos de chegar até aqui.
@@ -108,6 +109,8 @@ export const PizzaFormContainer = ({
         isSubmitting={isSubmitting}
         isEditing={!!pizzaToEdit}
         onCancel={onClose}
+        watch={watch}
+        pizzaToEdit={pizzaToEdit}
       />
     </AppModal>
   );

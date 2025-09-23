@@ -1,8 +1,7 @@
-// src/components/PizzaForm/PizzaForm.tsx
-"use client";
-
 import { PizzaInput, PizzaTextarea, PizzaFileInput } from "@/components/ui";
 import { PizzaFormInputData } from "@/utils/validation";
+import { PizzaCard } from "./PizzaCard";
+import { Pizza } from "@/types/pizzas";
 
 import {
   Box,
@@ -10,17 +9,17 @@ import {
   VStack,
   HStack,
   Button,
-  Grid,
-  GridItem,
   BoxProps,
   TextProps,
+  Text,
 } from "@chakra-ui/react";
-import { FormEvent, ReactNode } from "react";
+import { FormEvent, ReactNode, useMemo } from "react";
 import {
   UseFormRegister,
   FieldErrors,
   Control,
   Controller,
+  UseFormWatch,
 } from "react-hook-form";
 
 // Interfaces para componentes Field tipados
@@ -59,6 +58,8 @@ export interface PizzaFormProps {
   errors: FieldErrors<PizzaFormInputData>;
   register: UseFormRegister<PizzaFormInputData>;
   control: Control<PizzaFormInputData>;
+  watch: UseFormWatch<PizzaFormInputData>;
+  pizzaToEdit?: Pizza | null;
 }
 
 export const PizzaForm = ({
@@ -69,18 +70,64 @@ export const PizzaForm = ({
   errors,
   register,
   control,
+  watch,
+  pizzaToEdit,
 }: PizzaFormProps) => {
+  // Observar os valores do formulário para o preview
+  const watchedValues = watch();
+
+  // Criar um objeto pizza mockado para o preview
+  const previewPizza = useMemo(() => {
+    const preco = parseFloat(String(watchedValues.preco || "0"));
+    const hasNewImage = watchedValues.image?.[0];
+    const existingImage = pizzaToEdit?.image;
+
+    return {
+      id: 0, // ID mockado
+      nome: watchedValues.nome || "Nome da Pizza",
+      descricao:
+        watchedValues.descricao || "Descrição da pizza aparecerá aqui...",
+      preco: isNaN(preco) ? 0 : preco,
+      image: hasNewImage
+        ? URL.createObjectURL(watchedValues.image[0])
+        : existingImage || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  }, [watchedValues, pizzaToEdit]);
+
   return (
     <Box as="form" onSubmit={onSubmit} w="full">
-      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={8}>
-        <GridItem>{/* Preview opcional */}</GridItem>
+      <VStack gap={6} align="stretch">
+        {/* Preview sempre visível */}
+        <Box>
+          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
+            📱 Preview do Cardápio
+          </Heading>
+          <Box
+            display="flex"
+            justifyContent="center"
+            minH={{ base: "300px", lg: "400px" }}
+            p={4}
+          >
+            <Box w="full" maxW="400px">
+              <PizzaCard
+                pizza={previewPizza as Pizza}
+                onAddToCart={() => {}} // Função vazia para preview
+              />
+            </Box>
+          </Box>
+          <Text fontSize="sm" color="gray.500" textAlign="center" mb={6}>
+            Este é como a pizza aparecerá no cardápio
+          </Text>
+        </Box>
 
-        <GridItem>
+        {/* Formulário */}
+        <Box>
+          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
+            🛠️ Dados da Pizza
+          </Heading>
           <VStack gap={4} align="stretch">
-            <Heading size="lg" color="orange.400" textAlign="center">
-              🛠️ Dados da Pizza
-            </Heading>
-
             <Field.Root>
               <Field.Label>Nome da Pizza *</Field.Label>
               <PizzaInput {...register("nome")} />
@@ -124,8 +171,8 @@ export const PizzaForm = ({
               </Button>
             </HStack>
           </VStack>
-        </GridItem>
-      </Grid>
+        </Box>
+      </VStack>
     </Box>
   );
 };
