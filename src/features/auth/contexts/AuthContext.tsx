@@ -45,7 +45,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(userData);
         if (redirect) {
           // Redireciona baseado no role do usuário
-          const redirectPath = userData.role === "CLIENTE" ? "/cardapio" : "/dashboard";
+          const redirectPath =
+            userData.role === "CLIENTE" ? "/cardapio" : "/dashboard";
           router.push(redirectPath);
         }
         return true;

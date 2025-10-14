@@ -40,21 +40,24 @@ export function Header() {
   // Itens de navegação dinâmicos baseado nas permissões
   const getNavItems = () => [
     { label: "Cardápio", href: "/cardapio" },
-    { 
-      label: isStaff() ? "Gerenciar Pedidos" : "Meus Pedidos", 
-      href: "/pedidos", 
-      requiresAuth: true 
+    {
+      label: isStaff() ? "Gerenciar Pedidos" : "Meus Pedidos",
+      href: "/pedidos",
+      requiresAuth: true,
     },
-    { label: "Dashboard", href: "/dashboard", requiresAuth: true, requiresStaff: true },
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+      requiresAuth: true,
+      requiresStaff: true,
+    },
   ];
 
-  const accessibleNavItems = getNavItems().filter(
-    (item) => {
-      if (item.requiresAuth && !isAuthenticated) return false;
-      if (item.requiresStaff && !isStaff()) return false;
-      return true;
-    }
-  );
+  const accessibleNavItems = getNavItems().filter((item) => {
+    if (item.requiresAuth && !isAuthenticated) return false;
+    if (item.requiresStaff && !isStaff()) return false;
+    return true;
+  });
 
   return (
     <Box
