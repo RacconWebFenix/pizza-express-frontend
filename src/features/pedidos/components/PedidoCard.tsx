@@ -12,6 +12,7 @@ import {
 import { FiMoreVertical, FiArrowRight, FiCheck } from "react-icons/fi";
 import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
 import { motion } from "framer-motion";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const transicoesStatus: Record<StatusPedido, StatusPedido[]> = {
   [StatusPedido.PENDENTE]: [StatusPedido.EM_PREPARO],
@@ -23,14 +24,14 @@ const transicoesStatus: Record<StatusPedido, StatusPedido[]> = {
 
 interface PedidoCardProps {
   pedido: Pedido;
-  onUpdateStatus: (pedidoId: number, status: StatusPedido) => void;
+  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
 }
 
 const MotionBox = motion(Box);
 
 export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
   const proximosStatus = transicoesStatus[pedido.status];
-  const isFuncionario = true; // Placeholder para sua lógica de permissão
+  const { canUpdateOrderStatus } = usePermissions();
 
   return (
     <MotionBox
@@ -55,44 +56,46 @@ export const PedidoCard = ({ pedido, onUpdateStatus }: PedidoCardProps) => {
           </Text>
         </Box>
 
-        {isFuncionario && proximosStatus.length > 0 && (
-          <Menu.Root>
-            <Menu.Trigger asChild>
-              <IconButton
-                aria-label="Opções do Pedido"
-                variant="ghost"
-                size="sm"
-              >
-                <FiMoreVertical />
-              </IconButton>
-            </Menu.Trigger>
-            <Menu.Positioner>
-              {/* O Menu.Content herdará os estilos de fundo e cor corretos do tema */}
-              <Menu.Content>
-                {proximosStatus.map((status) => (
-                  <Menu.Item
-                    key={status}
-                    value={status}
-                    onClick={() => onUpdateStatus(pedido.id, status)}
-                  >
-                    <Flex align="center" gap="2">
-                      <Icon
-                        as={
-                          status === StatusPedido.ENTREGUE
-                            ? FiCheck
-                            : FiArrowRight
-                        }
-                      />
-                      <Text>
-                        Mover para &quot;{statusConfig[status].label}&quot;
-                      </Text>
-                    </Flex>
-                  </Menu.Item>
-                ))}
-              </Menu.Content>
-            </Menu.Positioner>
-          </Menu.Root>
-        )}
+        {canUpdateOrderStatus() &&
+          onUpdateStatus &&
+          proximosStatus.length > 0 && (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <IconButton
+                  aria-label="Opções do Pedido"
+                  variant="ghost"
+                  size="sm"
+                >
+                  <FiMoreVertical />
+                </IconButton>
+              </Menu.Trigger>
+              <Menu.Positioner>
+                {/* O Menu.Content herdará os estilos de fundo e cor corretos do tema */}
+                <Menu.Content>
+                  {proximosStatus.map((status) => (
+                    <Menu.Item
+                      key={status}
+                      value={status}
+                      onClick={() => onUpdateStatus(pedido.id, status)}
+                    >
+                      <Flex align="center" gap="2">
+                        <Icon
+                          as={
+                            status === StatusPedido.ENTREGUE
+                              ? FiCheck
+                              : FiArrowRight
+                          }
+                        />
+                        <Text>
+                          Mover para &quot;{statusConfig[status].label}&quot;
+                        </Text>
+                      </Flex>
+                    </Menu.Item>
+                  ))}
+                </Menu.Content>
+              </Menu.Positioner>
+            </Menu.Root>
+          )}
       </Flex>
 
       <Box mt={3}>

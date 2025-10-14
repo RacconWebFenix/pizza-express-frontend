@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { LayoutGrid, KanbanSquare } from "lucide-react";
 import { usePedidos } from "../hooks/usePedidos";
+import { useMeusPedidos } from "../hooks/useMeusPedidos";
+import { usePermissions } from "@/hooks/usePermissions";
 import { PedidosKanban } from "./PedidosKanban";
 import { PizzaLoading } from "@/components/ui";
 
@@ -21,16 +23,30 @@ type ViewMode = "kanban" | "grid";
  * Componente "Container" ou "Layout" da página de Pedidos.
  * Responsabilidade Única: Orquestrar a lógica da página e passar os dados
  * do hook para os componentes de UI.
+ * Usa o hook correto baseado nas permissões do usuário.
  */
 export const PedidosPageLayout = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
-  const { pedidos, isLoading, handleUpdateStatus } = usePedidos();
+  const { canViewAllOrders } = usePermissions();
+
+  // Sempre chama ambos os hooks, mas só um será executado baseado nas permissões
+  const allOrdersHook = usePedidos(canViewAllOrders());
+  const myOrdersHook = useMeusPedidos(!canViewAllOrders());
+
+  // Seleciona o hook apropriado baseado nas permissões
+  const ordersHook = canViewAllOrders() ? allOrdersHook : myOrdersHook;
+  const { pedidos, isLoading } = ordersHook;
+
+  // handleUpdateStatus só existe para funcionários/admins
+  const handleUpdateStatus = canViewAllOrders()
+    ? allOrdersHook.handleUpdateStatus
+    : undefined;
 
   return (
     <VStack w="full" p={{ base: 4, md: 8 }} gap={6} align="stretch">
       <Flex justify="space-between" align="center">
         <Heading as="h1" size="xl">
-          Gestão de Pedidos
+          {canViewAllOrders() ? "Gestão de Pedidos" : "Meus Pedidos"}
         </Heading>
         <Flex gap={2}>
           <Button

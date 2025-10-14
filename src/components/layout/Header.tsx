@@ -28,21 +28,32 @@ import CartWidget from "@/features/cart/components/CartWidget";
 import MobileNavItem from "./MobileNavItem";
 import { PizzaButton } from "../ui";
 import Link from "next/link";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useRouter } from "next/navigation";
-
-const NAV_ITEMS = [
-  { label: "Cardápio", href: "/cardapio" },
-  { label: "Meus Pedidos", href: "/pedidos", requiresAuth: true },
-  { label: "Dashboard", href: "/dashboard", requiresAuth: true },
-];
 
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, user, logout } = useAuth();
+  const { isStaff } = usePermissions();
   const router = useRouter();
 
-  const accessibleNavItems = NAV_ITEMS.filter(
-    (item) => !item.requiresAuth || isAuthenticated
+  // Itens de navegação dinâmicos baseado nas permissões
+  const getNavItems = () => [
+    { label: "Cardápio", href: "/cardapio" },
+    { 
+      label: isStaff() ? "Gerenciar Pedidos" : "Meus Pedidos", 
+      href: "/pedidos", 
+      requiresAuth: true 
+    },
+    { label: "Dashboard", href: "/dashboard", requiresAuth: true, requiresStaff: true },
+  ];
+
+  const accessibleNavItems = getNavItems().filter(
+    (item) => {
+      if (item.requiresAuth && !isAuthenticated) return false;
+      if (item.requiresStaff && !isStaff()) return false;
+      return true;
+    }
   );
 
   return (
@@ -99,7 +110,7 @@ export function Header() {
                   <HStack gap={2}>
                     <Avatar.Root size="sm">
                       <Avatar.Image
-                        src={user?.avatar || ""}
+                        src={user?.avatar || undefined}
                         alt={user?.nome || ""}
                       />
                       <Avatar.Fallback>

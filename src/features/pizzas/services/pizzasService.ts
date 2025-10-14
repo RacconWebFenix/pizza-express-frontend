@@ -40,7 +40,8 @@ export const getPizzas = async (): Promise<Pizza[]> => {
     headers: getAuthHeaders(),
   });
   if (!response.ok) throw new Error("Erro ao buscar as pizzas.");
-  return response.json();
+  const result = await response.json();
+  return result.data; // Extrair apenas o array de pizzas
 };
 
 export const createPizza = async (

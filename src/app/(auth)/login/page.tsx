@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
+import { toaster } from "@/components/ui/toaster";
 import { FcGoogle } from "react-icons/fc";
 
 /**
@@ -25,9 +26,21 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
-    // Validação simples
-    if (!email || !password) {
-      setError("Por favor, preencha o email e a senha.");
+    // Validação mais robusta
+    if (!email.trim()) {
+      setError("Por favor, informe seu endereço de e-mail.");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Por favor, informe sua senha.");
+      return;
+    }
+
+    // Validação básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Por favor, informe um endereço de e-mail válido.");
       return;
     }
 
@@ -35,13 +48,24 @@ export default function LoginPage() {
       // Chama a função de login do authService através do context
       const loginSuccess = await login({ email, password });
       if (!loginSuccess) {
-        setError("Credenciais inválidas. Verifique seu email e senha.");
+        setError(
+          "Falha na autenticação. Verifique suas credenciais e tente novamente."
+        );
       }
       // O redirecionamento já é tratado pelo AuthContext
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Ocorreu um erro inesperado."
-      );
+      console.error("Erro no login:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro inesperado durante o login.";
+      setError(errorMessage);
+
+      // Mostra toast de erro para feedback mais visível
+      toaster.create({
+        title: "Erro no Login",
+        description: errorMessage,
+        type: "error",
+        duration: 5000,
+      });
     }
   };
 
@@ -86,7 +110,12 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={error ? " " : undefined} // Apenas para marcar o campo
+            error={
+              error &&
+              (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+                ? "Email inválido"
+                : undefined
+            }
             required
           />
           <PizzaInput
@@ -94,13 +123,25 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={error ? " " : undefined}
+            error={error && !password.trim() ? "Senha obrigatória" : undefined}
             required
           />
           {error && (
-            <Text color="red.500" fontSize="sm">
-              {error}
-            </Text>
+            <Box
+              p={3}
+              bg="red.50"
+              border="1px solid"
+              borderColor="red.200"
+              borderRadius="md"
+              _dark={{
+                bg: "red.900",
+                borderColor: "red.700",
+              }}
+            >
+              <Text color="red.600" fontSize="sm" fontWeight="medium">
+                {error}
+              </Text>
+            </Box>
           )}
 
           <PizzaButton type="submit" w="full" size="lg" loading={isLoading}>

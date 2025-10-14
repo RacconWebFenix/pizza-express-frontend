@@ -44,7 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userData = await getMe(token);
         setUser(userData);
         if (redirect) {
-          router.push("/dashboard");
+          // Redireciona baseado no role do usuário
+          const redirectPath = userData.role === "CLIENTE" ? "/cardapio" : "/dashboard";
+          router.push(redirectPath);
         }
         return true;
       } catch (error) {

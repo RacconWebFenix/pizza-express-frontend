@@ -12,9 +12,9 @@ export type UsePedidosReturn = ReturnType<typeof usePedidos>;
  * Hook com a Responsabilidade Única de gerenciar todo o estado e lógica de negócio
  * relacionados a Pedidos.
  */
-export const usePedidos = () => {
+export const usePedidos = (enabled: boolean = true) => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPedidos = useCallback(async () => {
@@ -34,8 +34,12 @@ export const usePedidos = () => {
   }, []);
 
   useEffect(() => {
-    fetchPedidos();
-  }, [fetchPedidos]);
+    if (enabled) {
+      fetchPedidos();
+    } else {
+      setIsLoading(false);
+    }
+  }, [fetchPedidos, enabled]);
 
   const handleUpdateStatus = async (pedidoId: number, status: StatusPedido) => {
     const originalPedidos = [...pedidos];

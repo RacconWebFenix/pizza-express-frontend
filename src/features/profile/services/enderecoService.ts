@@ -57,7 +57,8 @@ export const getEnderecos = async (): Promise<Endereco[]> => {
     }
     throw new Error("Falha ao buscar endereços.");
   }
-  return response.json();
+  const result = await response.json();
+  return result.data; // Extrair apenas o array de endereços
 };
 
 /**

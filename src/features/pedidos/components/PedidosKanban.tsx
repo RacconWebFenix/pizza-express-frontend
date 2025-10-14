@@ -12,8 +12,8 @@ import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
 import { PedidoCard } from "./PedidoCard";
 
 interface PedidosKanbanProps {
-  pedidos: Pedido[];
-  onUpdateStatus: (pedidoId: number, status: StatusPedido) => void;
+  pedidos?: Pedido[];
+  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
 }
 
 const KanbanColumn = ({
@@ -25,7 +25,7 @@ const KanbanColumn = ({
   title: string;
   status: StatusPedido;
   pedidos: Pedido[];
-  onUpdateStatus: (pedidoId: number, status: StatusPedido) => void;
+  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
 }) => (
   <Box
     bg="background.secondary"
@@ -61,7 +61,7 @@ const KanbanColumn = ({
 );
 
 export const PedidosKanban = ({
-  pedidos,
+  pedidos = [],
   onUpdateStatus,
 }: PedidosKanbanProps) => {
   const pedidosPorStatus = (status: StatusPedido) =>

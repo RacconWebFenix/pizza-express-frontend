@@ -23,8 +23,17 @@ export const loginUser = async (
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    throw new Error(errorData?.message || "Credenciais inválidas.");
+    let errorMessage = "Credenciais inválidas.";
+    try {
+      const errorData = await response.json();
+      errorMessage =
+        errorData?.message || errorData?.error || "Credenciais inválidas.";
+    } catch (parseError) {
+      console.warn("Não foi possível parsear resposta de erro:", parseError);
+      // Mantém a mensagem padrão
+    }
+
+    throw new Error(errorMessage);
   }
   return response.json();
 };

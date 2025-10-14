@@ -12,7 +12,26 @@ interface CreatePedidoPayload {
 }
 
 /**
- * Busca todos os pedidos do backend.
+ * Busca os pedidos do usuário logado.
+ */
+export const getMeusPedidos = async (): Promise<Pedido[]> => {
+  const token = getAuthToken();
+  if (!token) throw new Error("Usuário não autenticado.");
+
+  const response = await fetch(`${API_URL}/pedidos/meus-pedidos`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Falha ao buscar seus pedidos.");
+  const result = await response.json();
+
+  // A API pode retornar tanto um array quanto um objeto único
+  // Vamos normalizar para sempre retornar um array
+  const data = result.data || result;
+  return Array.isArray(data) ? data : [data];
+};
+
+/**
+ * Busca todos os pedidos do backend (para funcionários/admins).
  */
 export const getPedidos = async (): Promise<Pedido[]> => {
   const token = getAuthToken();
@@ -22,7 +41,12 @@ export const getPedidos = async (): Promise<Pedido[]> => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) throw new Error("Falha ao buscar os pedidos.");
-  return response.json();
+  const result = await response.json();
+
+  // A API pode retornar tanto um array quanto um objeto único
+  // Vamos normalizar para sempre retornar um array
+  const data = result.data || result;
+  return Array.isArray(data) ? data : [data];
 };
 
 /**
