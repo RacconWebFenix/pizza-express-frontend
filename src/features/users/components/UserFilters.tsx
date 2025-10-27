@@ -48,10 +48,15 @@ export const UserFilters = ({ filters, onFiltersChange, onSearch }: UserFiltersP
             Buscar
           </Text>
           <Input
-            placeholder="Nome ou email..."
+            placeholder="Nome ou email (mín. 3 caracteres)..."
             value={filters.search || ""}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
+          {filters.search && filters.search.length > 0 && filters.search.length < 3 && (
+            <Text fontSize="xs" color="orange.500" mt={1}>
+              Digite pelo menos 3 caracteres para buscar
+            </Text>
+          )}
         </Box>
 
         <Box minW="150px">
@@ -81,6 +86,7 @@ export const UserFilters = ({ filters, onFiltersChange, onSearch }: UserFiltersP
           onClick={onSearch}
           colorScheme="blue"
           variant="outline"
+          disabled={Boolean(filters.search && filters.search.length > 0 && filters.search.length < 3)}
         >
           <FaFilter style={{ marginRight: "8px" }} />
           Filtrar

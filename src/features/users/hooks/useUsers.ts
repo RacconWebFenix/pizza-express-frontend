@@ -51,8 +51,20 @@ export const useUsers = (): UseUsersReturn => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await getUsers(filters);
-      setUsers(data);
+
+      // Se temos busca com menos de 3 caracteres, buscar todos e filtrar localmente
+      if (filters?.search && filters.search.length < 3) {
+        const allUsers = await getUsers({ ...filters, search: undefined });
+        const filteredUsers = allUsers.filter(user =>
+          user.nome.toLowerCase().includes(filters.search!.toLowerCase()) ||
+          user.email.toLowerCase().includes(filters.search!.toLowerCase())
+        );
+        setUsers(filteredUsers);
+      } else {
+        // Busca normal via API
+        const data = await getUsers(filters);
+        setUsers(data);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erro ao carregar usuários.";
       setError(message);
