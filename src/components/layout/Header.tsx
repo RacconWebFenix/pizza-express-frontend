@@ -34,13 +34,13 @@ import { useRouter } from "next/navigation";
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, user, logout } = useAuth();
-    const { isStaff, isCliente } = usePermissions();
+  const { isStaff, isCliente } = usePermissions();
   const router = useRouter();
 
   // Itens de navegação dinâmicos baseado nas permissões
   const getNavItems = () => [
-    { 
-      label: "Cardápio", 
+    {
+      label: "Cardápio",
       href: "/cardapio",
       requiresAuth: true,
       requiresCliente: true,
