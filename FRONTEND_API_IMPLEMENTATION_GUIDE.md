@@ -364,28 +364,63 @@ FormData:
 **Purpose**: Create user
 **Auth Required**: ✅ Yes (ADMIN only)
 **Body**: Same as registration
+```typescript
+{
+  "nome": "string",
+  "email": "string",
+  "password": "string", // Required for creation
+  "telefone": "string",
+  "role": "CLIENTE" | "FUNCIONARIO" | "ADMIN" // Optional, defaults to CLIENTE
+}
+```
 
 #### **GET /users**
-**Purpose**: Get all users
+**Purpose**: Get all users with filtering
 **Auth Required**: ✅ Yes (ADMIN only)
-**Query Params**: `?email=string` (optional filter)
+**Query Params**:
+- `role` (optional): Filter by user role (CLIENTE|FUNCIONARIO|ADMIN)
+- `search` (optional): Search in name or email (case-insensitive)
+- `page` (optional): Page number for pagination
+- `limit` (optional): Items per page
 **Response**: Array of users (without passwords)
+```typescript
+[
+  {
+    "id": 1,
+    "nome": "João Silva",
+    "email": "joao@email.com",
+    "telefone": "(11) 99999-9999",
+    "role": "FUNCIONARIO",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
 
 #### **GET /users/:id**
 **Purpose**: Get specific user
 **Auth Required**: ✅ Yes (ADMIN only)
 **Parameters**: `id` (number)
+**Response**: Single user object (without password)
 
 #### **PATCH /users/:id**
-**Purpose**: Update user
+**Purpose**: Update user (password cannot be changed via this endpoint)
 **Auth Required**: ✅ Yes (ADMIN or resource owner)
 **Parameters**: `id` (number)
-**Body**: Partial user object
+**Body**: Partial user object (without password)
+```typescript
+{
+  "nome": "string",     // Optional
+  "email": "string",    // Optional
+  "telefone": "string", // Optional
+  "role": "CLIENTE" | "FUNCIONARIO" | "ADMIN" // Optional, ADMIN only
+}
+```
 
 #### **DELETE /users/:id**
 **Purpose**: Delete user
 **Auth Required**: ✅ Yes (ADMIN only)
 **Parameters**: `id` (number)
+**Response**: Success confirmation
 
 ---
 
@@ -882,7 +917,7 @@ class PaymentService {
 - [ ] Order status updates
 
 ### **Phase 6: Admin Features**
-- [ ] User management (GET/POST/PATCH/DELETE /users)
+- [x] **User management** (GET/POST/PATCH/DELETE /users) - ✅ **IMPLEMENTADO**
 - [ ] Pizza management (all /pizzas routes)
 - [ ] Delivery person management (all /entregadores routes)
 - [ ] System overview dashboard

@@ -18,20 +18,6 @@ import { PizzaInput, PizzaButton, AppModal } from "@/components/ui";
 import { Role } from "@/types/users";
 import { UserCreationData } from "../types/userManagement";
 
-// Schema de validação com Zod
-const userFormSchema = z.object({
-  nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email deve ter um formato válido"),
-  telefone: z.string().regex(
-    /^\(\d{2}\) \d{4,5}-\d{4}$/,
-    "Telefone deve estar no formato (99) 99999-9999"
-  ),
-  role: z.nativeEnum(Role),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres").optional(),
-});
-
-type UserFormData = z.infer<typeof userFormSchema>;
-
 interface UserFormModalProps {
   isOpen: boolean;
   user?: User | null; // null = criar, User = editar
@@ -52,6 +38,38 @@ export const UserFormModal = ({
   onClose,
   isLoading,
 }: UserFormModalProps) => {
+  // Schema de validação com Zod - criado dinamicamente baseado no modo
+  const userFormSchema = z.object({
+    nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+    email: z.string().email("Email deve ter um formato válido"),
+    telefone: z.string().regex(
+      /^\(\d{2}\) \d{4,5}-\d{4}$/,
+      "Telefone deve estar no formato (99) 99999-9999"
+    ),
+    role: z.nativeEnum(Role),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+  }).refine((data) => {
+    // Senha obrigatória apenas na criação
+    if (!data.password && !user) {
+      return false;
+    }
+    // Se senha fornecida, deve ter pelo menos 6 caracteres
+    if (data.password && data.password.length < 6) {
+      return false;
+    }
+    // Se confirmPassword fornecida, deve coincidir com password
+    if (data.confirmPassword && data.password !== data.confirmPassword) {
+      return false;
+    }
+    return true;
+  }, {
+    message: "Validação de senha falhou",
+    path: ["password"],
+  });
+
+  type UserFormData = z.infer<typeof userFormSchema>;
+
   const {
     register,
     handleSubmit,

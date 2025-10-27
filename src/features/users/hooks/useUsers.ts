@@ -46,7 +46,7 @@ export const useUsers = (): UseUsersReturn => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // Buscar usuários
+  // Buscar usuários (usado pelos filtros)
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -66,10 +66,30 @@ export const useUsers = (): UseUsersReturn => {
     }
   }, [filters]);
 
-  // Carregar usuários na montagem e quando filtros mudam
+  // Buscar usuários iniciais (sem filtros)
+  const fetchInitialUsers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getUsers(); // Sem filtros na carga inicial
+      setUsers(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao carregar usuários.";
+      setError(message);
+      toaster.create({
+        title: "Erro",
+        description: message,
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Carregar usuários apenas na montagem inicial
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchInitialUsers();
+  }, [fetchInitialUsers]);
 
   // Criar usuário
   const handleCreateUser = useCallback(async (data: UserCreationData) => {

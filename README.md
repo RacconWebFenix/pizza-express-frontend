@@ -20,7 +20,8 @@ npm start
 
 ## ✨ **Principais Funcionalidades**
 
-- 🔐 **Autenticação completa** com JWT
+- 🔐 **Autenticação completa** com JWT e controle de acesso baseado em roles
+- 👥 **Sistema de gerenciamento de usuários** para administradores
 - 🎨 **Sistema de Design** padronizado
 - 🍕 **Loading animado** com pizza
 - 📱 **Interface responsiva** e moderna
@@ -84,6 +85,8 @@ Este projeto requer o [Pizza Express Backend](https://github.com/RacconWebFenix/
 
 - ✅ **Páginas públicas**: `/`, `/login`, `/register`, `/access-denied`
 - 🔒 **Páginas protegidas**: `/cardapio`, `/pedidos`, `/dashboard`
+- 👑 **Páginas administrativas**: `/admin/users` (apenas ADMIN)
+- 🎯 **Controle de acesso baseado em roles**: CLIENTE, FUNCIONARIO, ADMIN
 
 ## 🎨 **Sistema de Design**
 
@@ -131,6 +134,10 @@ import { PizzaLoading, PizzaSpinner } from "@/components/ui";
 ```
 app/                    # Next.js App Router
 ├── (auth)/            # Grupo de rotas de autenticação
+├── admin/             # Páginas administrativas
+│   ├── users/         # Gerenciamento de usuários
+│   ├── delivery-persons/ # Gerenciamento de entregadores
+│   └── ...
 ├── cardapio/          # Página do cardápio
 ├── dashboard/         # Painel administrativo
 ├── galeria/           # Galeria de pizzas
@@ -142,12 +149,24 @@ components/            # Componentes React
 ├── dashboard/         # Componentes do dashboard
 ├── layout/            # Layout e navegação
 ├── pedidos/           # Componentes de pedidos
+├── users/             # Componentes de gerenciamento de usuários
 └── ui/                # Componentes UI reutilizáveis
+
+features/              # Features organizadas por domínio
+├── auth/              # Autenticação
+├── cart/              # Carrinho de compras
+├── dashboard/         # Dashboard
+├── payments/          # Pagamentos
+├── pedidos/           # Pedidos
+├── pizzas/            # Pizzas
+├── profile/           # Perfil do usuário
+└── users/             # Gerenciamento de usuários
 
 hooks/                 # Custom hooks
 ├── useLogin.ts        # Hook de autenticação
 ├── usePizzas.ts       # Hook para gerenciar pizzas
 ├── useDashboard.ts    # Hook do dashboard
+├── useUsers.ts        # Hook para gerenciamento de usuários
 └── usePedidos.ts      # Hook de pedidos
 
 services/              # Serviços e APIs
@@ -182,6 +201,41 @@ utils/                 # Utilitários e helpers
 - Validação em tempo real
 - Feedback visual de erros
 
+### **Controle de Acesso por Roles**
+- **CLIENTE**: Acesso ao cardápio e pedidos
+- **FUNCIONARIO**: Acesso ao dashboard e gerenciamento de pedidos
+- **ADMIN**: Acesso completo incluindo gerenciamento de usuários
+
+## 👥 **Sistema de Gerenciamento de Usuários**
+
+### **Funcionalidades Administrativas**
+- ✅ **CRUD completo** de usuários (Criar, Ler, Atualizar, Deletar)
+- ✅ **Controle de roles** (Cliente, Funcionário, Administrador)
+- ✅ **Filtros avançados** por role e busca por nome/email
+- ✅ **Validação robusta** com react-hook-form + Zod
+- ✅ **Interface responsiva** seguindo o tema da pizzaria
+- ✅ **Proteção de rotas** (apenas administradores)
+
+### **Componentes Implementados**
+- **UsersTable**: Tabela com badges de roles e ações rápidas
+- **UserFormModal**: Modal para criação/edição com validação
+- **UserFilters**: Filtros por role e busca textual
+- **useUsers**: Hook customizado para gerenciamento de estado
+
+### **Fluxo de Criação de Usuários**
+1. Admin acessa `/admin/users`
+2. Clica em "Criar Usuário"
+3. Preenche dados: nome, email, telefone, role
+4. Define senha inicial (obrigatória)
+5. Sistema valida e cria usuário
+6. Feedback visual de sucesso/erro
+
+### **Segurança Implementada**
+- Apenas administradores podem gerenciar usuários
+- Senhas são definidas apenas na criação
+- Validação de email único no sistema
+- Logs de auditoria (futuro)
+
 ## 🍕 **Gerenciamento de Pizzas**
 
 ### **Funcionalidades**
@@ -207,10 +261,16 @@ utils/                 # Utilitários e helpers
 - Pizza mais vendida
 
 ### **Ações Administrativas**
-- Criar nova pizza
-- Navegar para cardápio
-- Navegar para pedidos
-- Visualizar estatísticas
+- 👥 Gerenciar usuários do sistema
+- 🍕 Criar nova pizza
+- 📦 Navegar para pedidos
+- 📊 Visualizar estatísticas
+- 🚚 Gerenciar entregadores
+
+### **Páginas Administrativas**
+- `/admin/users` - Gerenciamento completo de usuários
+- `/admin/delivery-persons` - Controle de entregadores
+- `/dashboard` - Visão geral e estatísticas
 
 ## 🛒 **Sistema de Pedidos**
 
@@ -367,7 +427,16 @@ npm run build
 
 ## 📝 **Changelog**
 
-### **v1.0.0** (Atual)
+### **v1.1.0** (Atual)
+- ✅ **Sistema de gerenciamento de usuários** completo para administradores
+- ✅ **Controle de acesso baseado em roles** (CLIENTE, FUNCIONARIO, ADMIN)
+- ✅ **CRUD de usuários** com validação robusta
+- ✅ **Interface administrativa** em `/admin/users`
+- ✅ **Filtros e busca** avançados
+- ✅ **Proteção de rotas** para páginas administrativas
+- ✅ **Componentes seguindo SOLID principles** e Clean Code
+
+### **v1.0.0**
 - ✅ Sistema de autenticação completo
 - ✅ CRUD de pizzas com imagens
 - ✅ Dashboard administrativo
