@@ -34,12 +34,17 @@ import { useRouter } from "next/navigation";
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, user, logout } = useAuth();
-  const { isStaff } = usePermissions();
+    const { isStaff, isCliente } = usePermissions();
   const router = useRouter();
 
   // Itens de navegação dinâmicos baseado nas permissões
   const getNavItems = () => [
-    { label: "Cardápio", href: "/cardapio" },
+    { 
+      label: "Cardápio", 
+      href: "/cardapio",
+      requiresAuth: true,
+      requiresCliente: true,
+    },
     {
       label: isStaff() ? "Gerenciar Pedidos" : "Meus Pedidos",
       href: "/pedidos",
@@ -56,6 +61,7 @@ export function Header() {
   const accessibleNavItems = getNavItems().filter((item) => {
     if (item.requiresAuth && !isAuthenticated) return false;
     if (item.requiresStaff && !isStaff()) return false;
+    if (item.requiresCliente && !isCliente()) return false;
     return true;
   });
 
@@ -104,7 +110,7 @@ export function Header() {
         <Spacer />
 
         <Flex alignItems="center" gap={4}>
-          <CartWidget />
+          {isCliente() && <CartWidget />}
 
           {isAuthenticated ? (
             <Menu.Root>

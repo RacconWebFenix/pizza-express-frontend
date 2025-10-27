@@ -14,7 +14,7 @@ export const DashboardActions = ({
   onShowGerenciarCardapio,
 }: DashboardActionsProps) => {
   const router = useRouter();
-  const { canManagePizzas, canManageUsers, canManageDeliveryPersons, isAdmin } =
+  const { canManagePizzas, canManageUsers, canManageDeliveryPersons } =
     usePermissions();
 
   const secondaryButtonStyle = {

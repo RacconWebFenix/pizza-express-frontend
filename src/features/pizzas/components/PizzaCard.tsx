@@ -5,6 +5,7 @@ import { AspectRatio, Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import { Pizza } from "@/types/pizzas";
 import { formatCurrency } from "@/utils/format";
 import { PizzaButton } from "@/components/ui";
+import { usePermissions } from "@/hooks/usePermissions";
 
 // O componente agora só precisa saber como é uma Pizza
 interface PizzaCardProps {
@@ -13,6 +14,8 @@ interface PizzaCardProps {
 }
 
 export const PizzaCard = ({ pizza, onAddToCart }: PizzaCardProps) => {
+  const { isCliente } = usePermissions();
+
   return (
     <Box
       borderWidth="1px"
@@ -43,9 +46,11 @@ export const PizzaCard = ({ pizza, onAddToCart }: PizzaCardProps) => {
         <Text fontWeight="bold" fontSize="xl" color="green.500">
           {formatCurrency(pizza.preco)}
         </Text>
-        <PizzaButton onClick={() => onAddToCart(Number(pizza.id))}>
-          Adicionar
-        </PizzaButton>
+        {isCliente() && (
+          <PizzaButton onClick={() => onAddToCart(Number(pizza.id))}>
+            Adicionar
+          </PizzaButton>
+        )}
       </Flex>
     </Box>
   );

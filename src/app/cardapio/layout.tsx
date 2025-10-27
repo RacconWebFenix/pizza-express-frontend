@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { PizzaLoading } from "@/components/ui";
 import MainLayout from "@/components/layout/MainLayout";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface CardapioLayoutProps {
   children: ReactNode;
@@ -14,13 +15,17 @@ interface CardapioLayoutProps {
 
 export default function CardapioLayout({ children }: CardapioLayoutProps) {
   const { isAuthenticated, user, isLoading } = useAuth();
+  const { isCliente } = usePermissions();
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, isLoading, router]);
+    if (!isLoading && isAuthenticated && !isCliente()) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, isLoading, isCliente, router]);
 
   // Mostrar loading enquanto está carregando
   if (isLoading) {
