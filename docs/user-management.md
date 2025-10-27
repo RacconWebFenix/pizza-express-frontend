@@ -47,7 +47,20 @@ src/features/users/
 - **TypeScript**: Tipagem forte em todos os componentes
 - **React Hook Form + Zod**: Validação robusta e performática
 
-## 🔧 Como Usar
+## 🔧 Implementação Técnica
+
+### **Fallback de Busca Local**
+Devido a limitações atuais no backend, implementamos um sistema híbrido:
+
+- **Buscas ≥ 3 caracteres**: Enviadas para o backend via API
+- **Buscas < 3 caracteres**: Busca local nos dados já carregados
+- **Benefício**: Experiência fluida enquanto o backend é corrigido
+
+### **Validações Implementadas**
+- Busca requer mínimo 3 caracteres
+- Botão desabilitado para buscas insuficientes
+- Feedback visual em tempo real
+- Validação de email único (via backend)
 
 ### **Acesso ao Sistema**
 1. Faça login como administrador
@@ -86,9 +99,11 @@ const newUser = {
 - 🎯 **Botões temáticos** seguindo o design da pizzaria
 
 ### **Sistema de Filtros**
-- 🔍 **Busca textual** por nome/email
-- 📋 **Dropdown de roles** para filtragem
-- 🔄 **Limpeza de filtros** com um clique
+- 🔍 **Busca textual** por nome/email (mínimo 3 caracteres)
+- 📋 **Filtro por role** (Cliente, Funcionário, Administrador)
+- ⚡ **Aplicação manual** via botão "Filtrar"
+- 🔄 **Busca local** como fallback para buscas curtas
+- 📝 **Feedback visual** para requisitos mínimos
 
 ## 🔒 Segurança
 
@@ -108,8 +123,15 @@ const newUser = {
 
 ### **Endpoints Utilizados**
 ```typescript
-// Buscar usuários
-GET /users?role=FUNCIONARIO&search=joao
+### **Endpoints Utilizados**
+```typescript
+// Buscar usuários com filtros
+GET /users?role=FUNCIONARIO&search=admin
+
+// Fallback: busca local para termos curtos (< 3 caracteres)
+// Busca todos os usuários e filtra no frontend
+GET /users (sem parâmetros de busca)
+```
 
 // Criar usuário
 POST /users
