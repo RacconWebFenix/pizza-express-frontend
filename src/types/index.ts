@@ -63,6 +63,11 @@ export * from "./pizzas";
 export * from "./pedidos";
 
 // Exporta todos os tipos relacionados a usuarios e endereços
-
 export * from "./endereco"; // <<< ADICIONADO
 export * from "./entregador"; // <<< ADICIONADO
+
+// Exporta tipos de categorias, produtos, mesas e upload
+export * from "./categoria";
+export * from "./produto";
+export * from "./mesa";
+export * from "./upload";

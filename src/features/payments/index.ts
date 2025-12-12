@@ -19,5 +19,5 @@ export { stripeService } from "./services/stripeService";
 export { usePayment } from "./hooks/usePayment";
 
 // Components
-export { CardPreview } from "./components/CardPreview";
 export { CreditCardForm } from "./components/CreditCardForm";
+export { DevelopmentCard } from "./components/DevelopmentCard";

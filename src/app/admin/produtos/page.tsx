@@ -2,13 +2,13 @@
 
 import { AdminRoute } from "@/components/ProtectedRoute";
 import { Box } from "@chakra-ui/react";
-import { EntregadoresList } from "@/features/entregadores";
+import { ProdutosList } from "@/features/produtos";
 
-export default function AdminDeliveryPersonsPage() {
+export default function AdminProdutosPage() {
   return (
     <AdminRoute>
       <Box p={8}>
-        <EntregadoresList />
+        <ProdutosList />
       </Box>
     </AdminRoute>
   );

@@ -21,6 +21,7 @@ import {
   FaUser,
   FaSignOutAlt,
   FaChevronDown,
+  FaCog,
 } from "react-icons/fa";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import NavItem from "./NavItem";
@@ -34,7 +35,7 @@ import { useRouter } from "next/navigation";
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, user, logout } = useAuth();
-  const { isStaff, isCliente } = usePermissions();
+  const { isStaff, isCliente, isAdmin } = usePermissions();
   const router = useRouter();
 
   // Itens de navegação dinâmicos baseado nas permissões
@@ -58,10 +59,57 @@ export function Header() {
     },
   ];
 
+  // Itens de navegação do admin (menu dropdown)
+  const getAdminNavItems = () => [
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+    {
+      label: "Mesas",
+      href: "/admin/mesas",
+      requiresAuth: true,
+      requiresStaff: true,
+    },
+    {
+      label: "Produtos",
+      href: "/admin/produtos",
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+    {
+      label: "Categorias",
+      href: "/admin/categorias",
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+    {
+      label: "Entregadores",
+      href: "/admin/delivery-persons",
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+    {
+      label: "Usuários",
+      href: "/admin/users",
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+  ];
+
   const accessibleNavItems = getNavItems().filter((item) => {
     if (item.requiresAuth && !isAuthenticated) return false;
     if (item.requiresStaff && !isStaff()) return false;
     if (item.requiresCliente && !isCliente()) return false;
+    return true;
+  });
+
+  const accessibleAdminNavItems = getAdminNavItems().filter((item) => {
+    if (item.requiresAuth && !isAuthenticated) return false;
+    if (item.requiresStaff && !isStaff()) return false;
+    if (item.requiresAdmin && !isAdmin()) return false;
     return true;
   });
 
@@ -148,6 +196,25 @@ export function Header() {
                       <Text>Meu Perfil</Text>
                     </HStack>
                   </Menu.Item>
+
+                  {/* Menu Admin */}
+                  {isAdmin() && (
+                    <>
+                      <Menu.Separator />
+                      <Menu.ItemGroup title="Administração">
+                        {accessibleAdminNavItems.map((item) => (
+                          <Menu.Item
+                            key={item.href}
+                            value={item.href}
+                            onClick={() => router.push(item.href)}
+                          >
+                            <Text>{item.label}</Text>
+                          </Menu.Item>
+                        ))}
+                      </Menu.ItemGroup>
+                    </>
+                  )}
+
                   <Menu.Separator />
                   <Menu.Item value="logout" onClick={logout}>
                     <HStack gap={2} color="red.400">
@@ -193,6 +260,30 @@ export function Header() {
                 >
                   Meu Perfil
                 </Button>
+
+                {/* Menu Admin Mobile */}
+                {isAdmin() && (
+                  <>
+                    <Text fontSize="sm" color="gray.400" px={4} py={2}>
+                      Administração
+                    </Text>
+                    {accessibleAdminNavItems.map((item) => (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        color="white"
+                        onClick={() => {
+                          router.push(item.href);
+                          onClose();
+                        }}
+                      >
+                        {item.label}
+                      </Button>
+                    ))}
+                  </>
+                )}
+
                 <Button
                   variant="ghost"
                   justifyContent="flex-start"

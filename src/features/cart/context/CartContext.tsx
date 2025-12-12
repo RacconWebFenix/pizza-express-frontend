@@ -64,12 +64,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // --- ADICIONADO PARA DEBUG ---
-    console.log(
-      "[CartContext] Estado do carrinho mudou. Salvando no localStorage:",
-      cart
-    );
-    // ----------------------------
     localStorage.setItem("pizza-express-cart", JSON.stringify(cart));
   }, [cart]);
 

@@ -13,6 +13,7 @@ import {
 import { useStripe } from "../contexts/StripeContext";
 import { usePayment } from "../hooks/usePayment";
 import { toaster } from "@/components/ui/toaster";
+import { DevelopmentCard } from "./DevelopmentCard";
 
 // Componentes Field customizados para Chakra UI 3.x
 interface FieldRootProps extends React.ComponentProps<typeof Box> {
@@ -124,6 +125,11 @@ const CreditCardFormContent: React.FC<CreditCardFormProps> = ({
           <Text fontSize="lg" color="gray.600">
             Valor: R$ {(amount / 100).toFixed(2)}
           </Text>
+        </Box>
+
+        {/* Card de desenvolvimento */}
+        <Box display="flex" justifyContent="center">
+          <DevelopmentCard />
         </Box>
 
         {/* Elemento de pagamento seguro do Stripe */}
