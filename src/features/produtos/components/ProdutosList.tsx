@@ -8,7 +8,6 @@ import {
   Text,
   Badge,
   useDisclosure,
-  AlertDialog,
   IconButton,
   SimpleGrid,
   Image,
@@ -216,32 +215,48 @@ export const ProdutosList: React.FC = () => {
       />
 
       {/* Modal de Confirmação de Delete */}
-      <AlertDialog.Root open={isDeleteOpen} onOpenChange={onDeleteClose}>
-        <AlertDialog.Backdrop />
-        <AlertDialog.Content>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Deletar Produto</AlertDialog.Title>
-          </AlertDialog.Header>
-          <AlertDialog.Body>
-            <Text>
+      {isDeleteOpen && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="blackAlpha.600"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex="modal"
+          onClick={onDeleteClose}
+        >
+          <Box
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            p={6}
+            borderRadius="lg"
+            maxW="md"
+            w="full"
+            mx={4}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Text fontSize="lg" fontWeight="bold" mb={4}>
+              Deletar Produto
+            </Text>
+            <Text mb={4}>
               Tem certeza que deseja deletar o produto "{produtoToDelete?.name}"?
               Esta ação não pode ser desfeita.
             </Text>
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <AlertDialog.ActionTrigger asChild>
+            <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>
                 Cancelar
               </Button>
-            </AlertDialog.ActionTrigger>
-            <AlertDialog.ActionTrigger asChild>
               <PizzaButton colorScheme="red" onClick={handleDeleteConfirm}>
                 Deletar
               </PizzaButton>
-            </AlertDialog.ActionTrigger>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+            </HStack>
+          </Box>
+        </Box>
+      )}
     </VStack>
   );
 };

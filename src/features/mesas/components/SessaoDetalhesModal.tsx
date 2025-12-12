@@ -2,18 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
   VStack,
   HStack,
   Text,
   Badge,
   Box,
   Button,
-  Divider,
   SimpleGrid,
-  AlertDialog,
   useDisclosure,
 } from '@chakra-ui/react';
+import { AppModal } from '@/components/ui';
 import { FaClock, FaPlus, FaMoneyBillWave, FaChair } from 'react-icons/fa';
 import { PizzaButton } from '@/components/ui';
 import { useMesas } from '../hooks/useMesas';
@@ -34,8 +32,8 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
 }) => {
   const { abrirSessao, fecharConta, getSessaoAtiva } = useMesas();
   const { produtos } = useProdutos();
-  const { isOpen: isPedidoOpen, onOpen: onPedidoOpen, onClose: onPedidoClose } = useDisclosure();
-  const { isOpen: isFecharOpen, onOpen: onFecharOpen, onClose: onFecharClose } = useDisclosure();
+  const { open: isPedidoOpen, onOpen: onPedidoOpen, onClose: onPedidoClose } = useDisclosure();
+  const { open: isFecharOpen, onOpen: onFecharOpen, onClose: onFecharClose } = useDisclosure();
 
   const [sessao, setSessao] = useState<SessaoMesa | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,29 +113,15 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
   if (!mesa) return null;
 
   const isMesaOcupada = mesa.status === 'OCCUPIED';
-  const totalPedidos = sessao?.pedidos.length || 0;
+  const totalPedidos = sessao?.pedidos?.length || 0;
 
   return (
     <>
-      <Modal.Root open={isOpen} onOpenChange={onClose} size="xl">
-        <Modal.Backdrop />
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title>
-              <HStack gap={2}>
-                <FaChair />
-                <Text>Mesa {mesa.number}</Text>
-                <Badge
-                  colorScheme={isMesaOcupada ? 'red' : 'green'}
-                  variant="subtle"
-                >
-                  {isMesaOcupada ? 'Ocupada' : 'Disponível'}
-                </Badge>
-              </HStack>
-            </Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
+      <AppModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={`Mesa ${mesa.number} - ${isMesaOcupada ? 'Ocupada' : 'Disponível'}`}
+      >
             <VStack gap={6} align="stretch">
               {/* Status da Sessão */}
               {sessao ? (
@@ -156,7 +140,8 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
 
                   {/* Lista de Pedidos */}
                   <VStack gap={3} align="stretch" maxH="300px" overflowY="auto">
-                    {sessao.pedidos.map((pedido, index) => (
+                    {sessao.pedidos && sessao.pedidos.length > 0
+                      ? sessao.pedidos.map((pedido, index) => (
                       <Box key={index} p={3} bg="gray.50" borderRadius="md">
                         <HStack justify="space-between" align="start">
                           <Box flex={1}>
@@ -187,10 +172,14 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
                           </Text>
                         </HStack>
                       </Box>
-                    ))}
+                    )) : (
+                      <Box textAlign="center" py={4}>
+                        <Text color="gray.500">Nenhum pedido nesta sessão ainda.</Text>
+                      </Box>
+                    )}
                   </VStack>
 
-                  <Divider my={4} />
+                  <Box my={4} borderTop="1px solid" borderColor="gray.200" />
 
                   {/* Total */}
                   <HStack justify="space-between" align="center">
@@ -216,7 +205,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
                   <PizzaButton
                     colorScheme="orange"
                     onClick={handleAbrirSessao}
-                    isLoading={isLoading}
+                    loading={isLoading}
                     loadingText="Abrindo mesa..."
                   >
                     Abrir Mesa para Cliente
@@ -230,7 +219,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
                     <PizzaButton
                       colorScheme="red"
                       onClick={onFecharOpen}
-                      isLoading={isLoading}
+                      loading={isLoading}
                       loadingText="Fechando conta..."
                     >
                       <FaMoneyBillWave />
@@ -240,9 +229,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
                 )}
               </HStack>
             </VStack>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
+      </AppModal>
 
       {/* Modal de Adicionar Pedido */}
       <AdicionarPedidoModal
@@ -252,36 +239,52 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
         onPedidoAdicionado={handlePedidoAdicionado}
       />
 
-      {/* Modal de Confirmação de Fechar Conta */}
-      <AlertDialog.Root open={isFecharOpen} onOpenChange={onFecharClose}>
-        <AlertDialog.Backdrop />
-        <AlertDialog.Content>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Fechar Conta</AlertDialog.Title>
-          </AlertDialog.Header>
-          <AlertDialog.Body>
-            <Text>
+      {/* Confirmação de Fechar Conta */}
+      {isFecharOpen && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="blackAlpha.600"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex="modal"
+          onClick={onFecharClose}
+        >
+          <Box
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            p={6}
+            borderRadius="lg"
+            maxW="md"
+            w="full"
+            mx={4}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Text fontSize="lg" fontWeight="bold" mb={4}>
+              Fechar Conta
+            </Text>
+            <Text mb={4}>
               Tem certeza que deseja fechar a conta da Mesa {mesa.number}?
               O total é de {formatPrice(sessao?.total || 0)}.
             </Text>
-            <Text fontSize="sm" color="gray.600" mt={2}>
+            <Text fontSize="sm" color="gray.600" mb={6}>
               Esta ação irá liberar a mesa para novos clientes.
             </Text>
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <AlertDialog.ActionTrigger asChild>
+            <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onFecharClose}>
                 Cancelar
               </Button>
-            </AlertDialog.ActionTrigger>
-            <AlertDialog.ActionTrigger asChild>
               <PizzaButton colorScheme="red" onClick={handleFecharConta}>
                 Fechar Conta
               </PizzaButton>
-            </AlertDialog.ActionTrigger>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+            </HStack>
+          </Box>
+        </Box>
+      )}
     </>
   );
 };

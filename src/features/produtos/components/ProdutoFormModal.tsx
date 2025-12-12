@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Modal,
   VStack,
   HStack,
   Text,
@@ -13,6 +12,7 @@ import {
   Select,
   Box,
 } from '@chakra-ui/react';
+import { AppModal } from '@/components/ui';
 import { PizzaInput, PizzaTextarea, PizzaButton } from '@/components/ui';
 import { useProdutos } from '../hooks/useProdutos';
 import { useCategorias } from '../../categorias/hooks/useCategorias';
@@ -114,16 +114,7 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
   };
 
   return (
-    <Modal.Root open={isOpen} onOpenChange={handleClose} size="lg">
-      <Modal.Backdrop />
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>
-            {isEditing ? 'Editar Produto' : 'Novo Produto'}
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+    <AppModal isOpen={isOpen} onClose={handleClose} title={isEditing ? 'Editar Produto' : 'Novo Produto'}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap={4} align="stretch">
               <PizzaInput
@@ -200,8 +191,6 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
               </HStack>
             </VStack>
           </form>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    </AppModal>
   );
 };

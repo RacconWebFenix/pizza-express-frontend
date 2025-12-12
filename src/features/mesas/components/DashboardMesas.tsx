@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -9,18 +9,27 @@ import {
   SimpleGrid,
   useDisclosure,
   Button,
-} from '@chakra-ui/react';
-import { FaPlus, FaChair } from 'react-icons/fa';
-import { PizzaButton } from '@/components/ui';
-import { useMesas } from '../hooks/useMesas';
-import { MesaCard } from './MesaCard';
-import { SessaoDetalhesModal } from './SessaoDetalhesModal';
-import { Mesa } from '@/types/mesa';
+} from "@chakra-ui/react";
+import { FaPlus, FaChair } from "react-icons/fa";
+import { PizzaButton } from "@/components/ui";
+import { toaster } from "@/components/ui/toaster";
+import { useMesas } from "../hooks/useMesas";
+import { MesaCard } from "./MesaCard";
+import { SessaoDetalhesModal } from "./SessaoDetalhesModal";
+import { CriarMesaModal } from "./CriarMesaModal";
+import { Mesa } from "@/types/mesa";
 
 export const DashboardMesas: React.FC = () => {
-  const { mesas, isLoading, error } = useMesas();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { mesas, isLoading, error, create } = useMesas();
+
+  const { open: isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    open: isCriarOpen,
+    onOpen: onCriarOpen,
+    onClose: onCriarClose,
+  } = useDisclosure();
   const [selectedMesa, setSelectedMesa] = useState<Mesa | null>(null);
+
 
   const handleMesaClick = (mesa: Mesa) => {
     setSelectedMesa(mesa);
@@ -32,22 +41,45 @@ export const DashboardMesas: React.FC = () => {
     onClose();
   };
 
+  const handleCriarMesa = async (numero: number) => {
+    try {
+      await create({ number: numero });
+      toaster.create({
+        title: "Mesa criada com sucesso!",
+        type: "success",
+      });
+      onCriarClose();
+    } catch (error) {
+      toaster.create({
+        title: "Erro ao criar mesa",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        type: "error",
+      });
+    }
+  };
+
   if (isLoading) {
     return <Text>Carregando mesas...</Text>;
   }
 
   if (error) {
     return (
-      <Box p={4} bg="red.50" borderRadius="md" border="1px solid" borderColor="red.200">
+      <Box
+        p={4}
+        bg="red.50"
+        borderRadius="md"
+        border="1px solid"
+        borderColor="red.200"
+      >
         <Text color="red.600">{error}</Text>
       </Box>
     );
   }
 
   // Estatísticas
-  const mesasDisponiveis = mesas.filter(m => m.status === 'AVAILABLE').length;
-  const mesasOcupadas = mesas.filter(m => m.status === 'OCCUPIED').length;
-  const mesasReservadas = mesas.filter(m => m.status === 'RESERVED').length;
+  const mesasDisponiveis = mesas.filter((m) => m.status === "AVAILABLE").length;
+  const mesasOcupadas = mesas.filter((m) => m.status === "OCCUPIED").length;
+  const mesasReservadas = mesas.filter((m) => m.status === "RESERVED").length;
 
   return (
     <VStack gap={6} align="stretch">
@@ -62,11 +94,23 @@ export const DashboardMesas: React.FC = () => {
               Gerencie as mesas e sessões do restaurante
             </Text>
           </Box>
+          <PizzaButton
+            colorScheme="orange"
+            onClick={onCriarOpen}
+          >
+            Criar Mesa
+          </PizzaButton>
         </HStack>
 
         {/* Cards de Estatísticas */}
         <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mb={6}>
-          <Box p={4} bg="green.50" borderRadius="md" border="1px solid" borderColor="green.200">
+          <Box
+            p={4}
+            bg="green.50"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="green.200"
+          >
             <HStack gap={3}>
               <Box p={2} bg="green.500" borderRadius="md">
                 <FaChair color="white" size={20} />
@@ -82,7 +126,13 @@ export const DashboardMesas: React.FC = () => {
             </HStack>
           </Box>
 
-          <Box p={4} bg="red.50" borderRadius="md" border="1px solid" borderColor="red.200">
+          <Box
+            p={4}
+            bg="red.50"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="red.200"
+          >
             <HStack gap={3}>
               <Box p={2} bg="red.500" borderRadius="md">
                 <FaChair color="white" size={20} />
@@ -98,7 +148,13 @@ export const DashboardMesas: React.FC = () => {
             </HStack>
           </Box>
 
-          <Box p={4} bg="yellow.50" borderRadius="md" border="1px solid" borderColor="yellow.200">
+          <Box
+            p={4}
+            bg="yellow.50"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="yellow.200"
+          >
             <HStack gap={3}>
               <Box p={2} bg="yellow.500" borderRadius="md">
                 <FaChair color="white" size={20} />
@@ -127,22 +183,35 @@ export const DashboardMesas: React.FC = () => {
           </Text>
         </Box>
       ) : (
-        <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }} gap={4}>
-          {mesas.map((mesa) => (
-            <MesaCard
-              key={mesa.id}
-              mesa={mesa}
-              onClick={() => handleMesaClick(mesa)}
-            />
-          ))}
-        </SimpleGrid>
+        <>
+          <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }} gap={4}>
+            {mesas.map((mesa) => (
+              <MesaCard
+                key={mesa.id}
+                mesa={mesa}
+                onClick={() => handleMesaClick(mesa)}
+              />
+            ))}
+          </SimpleGrid>
+
+        </>
       )}
 
       {/* Modal de Detalhes da Sessão */}
-      <SessaoDetalhesModal
-        isOpen={isOpen}
-        onClose={handleModalClose}
-        mesa={selectedMesa}
+      {selectedMesa && (
+        <SessaoDetalhesModal
+          isOpen={isOpen}
+          onClose={handleModalClose}
+          mesa={selectedMesa}
+        />
+      )}
+
+      {/* Modal de Criar Mesa */}
+      <CriarMesaModal
+        isOpen={isCriarOpen}
+        onClose={onCriarClose}
+        onCriarMesa={handleCriarMesa}
+        mesasExistentes={mesas.map((m) => m.number)}
       />
     </VStack>
   );

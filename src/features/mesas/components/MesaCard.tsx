@@ -1,32 +1,21 @@
 "use client";
 
 import React from 'react';
-import {
-  Box,
-  Text,
-  VStack,
-  Badge,
-  Icon,
-} from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { FaChair, FaClock } from 'react-icons/fa';
-import { MesaStatus } from '@/types/mesa';
+import { MesaStatus, Mesa } from '@/types/mesa';
 
 interface MesaCardProps {
-  mesa: {
-    id: string;
-    number: number;
-    status: MesaStatus;
-    sessaoAtiva?: {
-      id: string;
-      criadoEm: string;
-      pedidos: any[];
-      total: number;
-    };
-  };
+  mesa: Mesa;
   onClick: () => void;
 }
 
 export const MesaCard: React.FC<MesaCardProps> = ({ mesa, onClick }) => {
+  const handleClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClick();
+  };
   const getStatusConfig = (status: MesaStatus) => {
     switch (status) {
       case 'AVAILABLE':
@@ -78,77 +67,96 @@ export const MesaCard: React.FC<MesaCardProps> = ({ mesa, onClick }) => {
 
   return (
     <Box
-      as="button"
-      onClick={onClick}
       w="full"
       aspectRatio="1"
-      bg={statusConfig.bg}
-      borderRadius="lg"
-      border="2px solid"
-      borderColor={statusConfig.borderColor}
-      p={3}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      transition="all 0.2s"
-      _hover={{
-        transform: 'scale(1.05)',
-        shadow: 'lg',
-      }}
-      _active={{
-        transform: 'scale(0.95)',
-      }}
+      position="relative"
     >
-      <VStack gap={2} align="center">
+      <button
+        onClick={handleClick}
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: statusConfig.bg,
+          border: `2px solid ${statusConfig.borderColor}`,
+          borderRadius: '12px',
+          padding: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.2s',
+          cursor: 'pointer',
+          color: statusConfig.color,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+          e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
+          e.currentTarget.style.opacity = '0.9';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = 'none';
+          e.currentTarget.style.opacity = '1';
+        }}
+        onMouseDown={(e) => {
+          e.currentTarget.style.transform = 'scale(0.95)';
+        }}
+        onMouseUp={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+        }}
+      >
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        alignItems: 'center',
+        height: '100%',
+        justifyContent: 'center'
+      }}>
         {/* Ícone da cadeira */}
-        <Icon as={FaChair} size="24px" color={statusConfig.color} />
+        <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+          <FaChair />
+        </div>
 
         {/* Número da mesa */}
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          color={statusConfig.color}
-        >
+        <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>
           {mesa.number}
-        </Text>
+        </div>
 
         {/* Status */}
-        <Badge
-          bg="whiteAlpha.900"
-          color={statusConfig.bg}
-          fontSize="xs"
-          px={2}
-          py={1}
-          borderRadius="full"
-        >
+        <div style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          color: statusConfig.bg,
+          fontSize: '12px',
+          padding: '4px 8px',
+          borderRadius: '9999px',
+          marginBottom: '8px'
+        }}>
           {statusConfig.label}
-        </Badge>
+        </div>
 
         {/* Tempo de ocupação (se ocupada) */}
         {mesa.status === 'OCCUPIED' && mesa.sessaoAtiva && (
-          <HStack gap={1} align="center">
-            <Icon as={FaClock} size="12px" color={statusConfig.color} />
-            <Text fontSize="xs" color={statusConfig.color}>
-              {formatTime(mesa.sessaoAtiva.criadoEm)}
-            </Text>
-          </HStack>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', marginBottom: '4px' }}>
+            <FaClock />
+            <span>{formatTime(mesa.sessaoAtiva.criadoEm)}</span>
+          </div>
         )}
 
         {/* Número de pedidos (se ocupada) */}
         {mesa.status === 'OCCUPIED' && mesa.sessaoAtiva && (
-          <Badge
-            bg="whiteAlpha.800"
-            color={statusConfig.bg}
-            fontSize="xs"
-            px={2}
-            py={1}
-            borderRadius="full"
-          >
-            {mesa.sessaoAtiva.pedidos.length} pedidos
-          </Badge>
+          <div style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            color: statusConfig.bg,
+            fontSize: '12px',
+            padding: '4px 8px',
+            borderRadius: '9999px'
+          }}>
+            {mesa.sessaoAtiva.pedidos?.length || 0} pedidos
+          </div>
         )}
-      </VStack>
+      </div>
+      </button>
     </Box>
   );
 };

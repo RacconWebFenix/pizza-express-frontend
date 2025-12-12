@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Modal,
   VStack,
   HStack,
   Text,
@@ -15,6 +14,7 @@ import {
   Badge,
   Textarea,
 } from '@chakra-ui/react';
+import { AppModal } from '@/components/ui';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 import { PizzaButton, PizzaInput } from '@/components/ui';
 import { useMesas } from '../hooks/useMesas';
@@ -150,16 +150,7 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
   const produtosAtivos = produtos.filter(produto => produto.active);
 
   return (
-    <Modal.Root open={isOpen} onOpenChange={handleClose} size="4xl">
-      <Modal.Backdrop />
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>
-            Adicionar Pedido - Mesa {mesa?.number}
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+    <AppModal isOpen={isOpen} onClose={handleClose} title={`Adicionar Pedido - Mesa ${mesa?.number}`}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap={6} align="stretch">
               {/* Produtos Disponíveis */}
@@ -184,7 +175,7 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
                         <Text fontWeight="semibold" fontSize="sm">
                           {produto.name}
                         </Text>
-                        <Text fontSize="xs" color="gray.600" noOfLines={2}>
+                        <Text fontSize="xs" color="gray.600">
                           {produto.description}
                         </Text>
                         <Text fontSize="sm" fontWeight="bold" color="orange.500">
@@ -281,8 +272,8 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
                 <PizzaButton
                   colorScheme="orange"
                   type="submit"
-                  isDisabled={itensPedido.length === 0}
-                  isLoading={isSubmitting}
+                  disabled={itensPedido.length === 0}
+                  loading={isSubmitting}
                   loadingText="Adicionando pedido..."
                 >
                   Adicionar Pedido
@@ -290,8 +281,6 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
               </HStack>
             </VStack>
           </form>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    </AppModal>
   );
 };

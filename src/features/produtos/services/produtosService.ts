@@ -1,10 +1,11 @@
 import { Produto, CreateProdutoData, UpdateProdutoData } from '@/types/produto';
+import { getAuthToken } from '@/utils/cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // Listar todos os produtos
 export const getProdutos = async (): Promise<Produto[]> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -27,7 +28,7 @@ export const getProdutos = async (): Promise<Produto[]> => {
 
 // Buscar produto por ID
 export const getProdutoById = async (id: string): Promise<Produto> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -50,7 +51,7 @@ export const getProdutoById = async (id: string): Promise<Produto> => {
 
 // Criar novo produto
 export const createProduto = async (data: CreateProdutoData): Promise<Produto> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -74,7 +75,7 @@ export const createProduto = async (data: CreateProdutoData): Promise<Produto> =
 
 // Atualizar produto
 export const updateProduto = async (id: string, data: UpdateProdutoData): Promise<Produto> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -98,7 +99,7 @@ export const updateProduto = async (id: string, data: UpdateProdutoData): Promis
 
 // Deletar produto
 export const deleteProduto = async (id: string): Promise<void> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }

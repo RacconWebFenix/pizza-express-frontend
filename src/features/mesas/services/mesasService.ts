@@ -1,10 +1,11 @@
 import { Mesa, CreateMesaData, SessaoMesa, AdicionarPedidoMesaData, FecharContaData } from '@/types/mesa';
+import { getAuthToken } from '@/utils/cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // Listar todas as mesas
 export const getMesas = async (): Promise<Mesa[]> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -27,7 +28,7 @@ export const getMesas = async (): Promise<Mesa[]> => {
 
 // Buscar mesa por ID
 export const getMesaById = async (id: string): Promise<Mesa> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -50,7 +51,7 @@ export const getMesaById = async (id: string): Promise<Mesa> => {
 
 // Criar nova mesa
 export const createMesa = async (data: CreateMesaData): Promise<Mesa> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -74,7 +75,7 @@ export const createMesa = async (data: CreateMesaData): Promise<Mesa> => {
 
 // Abrir sessão da mesa
 export const abrirSessaoMesa = async (mesaId: string): Promise<SessaoMesa> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -97,7 +98,7 @@ export const abrirSessaoMesa = async (mesaId: string): Promise<SessaoMesa> => {
 
 // Ver sessão ativa da mesa
 export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -123,7 +124,7 @@ export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null>
 
 // Adicionar pedido à mesa
 export const adicionarPedidoMesa = async (data: AdicionarPedidoMesaData): Promise<any> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -147,7 +148,7 @@ export const adicionarPedidoMesa = async (data: AdicionarPedidoMesaData): Promis
 
 // Fechar conta (billing)
 export const fecharConta = async (mesaId: string): Promise<any> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }

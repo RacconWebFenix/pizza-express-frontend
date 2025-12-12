@@ -9,7 +9,6 @@ import {
   Button,
   Badge,
   useDisclosure,
-  AlertDialog,
   IconButton,
   SimpleGrid,
 } from '@chakra-ui/react';
@@ -21,8 +20,8 @@ import { Categoria } from '@/types/categoria';
 
 export const CategoriasList: React.FC = () => {
   const { categorias, isLoading, error, remove } = useCategorias();
-  const { isOpen: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { open: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
+  const { open: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(null);
   const [categoriaToDelete, setCategoriaToDelete] = useState<Categoria | null>(null);
 
@@ -84,7 +83,6 @@ export const CategoriasList: React.FC = () => {
         </Box>
         <PizzaButton
           colorScheme="orange"
-          leftIcon={<FaPlus />}
           onClick={handleCreate}
         >
           Nova Categoria
@@ -99,7 +97,6 @@ export const CategoriasList: React.FC = () => {
           </Text>
           <PizzaButton
             colorScheme="orange"
-            leftIcon={<FaPlus />}
             onClick={handleCreate}
           >
             Criar Primeira Categoria
@@ -126,17 +123,19 @@ export const CategoriasList: React.FC = () => {
                         variant="ghost"
                         colorScheme="blue"
                         aria-label="Editar categoria"
-                        icon={<FaEdit />}
                         onClick={() => handleEdit(categoria)}
-                      />
+                      >
+                        <FaEdit />
+                      </IconButton>
                       <IconButton
                         size="sm"
                         variant="ghost"
                         colorScheme="red"
                         aria-label="Deletar categoria"
-                        icon={<FaTrash />}
                         onClick={() => handleDeleteClick(categoria)}
-                      />
+                      >
+                        <FaTrash />
+                      </IconButton>
                     </HStack>
                   </HStack>
                 </Box>
@@ -165,32 +164,48 @@ export const CategoriasList: React.FC = () => {
       />
 
       {/* Modal de Confirmação de Delete */}
-      <AlertDialog.Root open={isDeleteOpen} onOpenChange={onDeleteClose}>
-        <AlertDialog.Backdrop />
-        <AlertDialog.Content>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Deletar Categoria</AlertDialog.Title>
-          </AlertDialog.Header>
-          <AlertDialog.Body>
-            <Text>
+      {isDeleteOpen && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="blackAlpha.600"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex="modal"
+          onClick={onDeleteClose}
+        >
+          <Box
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            p={6}
+            borderRadius="lg"
+            maxW="md"
+            w="full"
+            mx={4}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Text fontSize="lg" fontWeight="bold" mb={4}>
+              Deletar Categoria
+            </Text>
+            <Text mb={4}>
               Tem certeza que deseja deletar a categoria "{categoriaToDelete?.name}"?
               Esta ação não pode ser desfeita.
             </Text>
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <AlertDialog.ActionTrigger asChild>
+            <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>
                 Cancelar
               </Button>
-            </AlertDialog.ActionTrigger>
-            <AlertDialog.ActionTrigger asChild>
               <PizzaButton colorScheme="red" onClick={handleDeleteConfirm}>
                 Deletar
               </PizzaButton>
-            </AlertDialog.ActionTrigger>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+            </HStack>
+          </Box>
+        </Box>
+      )}
     </VStack>
   );
 };

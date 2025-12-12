@@ -21,7 +21,6 @@ import {
   FaUser,
   FaSignOutAlt,
   FaChevronDown,
-  FaCog,
 } from "react-icons/fa";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import NavItem from "./NavItem";

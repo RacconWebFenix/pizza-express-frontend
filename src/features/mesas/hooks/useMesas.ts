@@ -69,7 +69,7 @@ export const useMesas = (): UseMesasReturn => {
       const sessao = await abrirSessaoMesa(mesaId);
       // Atualizar mesa com sessão ativa
       setMesas(prev => prev.map(mesa =>
-        mesa.id === mesaId ? { ...mesa, sessaoAtiva: sessao, status: 'OCCUPIED' } : mesa
+        mesa.id === mesaId ? { ...mesa, sessaoAtiva: sessao, status: 'OCCUPIED' as const } : mesa
       ));
       return sessao;
     } catch (err) {
@@ -107,7 +107,7 @@ export const useMesas = (): UseMesasReturn => {
       const result = await fecharConta(mesaId);
       // Atualizar mesa para liberada
       setMesas(prev => prev.map(mesa =>
-        mesa.id === mesaId ? { ...mesa, sessaoAtiva: undefined, status: 'AVAILABLE' } : mesa
+        mesa.id === mesaId ? { ...mesa, sessaoAtiva: undefined, status: 'AVAILABLE' as const } : mesa
       ));
       return result;
     } catch (err) {

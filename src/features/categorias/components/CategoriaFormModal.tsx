@@ -5,12 +5,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Modal,
   VStack,
   HStack,
-  Text,
   Button,
 } from '@chakra-ui/react';
+import { AppModal } from '@/components/ui';
 import { PizzaInput, PizzaButton } from '@/components/ui';
 import { useCategorias } from '../hooks/useCategorias';
 import { Categoria, CreateCategoriaData, UpdateCategoriaData } from '@/types/categoria';
@@ -98,16 +97,7 @@ export const CategoriaFormModal: React.FC<CategoriaFormModalProps> = ({
   };
 
   return (
-    <Modal.Root open={isOpen} onOpenChange={handleClose} size="md">
-      <Modal.Backdrop />
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>
-            {isEditing ? 'Editar Categoria' : 'Nova Categoria'}
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+    <AppModal isOpen={isOpen} onClose={handleClose} title={isEditing ? 'Editar Categoria' : 'Nova Categoria'}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap={4} align="stretch">
               <PizzaInput
@@ -141,8 +131,6 @@ export const CategoriaFormModal: React.FC<CategoriaFormModalProps> = ({
               </HStack>
             </VStack>
           </form>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    </AppModal>
   );
 };

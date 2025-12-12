@@ -1,4 +1,5 @@
 import { UploadResult, UploadProgress, UploadOptions, FileValidationResult } from '@/types/upload';
+import { getAuthToken } from '@/utils/cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -43,7 +44,7 @@ export const uploadPizzaImage = async (
   const formData = new FormData();
   formData.append('image', file);
 
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -86,7 +87,7 @@ export const uploadFile = async (
   const formData = new FormData();
   formData.append('file', file);
 
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }

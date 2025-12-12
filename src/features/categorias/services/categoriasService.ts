@@ -1,10 +1,11 @@
 import { Categoria, CreateCategoriaData, UpdateCategoriaData } from '@/types/categoria';
+import { getAuthToken } from '@/utils/cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // Listar todas as categorias
 export const getCategorias = async (): Promise<Categoria[]> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -27,7 +28,7 @@ export const getCategorias = async (): Promise<Categoria[]> => {
 
 // Buscar categoria por ID
 export const getCategoriaById = async (id: string): Promise<Categoria> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -50,7 +51,7 @@ export const getCategoriaById = async (id: string): Promise<Categoria> => {
 
 // Criar nova categoria
 export const createCategoria = async (data: CreateCategoriaData): Promise<Categoria> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -74,7 +75,7 @@ export const createCategoria = async (data: CreateCategoriaData): Promise<Catego
 
 // Atualizar categoria
 export const updateCategoria = async (id: string, data: UpdateCategoriaData): Promise<Categoria> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -98,7 +99,7 @@ export const updateCategoria = async (id: string, data: UpdateCategoriaData): Pr
 
 // Deletar categoria
 export const deleteCategoria = async (id: string): Promise<void> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }

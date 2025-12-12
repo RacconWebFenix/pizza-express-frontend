@@ -8,7 +8,6 @@ import {
   Text,
   Badge,
   useDisclosure,
-  AlertDialog,
   IconButton,
   SimpleGrid,
   Avatar,
@@ -21,8 +20,8 @@ import { Entregador } from '@/types/entregador';
 
 export const EntregadoresList: React.FC = () => {
   const { entregadores, isLoading, error, remove } = useEntregadores();
-  const { isOpen: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { open: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
+  const { open: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [selectedEntregador, setSelectedEntregador] = useState<Entregador | null>(null);
   const [entregadorToDelete, setEntregadorToDelete] = useState<Entregador | null>(null);
 
@@ -94,7 +93,6 @@ export const EntregadoresList: React.FC = () => {
         </Box>
         <PizzaButton
           colorScheme="orange"
-          leftIcon={<FaPlus />}
           onClick={handleCreate}
         >
           Novo Entregador
@@ -109,7 +107,6 @@ export const EntregadoresList: React.FC = () => {
           </Text>
           <PizzaButton
             colorScheme="orange"
-            leftIcon={<FaPlus />}
             onClick={handleCreate}
           >
             Cadastrar Primeiro Entregador
@@ -123,7 +120,7 @@ export const EntregadoresList: React.FC = () => {
                 {/* Avatar e Nome */}
                 <HStack gap={3}>
                   <Avatar.Root size="lg">
-                    <Avatar.Image src={entregador.avatar} alt={entregador.nome} />
+                    <Avatar.Image src={entregador.avatar || undefined} alt={entregador.nome} />
                     <Avatar.Fallback>
                       <FaMotorcycle />
                     </Avatar.Fallback>
@@ -135,7 +132,7 @@ export const EntregadoresList: React.FC = () => {
                           {entregador.nome}
                         </Text>
                         <Text fontSize="sm" color="gray.600">
-                          {formatPhone(entregador.telefone)}
+                          {entregador.telefone ? formatPhone(entregador.telefone) : 'Telefone não informado'}
                         </Text>
                       </Box>
                       <HStack gap={1}>
@@ -144,17 +141,19 @@ export const EntregadoresList: React.FC = () => {
                           variant="ghost"
                           colorScheme="blue"
                           aria-label="Editar entregador"
-                          icon={<FaEdit />}
                           onClick={() => handleEdit(entregador)}
-                        />
+                        >
+                          <FaEdit />
+                        </IconButton>
                         <IconButton
                           size="sm"
                           variant="ghost"
                           colorScheme="red"
                           aria-label="Deletar entregador"
-                          icon={<FaTrash />}
                           onClick={() => handleDeleteClick(entregador)}
-                        />
+                        >
+                          <FaTrash />
+                        </IconButton>
                       </HStack>
                     </HStack>
                   </Box>
@@ -162,22 +161,17 @@ export const EntregadoresList: React.FC = () => {
 
                 {/* Status */}
                 <Box>
-                  <Badge
-                    colorScheme={entregador.ativo ? 'green' : 'red'}
-                    variant="subtle"
-                    fontSize="xs"
-                  >
-                    {entregador.ativo ? 'Ativo' : 'Inativo'}
-                  </Badge>
+                    <Badge
+                      colorScheme="green"
+                      variant="subtle"
+                      fontSize="xs"
+                    >
+                      Ativo
+                    </Badge>
                 </Box>
 
                 {/* Informações adicionais */}
                 <Box pt={2} borderTop="1px solid" borderColor="gray.100">
-                  {entregador.totalEntregas !== undefined && (
-                    <Text fontSize="sm" color="gray.600">
-                      Total de entregas: {entregador.totalEntregas}
-                    </Text>
-                  )}
                   {entregador.createdAt && (
                     <Text fontSize="xs" color="gray.400">
                       Cadastrado em: {new Date(entregador.createdAt).toLocaleDateString('pt-BR')}
@@ -198,32 +192,48 @@ export const EntregadoresList: React.FC = () => {
       />
 
       {/* Modal de Confirmação de Delete */}
-      <AlertDialog.Root open={isDeleteOpen} onOpenChange={onDeleteClose}>
-        <AlertDialog.Backdrop />
-        <AlertDialog.Content>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Deletar Entregador</AlertDialog.Title>
-          </AlertDialog.Header>
-          <AlertDialog.Body>
-            <Text>
+      {isDeleteOpen && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="blackAlpha.600"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex="modal"
+          onClick={onDeleteClose}
+        >
+          <Box
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            p={6}
+            borderRadius="lg"
+            maxW="md"
+            w="full"
+            mx={4}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Text fontSize="lg" fontWeight="bold" mb={4}>
+              Deletar Entregador
+            </Text>
+            <Text mb={4}>
               Tem certeza que deseja deletar o entregador "{entregadorToDelete?.nome}"?
               Esta ação não pode ser desfeita.
             </Text>
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <AlertDialog.ActionTrigger asChild>
+            <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>
                 Cancelar
               </Button>
-            </AlertDialog.ActionTrigger>
-            <AlertDialog.ActionTrigger asChild>
               <PizzaButton colorScheme="red" onClick={handleDeleteConfirm}>
                 Deletar
               </PizzaButton>
-            </AlertDialog.ActionTrigger>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+            </HStack>
+          </Box>
+        </Box>
+      )}
     </VStack>
   );
 };

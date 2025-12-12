@@ -5,12 +5,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Modal,
   VStack,
   HStack,
   Text,
   Button,
 } from '@chakra-ui/react';
+import { AppModal } from '@/components/ui';
 import { PizzaInput, PizzaButton } from '@/components/ui';
 import { useEntregadores } from '../hooks/useEntregadores';
 import { Entregador } from '@/types/entregador';
@@ -54,7 +54,7 @@ export const EntregadorFormModal: React.FC<EntregadorFormModalProps> = ({
   React.useEffect(() => {
     if (entregador && isOpen) {
       setValue('nome', entregador.nome);
-      setValue('telefone', formatPhoneForDisplay(entregador.telefone));
+      setValue('telefone', entregador.telefone ? formatPhoneForDisplay(entregador.telefone) : '');
     } else if (!entregador && isOpen) {
       reset();
     }
@@ -114,16 +114,7 @@ export const EntregadorFormModal: React.FC<EntregadorFormModalProps> = ({
   };
 
   return (
-    <Modal.Root open={isOpen} onOpenChange={handleClose} size="md">
-      <Modal.Backdrop />
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>
-            {isEditing ? 'Editar Entregador' : 'Novo Entregador'}
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+    <AppModal isOpen={isOpen} onClose={handleClose} title={isEditing ? 'Editar Entregador' : 'Novo Entregador'}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap={4} align="stretch">
               <PizzaInput
@@ -149,7 +140,7 @@ export const EntregadorFormModal: React.FC<EntregadorFormModalProps> = ({
                 <PizzaButton
                   colorScheme="orange"
                   type="submit"
-                  isLoading={isSubmitting}
+                  loading={isSubmitting}
                   loadingText={isEditing ? 'Salvando...' : 'Criando...'}
                 >
                   {isEditing ? 'Salvar' : 'Criar'}
@@ -157,8 +148,6 @@ export const EntregadorFormModal: React.FC<EntregadorFormModalProps> = ({
               </HStack>
             </VStack>
           </form>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    </AppModal>
   );
 };

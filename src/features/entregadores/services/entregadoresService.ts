@@ -1,10 +1,11 @@
 import { Entregador } from '@/types/entregador';
+import { getAuthToken } from '@/utils/cookies';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // Listar todos os entregadores
 export const getEntregadores = async (): Promise<Entregador[]> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -27,7 +28,7 @@ export const getEntregadores = async (): Promise<Entregador[]> => {
 
 // Buscar entregador por ID
 export const getEntregadorById = async (id: number): Promise<Entregador> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -50,7 +51,7 @@ export const getEntregadorById = async (id: number): Promise<Entregador> => {
 
 // Criar novo entregador
 export const createEntregador = async (data: { nome: string; telefone: string }): Promise<Entregador> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -74,7 +75,7 @@ export const createEntregador = async (data: { nome: string; telefone: string })
 
 // Atualizar entregador
 export const updateEntregador = async (id: number, data: { nome?: string; telefone?: string }): Promise<Entregador> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
@@ -98,7 +99,7 @@ export const updateEntregador = async (id: number, data: { nome?: string; telefo
 
 // Deletar entregador
 export const deleteEntregador = async (id: number): Promise<void> => {
-  const token = localStorage.getItem('access_token');
+  const token = getAuthToken();
   if (!token) {
     throw new Error('Usuário não autenticado');
   }
