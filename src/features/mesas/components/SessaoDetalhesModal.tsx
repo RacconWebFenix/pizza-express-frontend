@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   VStack,
   HStack,
@@ -10,14 +10,14 @@ import {
   Button,
   SimpleGrid,
   useDisclosure,
-} from '@chakra-ui/react';
-import { AppModal } from '@/components/ui';
-import { FaClock, FaPlus, FaMoneyBillWave, FaChair } from 'react-icons/fa';
-import { PizzaButton } from '@/components/ui';
-import { useMesas } from '../hooks/useMesas';
-import { useProdutos } from '../../produtos/hooks/useProdutos';
-import { Mesa, SessaoMesa } from '@/types/mesa';
-import { AdicionarPedidoModal } from './AdicionarPedidoModal';
+} from "@chakra-ui/react";
+import { AppModal } from "@/components/ui";
+import { FaClock, FaPlus, FaMoneyBillWave, FaChair } from "react-icons/fa";
+import { PizzaButton } from "@/components/ui";
+import { useMesas } from "../hooks/useMesas";
+import { useProdutos } from "../../produtos/hooks/useProdutos";
+import { Mesa, SessaoMesa } from "@/types/mesa";
+import { AdicionarPedidoModal } from "./AdicionarPedidoModal";
 
 interface SessaoDetalhesModalProps {
   isOpen: boolean;
@@ -32,8 +32,16 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
 }) => {
   const { abrirSessao, fecharConta, getSessaoAtiva } = useMesas();
   const { produtos } = useProdutos();
-  const { open: isPedidoOpen, onOpen: onPedidoOpen, onClose: onPedidoClose } = useDisclosure();
-  const { open: isFecharOpen, onOpen: onFecharOpen, onClose: onFecharClose } = useDisclosure();
+  const {
+    open: isPedidoOpen,
+    onOpen: onPedidoOpen,
+    onClose: onPedidoClose,
+  } = useDisclosure();
+  const {
+    open: isFecharOpen,
+    onOpen: onFecharOpen,
+    onClose: onFecharClose,
+  } = useDisclosure();
 
   const [sessao, setSessao] = useState<SessaoMesa | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +59,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       const sessaoData = await getSessaoAtiva(mesa.id);
       setSessao(sessaoData);
     } catch (error) {
-      console.error('Erro ao carregar sessão:', error);
+      console.error("Erro ao carregar sessão:", error);
     }
   };
 
@@ -63,7 +71,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       await abrirSessao(mesa.id);
       await loadSessao();
     } catch (error) {
-      console.error('Erro ao abrir sessão:', error);
+      console.error("Erro ao abrir sessão:", error);
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +86,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       onClose();
       onFecharClose();
     } catch (error) {
-      console.error('Erro ao fechar conta:', error);
+      console.error("Erro ao fechar conta:", error);
     } finally {
       setIsLoading(false);
     }
@@ -89,9 +97,9 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(price);
   };
 
@@ -112,7 +120,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
 
   if (!mesa) return null;
 
-  const isMesaOcupada = mesa.status === 'OCCUPIED';
+  const isMesaOcupada = mesa.status === "OCCUPIED";
   const totalPedidos = sessao?.pedidos?.length || 0;
 
   return (
@@ -120,115 +128,123 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       <AppModal
         isOpen={isOpen}
         onClose={onClose}
-        title={`Mesa ${mesa.number} - ${isMesaOcupada ? 'Ocupada' : 'Disponível'}`}
+        title={`Mesa ${mesa.number} - ${
+          isMesaOcupada ? "Ocupada" : "Disponível"
+        }`}
       >
-            <VStack gap={6} align="stretch">
-              {/* Status da Sessão */}
-              {sessao ? (
-                <Box>
-                  <HStack justify="space-between" align="center" mb={4}>
-                    <HStack gap={2}>
-                      <FaClock />
-                      <Text fontWeight="semibold">
-                        Sessão ativa há {formatTime(sessao.criadoEm)}
-                      </Text>
-                    </HStack>
-                    <Badge colorScheme="blue" variant="subtle">
-                      {totalPedidos} pedido{totalPedidos !== 1 ? 's' : ''}
-                    </Badge>
-                  </HStack>
-
-                  {/* Lista de Pedidos */}
-                  <VStack gap={3} align="stretch" maxH="300px" overflowY="auto">
-                    {sessao.pedidos && sessao.pedidos.length > 0
-                      ? sessao.pedidos.map((pedido, index) => (
-                      <Box key={index} p={3} bg="gray.50" borderRadius="md">
-                        <HStack justify="space-between" align="start">
-                          <Box flex={1}>
-                            <Text fontSize="sm" color="gray.600">
-                              {new Date(pedido.criadoEm).toLocaleString('pt-BR')}
-                            </Text>
-                            {pedido.observacoes && (
-                              <Text fontSize="sm" color="gray.500" mt={1}>
-                                Obs: {pedido.observacoes}
-                              </Text>
-                            )}
-                            <Text fontSize="sm" mt={2}>
-                              {pedido.itens.map((item, idx) => (
-                                <span key={idx}>
-                                  {item.quantity}x {item.product?.name || 'Produto'}
-                                  {idx < pedido.itens.length - 1 ? ', ' : ''}
-                                </span>
-                              ))}
-                            </Text>
-                          </Box>
-                          <Text fontWeight="semibold">
-                            {formatPrice(
-                              pedido.itens.reduce(
-                                (total, item) => total + (item.product?.price || 0) * item.quantity,
-                                0
-                              )
-                            )}
-                          </Text>
-                        </HStack>
-                      </Box>
-                    )) : (
-                      <Box textAlign="center" py={4}>
-                        <Text color="gray.500">Nenhum pedido nesta sessão ainda.</Text>
-                      </Box>
-                    )}
-                  </VStack>
-
-                  <Box my={4} borderTop="1px solid" borderColor="gray.200" />
-
-                  {/* Total */}
-                  <HStack justify="space-between" align="center">
-                    <Text fontSize="lg" fontWeight="bold">
-                      Total da Conta
-                    </Text>
-                    <Text fontSize="xl" fontWeight="bold" color="orange.500">
-                      {formatPrice(sessao.total)}
-                    </Text>
-                  </HStack>
-                </Box>
-              ) : (
-                <Box textAlign="center" py={8}>
-                  <Text color="gray.500" mb={4}>
-                    Mesa disponível para novos clientes.
+        <VStack gap={6} align="stretch">
+          {/* Status da Sessão */}
+          {sessao ? (
+            <Box>
+              <HStack justify="space-between" align="center" mb={4}>
+                <HStack gap={2}>
+                  <FaClock />
+                  <Text fontWeight="semibold">
+                    Sessão ativa há {formatTime(sessao.criadoEm)}
                   </Text>
-                </Box>
-              )}
-
-              {/* Ações */}
-              <HStack gap={3} justify="flex-end">
-                {!sessao ? (
-                  <PizzaButton
-                    colorScheme="orange"
-                    onClick={handleAbrirSessao}
-                    loading={isLoading}
-                    loadingText="Abrindo mesa..."
-                  >
-                    Abrir Mesa para Cliente
-                  </PizzaButton>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={onPedidoOpen}>
-                      <FaPlus />
-                      Adicionar Pedido
-                    </Button>
-                    <PizzaButton
-                      colorScheme="red"
-                      onClick={onFecharOpen}
-                      loading={isLoading}
-                      loadingText="Fechando conta..."
-                    >
-                      <FaMoneyBillWave />
-                      Fechar Conta
-                    </PizzaButton>
-                  </>
-                )}
+                </HStack>
+                <Badge colorScheme="blue" variant="subtle">
+                  {totalPedidos} pedido{totalPedidos !== 1 ? "s" : ""}
+                </Badge>
               </HStack>
-            </VStack>
+
+              {/* Lista de Pedidos */}
+              <VStack gap={3} align="stretch" maxH="300px" overflowY="auto">
+                {sessao.pedidos && sessao.pedidos.length > 0 ? (
+                  sessao.pedidos.map((pedido, index) => (
+                    <Box key={index} p={3} bg="gray.50" borderRadius="md">
+                      <HStack justify="space-between" align="start">
+                        <Box flex={1}>
+                          <Text fontSize="sm" color="gray.600">
+                            {new Date(pedido.criadoEm).toLocaleString("pt-BR")}
+                          </Text>
+                          {pedido.observacoes && (
+                            <Text fontSize="sm" color="gray.500" mt={1}>
+                              Obs: {pedido.observacoes}
+                            </Text>
+                          )}
+                          <Text fontSize="sm" mt={2}>
+                            {pedido.itens.map((item, idx) => (
+                              <span key={idx}>
+                                {item.quantity}x{" "}
+                                {item.product?.name || "Produto"}
+                                {idx < pedido.itens.length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                          </Text>
+                        </Box>
+                        <Text fontWeight="semibold">
+                          {formatPrice(
+                            pedido.itens.reduce(
+                              (total, item) =>
+                                total +
+                                (item.product?.price || 0) * item.quantity,
+                              0
+                            )
+                          )}
+                        </Text>
+                      </HStack>
+                    </Box>
+                  ))
+                ) : (
+                  <Box textAlign="center" py={4}>
+                    <Text color="gray.500">
+                      Nenhum pedido nesta sessão ainda.
+                    </Text>
+                  </Box>
+                )}
+              </VStack>
+
+              <Box my={4} borderTop="1px solid" borderColor="gray.200" />
+
+              {/* Total */}
+              <HStack justify="space-between" align="center">
+                <Text fontSize="lg" fontWeight="bold">
+                  Total da Conta
+                </Text>
+                <Text fontSize="xl" fontWeight="bold" color="orange.500">
+                  {formatPrice(sessao.total)}
+                </Text>
+              </HStack>
+            </Box>
+          ) : (
+            <Box textAlign="center" py={8}>
+              <Text color="gray.500" mb={4}>
+                Mesa disponível para novos clientes.
+              </Text>
+            </Box>
+          )}
+
+          {/* Ações */}
+          <HStack gap={3} justify="flex-end">
+            {!sessao ? (
+              <PizzaButton
+                colorScheme="orange"
+                onClick={handleAbrirSessao}
+                loading={isLoading}
+                loadingText="Abrindo mesa..."
+              >
+                Abrir Mesa para Cliente
+              </PizzaButton>
+            ) : (
+              <>
+                <Button variant="outline" onClick={onPedidoOpen}>
+                  <FaPlus />
+                  Adicionar Pedido
+                </Button>
+                <PizzaButton
+                  colorScheme="red"
+                  onClick={onFecharOpen}
+                  loading={isLoading}
+                  loadingText="Fechando conta..."
+                >
+                  <FaMoneyBillWave />
+                  Fechar Conta
+                </PizzaButton>
+              </>
+            )}
+          </HStack>
+        </VStack>
       </AppModal>
 
       {/* Modal de Adicionar Pedido */}
@@ -268,8 +284,8 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
               Fechar Conta
             </Text>
             <Text mb={4}>
-              Tem certeza que deseja fechar a conta da Mesa {mesa.number}?
-              O total é de {formatPrice(sessao?.total || 0)}.
+              Tem certeza que deseja fechar a conta da Mesa {mesa.number}? O
+              total é de {formatPrice(sessao?.total || 0)}.
             </Text>
             <Text fontSize="sm" color="gray.600" mb={6}>
               Esta ação irá liberar a mesa para novos clientes.
