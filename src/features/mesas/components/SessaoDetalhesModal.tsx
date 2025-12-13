@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   VStack,
   HStack,
@@ -8,16 +8,17 @@ import {
   Badge,
   Box,
   Button,
-  SimpleGrid,
+  Flex,
   useDisclosure,
 } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
-import { FaClock, FaPlus, FaMoneyBillWave, FaChair } from "react-icons/fa";
+import { FaClock, FaPlus, FaMoneyBillWave } from "react-icons/fa";
 import { PizzaButton } from "@/components/ui";
+import { PizzaSpinner } from "@/components/ui";
 import { useMesas } from "../hooks/useMesas";
-import { useProdutos } from "../../produtos/hooks/useProdutos";
 import { Mesa, SessaoMesa } from "@/types/mesa";
 import { AdicionarPedidoModal } from "./AdicionarPedidoModal";
+import { PedidoCard } from "./PedidoCard";
 
 interface SessaoDetalhesModalProps {
   isOpen: boolean;
@@ -31,7 +32,6 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
   mesa,
 }) => {
   const { abrirSessao, fecharConta, getSessaoAtiva } = useMesas();
-  const { produtos } = useProdutos();
   const {
     open: isPedidoOpen,
     onOpen: onPedidoOpen,
@@ -45,14 +45,9 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
 
   const [sessao, setSessao] = useState<SessaoMesa | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSessao, setIsLoadingSessao] = useState(false);
 
-  useEffect(() => {
-    if (mesa && isOpen) {
-      loadSessao();
-    }
-  }, [mesa, isOpen]);
-
-  const loadSessao = async () => {
+  const loadSessao = useCallback(async () => {
     if (!mesa) return;
 
     try {
@@ -60,8 +55,17 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       setSessao(sessaoData);
     } catch (error) {
       console.error("Erro ao carregar sessão:", error);
+    } finally {
+      setIsLoadingSessao(false);
     }
-  };
+  }, [mesa, getSessaoAtiva]);
+
+  useEffect(() => {
+    if (mesa && isOpen) {
+      setIsLoadingSessao(true);
+      loadSessao();
+    }
+  }, [mesa, isOpen, loadSessao]);
 
   const handleAbrirSessao = async () => {
     if (!mesa) return;
@@ -140,7 +144,14 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
       >
         <VStack gap={6} align="stretch">
           {/* Status da Sessão */}
-          {sessao ? (
+          {isLoadingSessao ? (
+            <Flex justify="center" align="center" py={8} direction="column">
+              <PizzaSpinner />
+              <Text mt={4} color="gray.500">
+                Carregando pedidos...
+              </Text>
+            </Flex>
+          ) : sessao ? (
             <Box>
               <HStack justify="space-between" align="center" mb={4}>
                 <HStack gap={2}>
@@ -158,39 +169,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
               <VStack gap={3} align="stretch" maxH="300px" overflowY="auto">
                 {sessao.pedidos && sessao.pedidos.length > 0 ? (
                   sessao.pedidos.map((pedido, index) => (
-                    <Box key={index} p={3} bg="gray.50" borderRadius="md">
-                      <HStack justify="space-between" align="start">
-                        <Box flex={1}>
-                          <Text fontSize="sm" color="gray.600">
-                            {new Date(pedido.criadoEm).toLocaleString("pt-BR")}
-                          </Text>
-                          {pedido.observacoes && (
-                            <Text fontSize="sm" color="gray.500" mt={1}>
-                              Obs: {pedido.observacoes}
-                            </Text>
-                          )}
-                          <Text fontSize="sm" mt={2}>
-                            {pedido.itens.map((item, idx) => (
-                              <span key={idx}>
-                                {item.quantity}x{" "}
-                                {item.product?.name || "Produto"}
-                                {idx < pedido.itens.length - 1 ? ", " : ""}
-                              </span>
-                            ))}
-                          </Text>
-                        </Box>
-                        <Text fontWeight="semibold">
-                          {formatPrice(
-                            pedido.itens.reduce(
-                              (total, item) =>
-                                total +
-                                (item.product?.price || 0) * item.quantity,
-                              0
-                            )
-                          )}
-                        </Text>
-                      </HStack>
-                    </Box>
+                    <PedidoCard key={index} pedido={pedido} index={index} />
                   ))
                 ) : (
                   <Box textAlign="center" py={4}>

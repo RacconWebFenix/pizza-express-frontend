@@ -3,11 +3,32 @@ import {
   CreateMesaData,
   SessaoMesa,
   AdicionarPedidoMesaData,
-  FecharContaData,
 } from "@/types/mesa";
+import { Pedido } from "@/types/pedidos";
 import { getAuthToken } from "@/utils/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+// Tipos para dados da API
+interface ApiPedidoItem {
+  productId: string;
+  quantity: number;
+  price?: string;
+  product?: {
+    id: string;
+    name: string;
+    price?: string;
+  };
+}
+
+interface ApiPedido {
+  id: string | number;
+  sessionId: string;
+  items: ApiPedidoItem[];
+  total: string | number;
+  createdAt: string;
+  observacoes?: string;
+}
 
 // Listar todas as mesas
 export const getMesas = async (): Promise<Mesa[]> => {
@@ -163,20 +184,20 @@ export const getSessaoAtiva = async (
 
       // Filtrar pedidos que pertencem à sessão atual
       const pedidosSessao = todosPedidos.filter(
-        (pedido: any) => pedido.sessionId === sessaoData.id
+        (pedido: ApiPedido) => pedido.sessionId === sessaoData.id
       );
 
       // Transformar pedidos para o formato esperado pelo componente
-      const pedidosMesa = pedidosSessao.map((pedido: any) => ({
-        id: pedido.id,
-        itens: (pedido.items || []).map((item: any) => ({
+      const pedidosMesa = pedidosSessao.map((pedido: ApiPedido) => ({
+        id: pedido.id.toString(),
+        itens: (pedido.items || []).map((item: ApiPedidoItem) => ({
           productId: item.productId,
           quantity: item.quantity,
           product: item.product
             ? {
                 id: item.product.id,
                 name: item.product.name,
-                price: parseFloat(item.product.price || item.price || 0),
+                price: parseFloat(item.product.price || item.price || "0"),
               }
             : undefined,
         })),
@@ -186,7 +207,8 @@ export const getSessaoAtiva = async (
 
       // Calcular total da sessão baseado nos pedidos
       const totalSessao = pedidosSessao.reduce(
-        (total: number, pedido: any) => total + parseFloat(pedido.total || 0),
+        (total: number, pedido: ApiPedido) =>
+          total + parseFloat(pedido.total.toString() || "0"),
         0
       );
 
@@ -215,7 +237,7 @@ export const getSessaoAtiva = async (
 // Adicionar pedido à mesa
 export const adicionarPedidoMesa = async (
   data: AdicionarPedidoMesaData
-): Promise<any> => {
+): Promise<Pedido> => {
   const token = getAuthToken();
   if (!token) {
     throw new Error("Usuário não autenticado");
@@ -241,7 +263,7 @@ export const adicionarPedidoMesa = async (
 };
 
 // Fechar conta (billing)
-export const fecharConta = async (mesaId: string): Promise<any> => {
+export const fecharConta = async (mesaId: string): Promise<void> => {
   const token = getAuthToken();
   if (!token) {
     throw new Error("Usuário não autenticado");
@@ -262,5 +284,5 @@ export const fecharConta = async (mesaId: string): Promise<any> => {
     throw new Error(errorData.message || "Erro ao fechar conta da mesa");
   }
 
-  return response.json();
+  // Não retorna dados, apenas confirma que a operação foi bem-sucedida
 };
