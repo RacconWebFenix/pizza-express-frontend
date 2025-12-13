@@ -104,10 +104,16 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
   };
 
   const formatTime = (dateString: string) => {
+    if (!dateString) return 'Data inválida';
+
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Data inválida';
+
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMins < 0) return 'Data futura';
 
     if (diffMins < 60) {
       return `${diffMins} minutos`;

@@ -119,7 +119,68 @@ export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null>
     throw new Error(errorData.message || 'Erro ao buscar sessão ativa');
   }
 
-  return response.json();
+  // Verificar se há conteúdo na resposta antes de tentar parsear JSON
+  const contentLength = response.headers.get('content-length');
+  if (contentLength === '0' || contentLength === null) {
+    return null; // Resposta vazia significa não há sessão ativa
+  }
+
+  const sessaoData = await response.json();
+
+  // Buscar pedidos relacionados à sessão
+  try {
+    const pedidosResponse = await fetch(`${API_URL}/orders`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (pedidosResponse.ok) {
+      const pedidosData = await pedidosResponse.json();
+      const todosPedidos = Array.isArray(pedidosData) ? pedidosData : pedidosData.data || [];
+
+      // Filtrar pedidos que pertencem à sessão atual
+      const pedidosSessao = todosPedidos.filter((pedido: any) => pedido.sessionId === sessaoData.id);
+
+      // Transformar pedidos para o formato esperado pelo componente
+      const pedidosMesa = pedidosSessao.map((pedido: any) => ({
+        id: pedido.id,
+        itens: (pedido.items || []).map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          product: item.product ? {
+            id: item.product.id,
+            name: item.product.name,
+            price: parseFloat(item.product.price || item.price || 0),
+          } : undefined,
+        })),
+        observacoes: pedido.observacoes || '',
+        criadoEm: pedido.createdAt,
+      }));
+
+      // Calcular total da sessão baseado nos pedidos
+      const totalSessao = pedidosSessao.reduce((total: number, pedido: any) => total + parseFloat(pedido.total || 0), 0);
+
+      return {
+        ...sessaoData,
+        criadoEm: sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
+        pedidos: pedidosMesa,
+        total: totalSessao,
+      };
+    }
+  } catch (error) {
+    console.warn('Erro ao buscar pedidos da sessão:', error);
+  }
+
+  // Retornar sessão sem pedidos se houver erro
+  return {
+    ...sessaoData,
+    criadoEm: sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
+    pedidos: [],
+    total: 0,
+  };
 };
 
 // Adicionar pedido à mesa
