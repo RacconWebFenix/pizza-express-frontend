@@ -1,26 +1,34 @@
-import { Mesa, CreateMesaData, SessaoMesa, AdicionarPedidoMesaData, FecharContaData } from '@/types/mesa';
-import { getAuthToken } from '@/utils/cookies';
+import {
+  Mesa,
+  CreateMesaData,
+  SessaoMesa,
+  AdicionarPedidoMesaData,
+  FecharContaData,
+} from "@/types/mesa";
+import { getAuthToken } from "@/utils/cookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 // Listar todas as mesas
 export const getMesas = async (): Promise<Mesa[]> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao buscar mesas' }));
-    throw new Error(errorData.message || 'Erro ao buscar mesas');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao buscar mesas" }));
+    throw new Error(errorData.message || "Erro ao buscar mesas");
   }
 
   return response.json();
@@ -30,20 +38,22 @@ export const getMesas = async (): Promise<Mesa[]> => {
 export const getMesaById = async (id: string): Promise<Mesa> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables/${id}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao buscar mesa' }));
-    throw new Error(errorData.message || 'Erro ao buscar mesa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao buscar mesa" }));
+    throw new Error(errorData.message || "Erro ao buscar mesa");
   }
 
   return response.json();
@@ -53,21 +63,23 @@ export const getMesaById = async (id: string): Promise<Mesa> => {
 export const createMesa = async (data: CreateMesaData): Promise<Mesa> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao criar mesa' }));
-    throw new Error(errorData.message || 'Erro ao criar mesa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao criar mesa" }));
+    throw new Error(errorData.message || "Erro ao criar mesa");
   }
 
   return response.json();
@@ -77,37 +89,41 @@ export const createMesa = async (data: CreateMesaData): Promise<Mesa> => {
 export const abrirSessaoMesa = async (mesaId: string): Promise<SessaoMesa> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/open`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao abrir sessão' }));
-    throw new Error(errorData.message || 'Erro ao abrir sessão da mesa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao abrir sessão" }));
+    throw new Error(errorData.message || "Erro ao abrir sessão da mesa");
   }
 
   return response.json();
 };
 
 // Ver sessão ativa da mesa
-export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null> => {
+export const getSessaoAtiva = async (
+  mesaId: string
+): Promise<SessaoMesa | null> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/active`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
@@ -115,13 +131,15 @@ export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null>
     if (response.status === 404) {
       return null; // Não há sessão ativa
     }
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao buscar sessão ativa' }));
-    throw new Error(errorData.message || 'Erro ao buscar sessão ativa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao buscar sessão ativa" }));
+    throw new Error(errorData.message || "Erro ao buscar sessão ativa");
   }
 
   // Verificar se há conteúdo na resposta antes de tentar parsear JSON
-  const contentLength = response.headers.get('content-length');
-  if (contentLength === '0' || contentLength === null) {
+  const contentLength = response.headers.get("content-length");
+  if (contentLength === "0" || contentLength === null) {
     return null; // Resposta vazia significa não há sessão ativa
   }
 
@@ -130,19 +148,23 @@ export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null>
   // Buscar pedidos relacionados à sessão
   try {
     const pedidosResponse = await fetch(`${API_URL}/orders`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 
     if (pedidosResponse.ok) {
       const pedidosData = await pedidosResponse.json();
-      const todosPedidos = Array.isArray(pedidosData) ? pedidosData : pedidosData.data || [];
+      const todosPedidos = Array.isArray(pedidosData)
+        ? pedidosData
+        : pedidosData.data || [];
 
       // Filtrar pedidos que pertencem à sessão atual
-      const pedidosSessao = todosPedidos.filter((pedido: any) => pedido.sessionId === sessaoData.id);
+      const pedidosSessao = todosPedidos.filter(
+        (pedido: any) => pedido.sessionId === sessaoData.id
+      );
 
       // Transformar pedidos para o formato esperado pelo componente
       const pedidosMesa = pedidosSessao.map((pedido: any) => ({
@@ -150,58 +172,69 @@ export const getSessaoAtiva = async (mesaId: string): Promise<SessaoMesa | null>
         itens: (pedido.items || []).map((item: any) => ({
           productId: item.productId,
           quantity: item.quantity,
-          product: item.product ? {
-            id: item.product.id,
-            name: item.product.name,
-            price: parseFloat(item.product.price || item.price || 0),
-          } : undefined,
+          product: item.product
+            ? {
+                id: item.product.id,
+                name: item.product.name,
+                price: parseFloat(item.product.price || item.price || 0),
+              }
+            : undefined,
         })),
-        observacoes: pedido.observacoes || '',
+        observacoes: pedido.observacoes || "",
         criadoEm: pedido.createdAt,
       }));
 
       // Calcular total da sessão baseado nos pedidos
-      const totalSessao = pedidosSessao.reduce((total: number, pedido: any) => total + parseFloat(pedido.total || 0), 0);
+      const totalSessao = pedidosSessao.reduce(
+        (total: number, pedido: any) => total + parseFloat(pedido.total || 0),
+        0
+      );
 
       return {
         ...sessaoData,
-        criadoEm: sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
+        criadoEm:
+          sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
         pedidos: pedidosMesa,
         total: totalSessao,
       };
     }
   } catch (error) {
-    console.warn('Erro ao buscar pedidos da sessão:', error);
+    console.warn("Erro ao buscar pedidos da sessão:", error);
   }
 
   // Retornar sessão sem pedidos se houver erro
   return {
     ...sessaoData,
-    criadoEm: sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
+    criadoEm:
+      sessaoData.openedAt || sessaoData.createdAt || sessaoData.criadoEm,
     pedidos: [],
     total: 0,
   };
 };
 
 // Adicionar pedido à mesa
-export const adicionarPedidoMesa = async (data: AdicionarPedidoMesaData): Promise<any> => {
+export const adicionarPedidoMesa = async (
+  data: AdicionarPedidoMesaData
+): Promise<any> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/orders`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao adicionar pedido' }));
-    throw new Error(errorData.message || 'Erro ao adicionar pedido à mesa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao adicionar pedido" }));
+    throw new Error(errorData.message || "Erro ao adicionar pedido à mesa");
   }
 
   return response.json();
@@ -211,20 +244,22 @@ export const adicionarPedidoMesa = async (data: AdicionarPedidoMesaData): Promis
 export const fecharConta = async (mesaId: string): Promise<any> => {
   const token = getAuthToken();
   if (!token) {
-    throw new Error('Usuário não autenticado');
+    throw new Error("Usuário não autenticado");
   }
 
   const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/close`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Erro ao fechar conta' }));
-    throw new Error(errorData.message || 'Erro ao fechar conta da mesa');
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: "Erro ao fechar conta" }));
+    throw new Error(errorData.message || "Erro ao fechar conta da mesa");
   }
 
   return response.json();

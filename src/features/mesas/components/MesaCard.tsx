@@ -53,16 +53,16 @@ export const MesaCard: React.FC<MesaCardProps> = ({ mesa, onClick }) => {
   const statusConfig = getStatusConfig(mesa.status);
 
   const formatTime = (dateString: string) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
 
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'N/A';
+    if (isNaN(date.getTime())) return "N/A";
 
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
 
-    if (diffMins < 0) return 'N/A';
+    if (diffMins < 0) return "N/A";
 
     if (diffMins < 60) {
       return `${diffMins}min`;
