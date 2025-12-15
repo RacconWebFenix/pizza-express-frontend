@@ -18,7 +18,7 @@ import { CategoriaFormModal } from "./CategoriaFormModal";
 import { Categoria } from "@/types/categoria";
 
 export const CategoriasList: React.FC = () => {
-  const { categorias, isLoading, error, remove } = useCategorias();
+  const { categorias, isLoading, error, remove, refreshFromServer } = useCategorias();
   const {
     open: isFormOpen,
     onOpen: onFormOpen,
@@ -35,6 +35,7 @@ export const CategoriasList: React.FC = () => {
   const [categoriaToDelete, setCategoriaToDelete] = useState<Categoria | null>(
     null
   );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleEdit = (categoria: Categoria) => {
     setSelectedCategoria(categoria);
@@ -54,11 +55,14 @@ export const CategoriasList: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (categoriaToDelete) {
       try {
+        setIsDeleting(true);
         await remove(categoriaToDelete.id);
         onDeleteClose();
         setCategoriaToDelete(null);
       } catch {
-        // Error já tratado no hook
+        // Error já tratado no hook com toast
+      } finally {
+        setIsDeleting(false);
       }
     }
   };
@@ -96,9 +100,19 @@ export const CategoriasList: React.FC = () => {
           </Text>
           <Text color="gray.600">Gerencie as categorias dos produtos</Text>
         </Box>
-        <PizzaButton colorScheme="orange" onClick={handleCreate}>
-          Nova Categoria
-        </PizzaButton>
+        <HStack gap={3}>
+          <PizzaButton
+            colorScheme="blue"
+            variant="outline"
+            onClick={refreshFromServer}
+            size="sm"
+          >
+            🔄 Sincronizar
+          </PizzaButton>
+          <PizzaButton colorScheme="orange" onClick={handleCreate}>
+            Nova Categoria
+          </PizzaButton>
+        </HStack>
       </HStack>
 
       {/* Lista de Categorias */}
@@ -213,10 +227,16 @@ export const CategoriasList: React.FC = () => {
               {categoriaToDelete?.name}&quot;? Esta ação não pode ser desfeita.
             </Text>
             <HStack gap={3} justify="flex-end">
-              <Button variant="outline" onClick={onDeleteClose}>
+              <Button variant="outline" onClick={onDeleteClose} disabled={isDeleting}>
                 Cancelar
               </Button>
-              <PizzaButton colorScheme="red" onClick={handleDeleteConfirm}>
+              <PizzaButton
+                colorScheme="red"
+                onClick={handleDeleteConfirm}
+                loading={isDeleting}
+                loadingText="Deletando..."
+                disabled={isDeleting}
+              >
                 Deletar
               </PizzaButton>
             </HStack>

@@ -8,6 +8,7 @@ import { CartProvider } from "@/features/cart/context/CartContext";
 
 import { AuthProvider } from "@/features/auth/contexts/AuthContext";
 import { StripeProvider } from "@/features/payments/contexts/StripeContext";
+import { CategoriasProvider } from "@/features/categorias/contexts/CategoriasContext";
 import { Toaster } from "@/components/ui/toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -16,8 +17,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <ThemeProvider attribute="class" disableTransitionOnChange>
           <StripeProvider>
-            <CartProvider>{children}</CartProvider>
-            <Toaster />
+            <CategoriasProvider>
+              <CartProvider>{children}</CartProvider>
+              <Toaster />
+            </CategoriasProvider>
           </StripeProvider>
         </ThemeProvider>
       </AuthProvider>

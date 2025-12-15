@@ -114,6 +114,12 @@ export const deleteCategoria = async (id: string): Promise<void> => {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'Erro ao deletar categoria' }));
+
+    // Para erros 404, incluir o status na mensagem
+    if (response.status === 404) {
+      throw new Error(`Category with ID ${id} not found`);
+    }
+
     throw new Error(errorData.message || 'Erro ao deletar categoria');
   }
 };
