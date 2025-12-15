@@ -5,13 +5,12 @@ import { Box, VStack, Text, Icon } from "@chakra-ui/react";
 import { FaCloudUploadAlt, FaTrash, FaFile, FaImage } from "react-icons/fa";
 import { PizzaButton } from "@/components/ui";
 import { useFileUpload } from "../hooks/useFileUpload";
-import { UploadOptions, UploadResult } from "@/types/upload";
+import { UploadResult } from "@/types/upload";
 import Image from "next/image";
 
 interface FileUploaderProps {
   onUploadComplete?: (result: UploadResult) => void;
   onError?: (error: string) => void;
-  uploadOptions?: UploadOptions;
   pizzaId?: string; // Para upload específico de pizza
   accept?: string;
   maxSizeText?: string;
@@ -21,7 +20,6 @@ interface FileUploaderProps {
 export const FileUploader: React.FC<FileUploaderProps> = ({
   onUploadComplete,
   onError,
-  uploadOptions,
   pizzaId,
   accept = "image/*",
   maxSizeText = "Máx: 5MB",
@@ -34,7 +32,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   );
 
   const { upload, isUploading, progress, error, reset } =
-    useFileUpload(uploadOptions);
+    useFileUpload();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

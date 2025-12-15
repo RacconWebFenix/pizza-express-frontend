@@ -427,7 +427,36 @@ npm run build
 
 ## 📝 **Changelog**
 
-### **v1.1.0** (Atual)
+### **v1.1.2** (Branch Atual - Correções Críticas e Limpeza)
+- 🐛 **Correção crítica de erro no console**: Resolvido erro "Falha ao buscar dados do usuário. O token pode ser inválido." que aparecia na página inicial para usuários não logados com tokens inválidos (alterado `console.error` para `console.warn`)
+- 🧩 **Modularização do menu administrativo**: Criado componente `AdminMenuItems` dedicado para melhor separação de responsabilidades e reutilização do código no `Header`
+- 🛠️ **Correções abrangentes de lint e build** (13+ arquivos corrigidos):
+  - **Variáveis não usadas**: Removidas imports e declarações desnecessárias
+  - **Entidades HTML não escapadas**: Substituído `"` por `&quot;` em textos
+  - **Tipos incompatíveis**: Ajustes para Chakra UI v3 (`open` → `isOpen`, `loading` → `isLoading`)
+  - **Componentes problemáticos**: Substituído `Select` e `Progress` por alternativas HTML/customizadas
+  - **Enums e constantes**: Uso correto de `MesaStatus` enum
+  - **Props inválidas**: Correção de `icon`, `leftIcon`, `noOfLines`, etc.
+  - **Schema Zod**: Ajuste para campos obrigatórios/opcionais
+  - **Dependências de hooks**: Remoção de dependências não usadas
+- 🗂️ **Limpeza de documentação**: Removida pasta `docs/` inteira (arquivos desatualizados mantidos apenas no README)
+- ⚡ **Melhorias de performance**: Otimizações no sistema de upload de arquivos
+- 🔧 **Compatibilidade técnica**: Ajustes para Next.js 15 e Chakra UI v3
+- ✅ **Status do build**: Lint limpo, TypeScript compilando, build de produção bem-sucedido
+
+### **v1.1.1** (Correções e Melhorias)
+- 🐛 **Correção de erro no console**: Resolvido erro de autenticação na página inicial quando token inválido está presente (agora usa `console.warn` em vez de `console.error`)
+- 🧩 **Modularização do menu administrativo**: Criado componente `AdminMenuItems` para melhor organização e reutilização do código no `Header`
+- 🛠️ **Correções de lint e build**: 
+  - Removidas variáveis não usadas em vários componentes
+  - Corrigidos tipos incompatíveis (Chakra UI v3, enums, etc.)
+  - Substituídos componentes problemáticos por alternativas compatíveis
+  - Ajustado schema Zod para validação correta
+  - Removidos arquivos de documentação desnecessários (mantido apenas README)
+- 📦 **Melhorias de performance**: Otimizações no upload de arquivos e gerenciamento de estado
+- 🔧 **Compatibilidade**: Ajustes para Chakra UI v3 e Next.js 15
+
+### **v1.1.0**
 - ✅ **Sistema de gerenciamento de usuários** completo para administradores
 - ✅ **Controle de acesso baseado em roles** (CLIENTE, FUNCIONARIO, ADMIN)
 - ✅ **CRUD de usuários** com validação robusta
@@ -448,4 +477,4 @@ npm run build
 
 ---
 
-**Desenvolvido com ❤️ para a melhor experiência em pizzarias!** 🍕
+**Sistema desenvolvido por Marcos Domingues com Desenvolvimento assistido por IA, focado na otimização da experiência do usuário em estabelecimentos de pizzaria.** 🍕

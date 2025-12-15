@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { UploadResult, UploadProgress, UploadOptions } from "@/types/upload";
+import { UploadResult, UploadProgress } from "@/types/upload";
 import { uploadPizzaImage, uploadFile } from "../services/uploadService";
 
 interface UseFileUploadReturn {
@@ -10,10 +10,7 @@ interface UseFileUploadReturn {
   reset: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const useFileUpload = (
-  _options: UploadOptions = {}
-): UseFileUploadReturn => {
+export const useFileUpload = (): UseFileUploadReturn => {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<UploadProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
