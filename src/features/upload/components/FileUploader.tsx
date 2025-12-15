@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef, useState } from 'react';
-import { Box, Button, VStack, Text, Progress, Icon } from '@chakra-ui/react';
-import { FaCloudUploadAlt, FaTrash, FaFile, FaImage } from 'react-icons/fa';
-import { PizzaButton } from '@/components/ui';
-import { useFileUpload } from '../hooks/useFileUpload';
-import { UploadOptions, UploadResult } from '@/types/upload';
+import React, { useRef, useState } from "react";
+import { Box, VStack, Text, Icon } from "@chakra-ui/react";
+import { FaCloudUploadAlt, FaTrash, FaFile, FaImage } from "react-icons/fa";
+import { PizzaButton } from "@/components/ui";
+import { useFileUpload } from "../hooks/useFileUpload";
+import { UploadOptions, UploadResult } from "@/types/upload";
+import Image from "next/image";
 
 interface FileUploaderProps {
   onUploadComplete?: (result: UploadResult) => void;
@@ -14,7 +15,6 @@ interface FileUploaderProps {
   pizzaId?: string; // Para upload específico de pizza
   accept?: string;
   maxSizeText?: string;
-  buttonText?: string;
   currentImageUrl?: string; // Para mostrar imagem atual
 }
 
@@ -25,14 +25,16 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   pizzaId,
   accept = "image/*",
   maxSizeText = "Máx: 5MB",
-  buttonText = "Escolher arquivo",
   currentImageUrl,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    currentImageUrl || null
+  );
 
-  const { upload, isUploading, progress, error, reset } = useFileUpload(uploadOptions);
+  const { upload, isUploading, progress, error, reset } =
+    useFileUpload(uploadOptions);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -41,7 +43,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     setSelectedFile(file);
 
     // Criar preview para imagens
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrl(e.target?.result as string);
@@ -58,7 +60,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       onUploadComplete?.(result);
       setSelectedFile(null);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro no upload';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro no upload";
       onError?.(errorMessage);
     }
   };
@@ -68,12 +71,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     setPreviewUrl(currentImageUrl || null);
     reset();
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const getFileIcon = () => {
-    if (previewUrl && selectedFile?.type.startsWith('image/')) {
+    if (previewUrl && selectedFile?.type.startsWith("image/")) {
       return <FaImage />;
     }
     return <FaFile />;
@@ -99,20 +102,20 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           type="file"
           accept={accept}
           onChange={handleFileSelect}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
 
         {previewUrl ? (
           <Box>
-            <img
+            <Image
               src={previewUrl}
               alt="Preview"
+              width={200}
+              height={200}
               style={{
-                maxWidth: '200px',
-                maxHeight: '200px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                marginBottom: '1rem'
+                objectFit: "cover",
+                borderRadius: "8px",
+                marginBottom: "1rem",
               }}
             />
             <Text fontSize="sm" color="gray.600">
@@ -121,8 +124,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           </Box>
         ) : (
           <VStack gap={2}>
-            <Icon as={FaCloudUploadAlt} size="24px" color="gray.500" />
-            <Text fontWeight="medium">Arraste uma imagem ou clique para selecionar</Text>
+            <Icon as={FaCloudUploadAlt} boxSize="24px" color="gray.500" />
+            <Text fontWeight="medium">
+              Arraste uma imagem ou clique para selecionar
+            </Text>
             <Text fontSize="sm" color="gray.500">
               {accept} • {maxSizeText}
             </Text>
@@ -152,12 +157,20 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
             {/* Progress bar */}
             {isUploading && progress && (
-              <Progress
-                value={progress.percentage}
-                size="sm"
-                colorScheme="orange"
+              <Box
+                w="100%"
+                h="4px"
+                bg="gray.200"
                 borderRadius="md"
-              />
+                overflow="hidden"
+              >
+                <Box
+                  h="100%"
+                  bg="orange.500"
+                  width={`${progress.percentage}%`}
+                  transition="width 0.3s"
+                />
+              </Box>
             )}
 
             {/* Ações */}
@@ -166,7 +179,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 size="sm"
                 variant="outline"
                 onClick={handleRemove}
-                isDisabled={isUploading}
+                disabled={isUploading}
               >
                 <FaTrash />
               </PizzaButton>
@@ -174,7 +187,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 size="sm"
                 colorScheme="orange"
                 onClick={handleUpload}
-                isLoading={isUploading}
+                loading={isUploading}
                 loadingText="Enviando..."
               >
                 Enviar
@@ -185,7 +198,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       )}
 
       {/* Erro */}
-      {(error) && (
+      {error && (
         <Text color="red.500" fontSize="sm" textAlign="center">
           {error}
         </Text>

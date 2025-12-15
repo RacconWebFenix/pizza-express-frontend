@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         return true;
       } catch (error) {
-        console.error("Falha na autenticação:", error);
+        console.warn("Token inválido detectado, limpando sessão:", error);
         setUser(null);
         deleteCookie();
         return false;

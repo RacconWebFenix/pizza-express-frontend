@@ -1,29 +1,40 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   VStack,
   HStack,
   Text,
   Button,
-  Badge,
   useDisclosure,
   IconButton,
   SimpleGrid,
-} from '@chakra-ui/react';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
-import { PizzaCard, PizzaButton } from '@/components/ui';
-import { useCategorias } from '../hooks/useCategorias';
-import { CategoriaFormModal } from './CategoriaFormModal';
-import { Categoria } from '@/types/categoria';
+} from "@chakra-ui/react";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { PizzaCard, PizzaButton } from "@/components/ui";
+import { useCategorias } from "../hooks/useCategorias";
+import { CategoriaFormModal } from "./CategoriaFormModal";
+import { Categoria } from "@/types/categoria";
 
 export const CategoriasList: React.FC = () => {
   const { categorias, isLoading, error, remove } = useCategorias();
-  const { open: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-  const { open: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(null);
-  const [categoriaToDelete, setCategoriaToDelete] = useState<Categoria | null>(null);
+  const {
+    open: isFormOpen,
+    onOpen: onFormOpen,
+    onClose: onFormClose,
+  } = useDisclosure();
+  const {
+    open: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(
+    null
+  );
+  const [categoriaToDelete, setCategoriaToDelete] = useState<Categoria | null>(
+    null
+  );
 
   const handleEdit = (categoria: Categoria) => {
     setSelectedCategoria(categoria);
@@ -46,7 +57,7 @@ export const CategoriasList: React.FC = () => {
         await remove(categoriaToDelete.id);
         onDeleteClose();
         setCategoriaToDelete(null);
-      } catch (error) {
+      } catch {
         // Error já tratado no hook
       }
     }
@@ -63,7 +74,13 @@ export const CategoriasList: React.FC = () => {
 
   if (error) {
     return (
-      <Box p={4} bg="red.50" borderRadius="md" border="1px solid" borderColor="red.200">
+      <Box
+        p={4}
+        bg="red.50"
+        borderRadius="md"
+        border="1px solid"
+        borderColor="red.200"
+      >
         <Text color="red.600">{error}</Text>
       </Box>
     );
@@ -77,14 +94,9 @@ export const CategoriasList: React.FC = () => {
           <Text fontSize="2xl" fontWeight="bold" color="gray.800">
             Categorias
           </Text>
-          <Text color="gray.600">
-            Gerencie as categorias dos produtos
-          </Text>
+          <Text color="gray.600">Gerencie as categorias dos produtos</Text>
         </Box>
-        <PizzaButton
-          colorScheme="orange"
-          onClick={handleCreate}
-        >
+        <PizzaButton colorScheme="orange" onClick={handleCreate}>
           Nova Categoria
         </PizzaButton>
       </HStack>
@@ -95,10 +107,7 @@ export const CategoriasList: React.FC = () => {
           <Text color="gray.500" mb={4}>
             Nenhuma categoria cadastrada ainda.
           </Text>
-          <PizzaButton
-            colorScheme="orange"
-            onClick={handleCreate}
-          >
+          <PizzaButton colorScheme="orange" onClick={handleCreate}>
             Criar Primeira Categoria
           </PizzaButton>
         </Box>
@@ -110,7 +119,11 @@ export const CategoriasList: React.FC = () => {
                 <Box>
                   <HStack justify="space-between" align="start">
                     <Box flex={1}>
-                      <Text fontSize="lg" fontWeight="semibold" color="gray.800">
+                      <Text
+                        fontSize="lg"
+                        fontWeight="semibold"
+                        color="gray.800"
+                      >
                         {categoria.name}
                       </Text>
                       <Text fontSize="sm" color="gray.500">
@@ -142,11 +155,15 @@ export const CategoriasList: React.FC = () => {
 
                 <Box pt={2} borderTop="1px solid" borderColor="gray.100">
                   <Text fontSize="xs" color="gray.400">
-                    Criado em: {new Date(categoria.createdAt).toLocaleDateString('pt-BR')}
+                    Criado em:{" "}
+                    {new Date(categoria.createdAt).toLocaleDateString("pt-BR")}
                   </Text>
                   {categoria.updatedAt !== categoria.createdAt && (
                     <Text fontSize="xs" color="gray.400">
-                      Atualizado: {new Date(categoria.updatedAt).toLocaleDateString('pt-BR')}
+                      Atualizado:{" "}
+                      {new Date(categoria.updatedAt).toLocaleDateString(
+                        "pt-BR"
+                      )}
                     </Text>
                   )}
                 </Box>
@@ -192,8 +209,8 @@ export const CategoriasList: React.FC = () => {
               Deletar Categoria
             </Text>
             <Text mb={4}>
-              Tem certeza que deseja deletar a categoria "{categoriaToDelete?.name}"?
-              Esta ação não pode ser desfeita.
+              Tem certeza que deseja deletar a categoria &quot;
+              {categoriaToDelete?.name}&quot;? Esta ação não pode ser desfeita.
             </Text>
             <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>

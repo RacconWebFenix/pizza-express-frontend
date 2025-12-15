@@ -1,30 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  VStack,
-  HStack,
-  Text,
-  Button,
-  Select,
-  Box,
-} from '@chakra-ui/react';
-import { AppModal } from '@/components/ui';
-import { PizzaInput, PizzaTextarea, PizzaButton } from '@/components/ui';
-import { useProdutos } from '../hooks/useProdutos';
-import { useCategorias } from '../../categorias/hooks/useCategorias';
-import { useFileUpload } from '../../upload/hooks/useFileUpload';
-import { Produto, CreateProdutoData, UpdateProdutoData } from '@/types/produto';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { VStack, HStack, Text, Button, Box } from "@chakra-ui/react";
+import { AppModal } from "@/components/ui";
+import { PizzaInput, PizzaTextarea, PizzaButton } from "@/components/ui";
+import { useProdutos } from "../hooks/useProdutos";
+import { useCategorias } from "../../categorias/hooks/useCategorias";
+import { Produto } from "@/types/produto";
 
 const produtoSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome deve ter no máximo 100 caracteres'),
-  description: z.string().min(1, 'Descrição é obrigatória').max(500, 'Descrição deve ter no máximo 500 caracteres'),
-  price: z.number().min(0.01, 'Preço deve ser maior que zero'),
-  categoryId: z.string().min(1, 'Categoria é obrigatória'),
-  active: z.boolean().default(true),
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
+  description: z
+    .string()
+    .min(1, "Descrição é obrigatória")
+    .max(500, "Descrição deve ter no máximo 500 caracteres"),
+  price: z.number().min(0.01, "Preço deve ser maior que zero"),
+  categoryId: z.string().min(1, "Categoria é obrigatória"),
+  active: z.boolean(),
 });
 
 type ProdutoFormData = z.infer<typeof produtoSchema>;
@@ -42,10 +40,7 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
 }) => {
   const { create, update } = useProdutos();
   const { categorias } = useCategorias();
-  const { upload, isUploading } = useFileUpload();
   const isEditing = !!produto;
-
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(produto?.image);
 
   const {
     register,
@@ -57,10 +52,10 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
   } = useForm<ProdutoFormData>({
     resolver: zodResolver(produtoSchema),
     defaultValues: {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       price: 0,
-      categoryId: '',
+      categoryId: "",
       active: true,
     },
   });
@@ -68,15 +63,13 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
   // Preencher formulário quando estiver editando
   React.useEffect(() => {
     if (produto && isOpen) {
-      setValue('name', produto.name);
-      setValue('description', produto.description);
-      setValue('price', produto.price);
-      setValue('categoryId', produto.categoryId);
-      setValue('active', produto.active);
-      setCurrentImageUrl(produto.image);
+      setValue("name", produto.name);
+      setValue("description", produto.description);
+      setValue("price", produto.price);
+      setValue("categoryId", produto.categoryId);
+      setValue("active", produto.active);
     } else if (!produto && isOpen) {
       reset();
-      setCurrentImageUrl(undefined);
     }
   }, [produto, isOpen, setValue, reset]);
 
@@ -89,108 +82,120 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
       }
       onClose();
       reset();
-      setCurrentImageUrl(undefined);
-    } catch (error) {
+    } catch {
       // Error já tratado no hook
     }
   };
 
   const handleClose = () => {
     reset();
-    setCurrentImageUrl(undefined);
     onClose();
-  };
-
-  const formatPrice = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
-    setValue('price', value);
+    setValue("price", value);
   };
 
   return (
-    <AppModal isOpen={isOpen} onClose={handleClose} title={isEditing ? 'Editar Produto' : 'Novo Produto'}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <VStack gap={4} align="stretch">
-              <PizzaInput
-                label="Nome do Produto"
-                placeholder="Ex: Pizza Calabresa"
-                {...register('name')}
-                error={errors.name?.message}
-              />
+    <AppModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEditing ? "Editar Produto" : "Novo Produto"}
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack gap={4} align="stretch">
+          <PizzaInput
+            label="Nome do Produto"
+            placeholder="Ex: Pizza Calabresa"
+            {...register("name")}
+            error={errors.name?.message}
+          />
 
-              <PizzaTextarea
-                label="Descrição"
-                placeholder="Descrição detalhada do produto"
-                {...register('description')}
-                error={errors.description?.message}
-              />
+          <PizzaTextarea
+            label="Descrição"
+            placeholder="Descrição detalhada do produto"
+            {...register("description")}
+            error={errors.description?.message}
+          />
 
-              <HStack gap={4}>
-                <PizzaInput
-                  label="Preço"
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  onChange={handlePriceChange}
-                  value={watch('price') || ''}
-                  error={errors.price?.message}
-                />
+          <HStack gap={4}>
+            <PizzaInput
+              label="Preço"
+              type="number"
+              step="0.01"
+              placeholder="0,00"
+              onChange={handlePriceChange}
+              value={watch("price") || ""}
+              error={errors.price?.message}
+            />
 
-                <Box flex={1}>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>
-                    Categoria
-                  </Text>
-                  <Select
-                    {...register('categoryId')}
-                    placeholder="Selecione uma categoria"
-                  >
-                    {categorias.map((categoria) => (
-                      <option key={categoria.id} value={categoria.id}>
-                        {categoria.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {errors.categoryId && (
-                    <Text fontSize="sm" color="red.500" mt={1}>
-                      {errors.categoryId.message}
-                    </Text>
-                  )}
-                </Box>
-              </HStack>
+            <Box flex={1}>
+              <Text fontSize="sm" fontWeight="medium" mb={2}>
+                Categoria
+              </Text>
+              <select
+                {...register("categoryId")}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <option value="">Selecione uma categoria</option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.name}
+                  </option>
+                ))}
+              </select>
+              {errors.categoryId && (
+                <Text fontSize="sm" color="red.500" mt={1}>
+                  {errors.categoryId.message}
+                </Text>
+              )}
+            </Box>
+          </HStack>
 
-              <HStack gap={4}>
-                <Box flex={1}>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>
-                    Status
-                  </Text>
-                  <Select {...register('active')} defaultValue="true">
-                    <option value="true">Ativo</option>
-                    <option value="false">Inativo</option>
-                  </Select>
-                </Box>
-              </HStack>
+          <HStack gap={4}>
+            <Box flex={1}>
+              <Text fontSize="sm" fontWeight="medium" mb={2}>
+                Status
+              </Text>
+              <select
+                {...register("active")}
+                defaultValue="true"
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </Box>
+          </HStack>
 
-              <HStack gap={3} justify="flex-end" pt={4}>
-                <Button variant="outline" onClick={handleClose}>
-                  Cancelar
-                </Button>
-                <PizzaButton
-                  colorScheme="orange"
-                  type="submit"
-                  isLoading={isSubmitting}
-                  loadingText={isEditing ? 'Salvando...' : 'Criando...'}
-                >
-                  {isEditing ? 'Salvar' : 'Criar'}
-                </PizzaButton>
-              </HStack>
-            </VStack>
-          </form>
+          <HStack gap={3} justify="flex-end" pt={4}>
+            <Button variant="outline" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <PizzaButton
+              colorScheme="orange"
+              type="submit"
+              loading={isSubmitting}
+              loadingText={isEditing ? "Salvando..." : "Criando..."}
+            >
+              {isEditing ? "Salvar" : "Criar"}
+            </PizzaButton>
+          </HStack>
+        </VStack>
+      </form>
     </AppModal>
   );
 };

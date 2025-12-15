@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import { FaChair, FaClock } from "react-icons/fa";
 import { MesaStatus, Mesa } from "@/types/mesa";
@@ -11,8 +11,6 @@ interface MesaCardProps {
 }
 
 export const MesaCard: React.FC<MesaCardProps> = ({ mesa, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   const getStatusConfig = (status: MesaStatus) => {
     switch (status) {
       case "AVAILABLE":
@@ -98,8 +96,6 @@ export const MesaCard: React.FC<MesaCardProps> = ({ mesa, onClick }) => {
         _active={{
           transform: "scale(0.95)",
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <VStack gap={2} w="full" justify="center" align="center">
           {/* Ícone da cadeira */}

@@ -165,7 +165,7 @@ export const ProfilePageLayout = () => {
           >
             <VStack align="center" gap={4}>
               <Avatar.Root size="2xl">
-                <Avatar.Image src={user.avatar || null} alt={user.nome} />
+                <Avatar.Image src={user.avatar || undefined} alt={user.nome} />
                 <Avatar.Fallback
                   bg="brand.primary"
                   color="white"

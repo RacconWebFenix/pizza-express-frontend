@@ -30,6 +30,7 @@ import { PizzaButton } from "../ui";
 import Link from "next/link";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useRouter } from "next/navigation";
+import { AdminMenuItems } from "./AdminMenuItems";
 
 export function Header() {
   const { open, onOpen, onClose } = useDisclosure();
@@ -200,17 +201,7 @@ export function Header() {
                   {isAdmin() && (
                     <>
                       <Menu.Separator />
-                      <Menu.ItemGroup title="Administração">
-                        {accessibleAdminNavItems.map((item) => (
-                          <Menu.Item
-                            key={item.href}
-                            value={item.href}
-                            onClick={() => router.push(item.href)}
-                          >
-                            <Text>{item.label}</Text>
-                          </Menu.Item>
-                        ))}
-                      </Menu.ItemGroup>
+                      <AdminMenuItems items={accessibleAdminNavItems} />
                     </>
                   )}
 

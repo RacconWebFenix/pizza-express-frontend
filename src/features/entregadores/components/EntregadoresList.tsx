@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   VStack,
@@ -11,19 +11,30 @@ import {
   IconButton,
   SimpleGrid,
   Avatar,
-} from '@chakra-ui/react';
-import { FaEdit, FaTrash, FaPlus, FaMotorcycle } from 'react-icons/fa';
-import { PizzaCard, PizzaButton } from '@/components/ui';
-import { useEntregadores } from '../hooks/useEntregadores';
-import { EntregadorFormModal } from './EntregadorFormModal';
-import { Entregador } from '@/types/entregador';
+  Button,
+} from "@chakra-ui/react";
+import { FaEdit, FaTrash, FaMotorcycle } from "react-icons/fa";
+import { PizzaCard, PizzaButton } from "@/components/ui";
+import { useEntregadores } from "../hooks/useEntregadores";
+import { EntregadorFormModal } from "./EntregadorFormModal";
+import { Entregador } from "@/types/entregador";
 
 export const EntregadoresList: React.FC = () => {
   const { entregadores, isLoading, error, remove } = useEntregadores();
-  const { open: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-  const { open: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const [selectedEntregador, setSelectedEntregador] = useState<Entregador | null>(null);
-  const [entregadorToDelete, setEntregadorToDelete] = useState<Entregador | null>(null);
+  const {
+    open: isFormOpen,
+    onOpen: onFormOpen,
+    onClose: onFormClose,
+  } = useDisclosure();
+  const {
+    open: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const [selectedEntregador, setSelectedEntregador] =
+    useState<Entregador | null>(null);
+  const [entregadorToDelete, setEntregadorToDelete] =
+    useState<Entregador | null>(null);
 
   const handleEdit = (entregador: Entregador) => {
     setSelectedEntregador(entregador);
@@ -46,7 +57,7 @@ export const EntregadoresList: React.FC = () => {
         await remove(entregadorToDelete.id);
         onDeleteClose();
         setEntregadorToDelete(null);
-      } catch (error) {
+      } catch {
         // Error já tratado no hook
       }
     }
@@ -59,7 +70,7 @@ export const EntregadoresList: React.FC = () => {
 
   const formatPhone = (phone: string) => {
     // Formatar telefone brasileiro
-    const cleaned = phone.replace(/\D/g, '');
+    const cleaned = phone.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{2})(\d{4,5})(\d{4})$/);
     if (match) {
       return `(${match[1]}) ${match[2]}-${match[3]}`;
@@ -73,7 +84,13 @@ export const EntregadoresList: React.FC = () => {
 
   if (error) {
     return (
-      <Box p={4} bg="red.50" borderRadius="md" border="1px solid" borderColor="red.200">
+      <Box
+        p={4}
+        bg="red.50"
+        borderRadius="md"
+        border="1px solid"
+        borderColor="red.200"
+      >
         <Text color="red.600">{error}</Text>
       </Box>
     );
@@ -87,14 +104,9 @@ export const EntregadoresList: React.FC = () => {
           <Text fontSize="2xl" fontWeight="bold" color="gray.800">
             Entregadores
           </Text>
-          <Text color="gray.600">
-            Gerencie os entregadores da pizzaria
-          </Text>
+          <Text color="gray.600">Gerencie os entregadores da pizzaria</Text>
         </Box>
-        <PizzaButton
-          colorScheme="orange"
-          onClick={handleCreate}
-        >
+        <PizzaButton colorScheme="orange" onClick={handleCreate}>
           Novo Entregador
         </PizzaButton>
       </HStack>
@@ -105,10 +117,7 @@ export const EntregadoresList: React.FC = () => {
           <Text color="gray.500" mb={4}>
             Nenhum entregador cadastrado ainda.
           </Text>
-          <PizzaButton
-            colorScheme="orange"
-            onClick={handleCreate}
-          >
+          <PizzaButton colorScheme="orange" onClick={handleCreate}>
             Cadastrar Primeiro Entregador
           </PizzaButton>
         </Box>
@@ -120,7 +129,6 @@ export const EntregadoresList: React.FC = () => {
                 {/* Avatar e Nome */}
                 <HStack gap={3}>
                   <Avatar.Root size="lg">
-                    <Avatar.Image src={entregador.avatar || undefined} alt={entregador.nome} />
                     <Avatar.Fallback>
                       <FaMotorcycle />
                     </Avatar.Fallback>
@@ -128,11 +136,17 @@ export const EntregadoresList: React.FC = () => {
                   <Box flex={1}>
                     <HStack justify="space-between" align="start">
                       <Box flex={1}>
-                        <Text fontSize="lg" fontWeight="semibold" color="gray.800">
+                        <Text
+                          fontSize="lg"
+                          fontWeight="semibold"
+                          color="gray.800"
+                        >
                           {entregador.nome}
                         </Text>
                         <Text fontSize="sm" color="gray.600">
-                          {entregador.telefone ? formatPhone(entregador.telefone) : 'Telefone não informado'}
+                          {entregador.telefone
+                            ? formatPhone(entregador.telefone)
+                            : "Telefone não informado"}
                         </Text>
                       </Box>
                       <HStack gap={1}>
@@ -161,20 +175,19 @@ export const EntregadoresList: React.FC = () => {
 
                 {/* Status */}
                 <Box>
-                    <Badge
-                      colorScheme="green"
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      Ativo
-                    </Badge>
+                  <Badge colorScheme="green" variant="subtle" fontSize="xs">
+                    Ativo
+                  </Badge>
                 </Box>
 
                 {/* Informações adicionais */}
                 <Box pt={2} borderTop="1px solid" borderColor="gray.100">
                   {entregador.createdAt && (
                     <Text fontSize="xs" color="gray.400">
-                      Cadastrado em: {new Date(entregador.createdAt).toLocaleDateString('pt-BR')}
+                      Cadastrado em:{" "}
+                      {new Date(entregador.createdAt).toLocaleDateString(
+                        "pt-BR"
+                      )}
                     </Text>
                   )}
                 </Box>
@@ -220,8 +233,8 @@ export const EntregadoresList: React.FC = () => {
               Deletar Entregador
             </Text>
             <Text mb={4}>
-              Tem certeza que deseja deletar o entregador "{entregadorToDelete?.nome}"?
-              Esta ação não pode ser desfeita.
+              Tem certeza que deseja deletar o entregador &quot;
+              {entregadorToDelete?.nome}&quot;? Esta ação não pode ser desfeita.
             </Text>
             <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>

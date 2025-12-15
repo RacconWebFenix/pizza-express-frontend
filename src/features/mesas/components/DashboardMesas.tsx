@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   VStack,
@@ -8,9 +8,8 @@ import {
   Text,
   SimpleGrid,
   useDisclosure,
-  Button,
 } from "@chakra-ui/react";
-import { FaPlus, FaChair } from "react-icons/fa";
+import { FaChair } from "react-icons/fa";
 import { PizzaButton } from "@/components/ui";
 import { toaster } from "@/components/ui/toaster";
 import { useMesas } from "../hooks/useMesas";
@@ -29,7 +28,6 @@ export const DashboardMesas: React.FC = () => {
     onClose: onCriarClose,
   } = useDisclosure();
   const [selectedMesa, setSelectedMesa] = useState<Mesa | null>(null);
-
 
   const handleMesaClick = (mesa: Mesa) => {
     setSelectedMesa(mesa);
@@ -52,7 +50,8 @@ export const DashboardMesas: React.FC = () => {
     } catch (error) {
       toaster.create({
         title: "Erro ao criar mesa",
-        description: error instanceof Error ? error.message : "Erro desconhecido",
+        description:
+          error instanceof Error ? error.message : "Erro desconhecido",
         type: "error",
       });
     }
@@ -94,10 +93,7 @@ export const DashboardMesas: React.FC = () => {
               Gerencie as mesas e sessões do restaurante
             </Text>
           </Box>
-          <PizzaButton
-            colorScheme="orange"
-            onClick={onCriarOpen}
-          >
+          <PizzaButton colorScheme="orange" onClick={onCriarOpen}>
             Criar Mesa
           </PizzaButton>
         </HStack>
@@ -193,7 +189,6 @@ export const DashboardMesas: React.FC = () => {
               />
             ))}
           </SimpleGrid>
-
         </>
       )}
 

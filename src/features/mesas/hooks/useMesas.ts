@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Mesa,
+  MesaStatus,
   CreateMesaData,
   SessaoMesa,
   AdicionarPedidoMesaData,
@@ -84,7 +85,7 @@ export const useMesas = (): UseMesasReturn => {
         setMesas((prev) =>
           prev.map((mesa) =>
             mesa.id === mesaId
-              ? { ...mesa, sessaoAtiva: sessao, status: "OCCUPIED" as const }
+              ? { ...mesa, sessaoAtiva: sessao, status: MesaStatus.OCCUPIED }
               : mesa
           )
         );
@@ -141,7 +142,7 @@ export const useMesas = (): UseMesasReturn => {
               ? {
                   ...mesa,
                   sessaoAtiva: undefined,
-                  status: "AVAILABLE" as const,
+                  status: MesaStatus.AVAILABLE,
                 }
               : mesa
           )

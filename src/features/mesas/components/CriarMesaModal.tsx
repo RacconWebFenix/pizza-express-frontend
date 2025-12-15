@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { VStack, HStack, Text, Button, Box } from "@chakra-ui/react";
+import { VStack, HStack, Button } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
 import { PizzaInput, PizzaButton } from "@/components/ui";
 
@@ -60,7 +60,7 @@ export const CriarMesaModal: React.FC<CriarMesaModalProps> = ({
     try {
       await onCriarMesa(data.number);
       reset();
-    } catch (error) {
+    } catch {
       // Error já tratado no componente pai
     } finally {
       setIsSubmitting(false);
@@ -94,12 +94,12 @@ export const CriarMesaModal: React.FC<CriarMesaModalProps> = ({
             <Button variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-                <PizzaButton
-                  colorScheme="orange"
-                  type="submit"
-                  loading={isSubmitting}
-                  loadingText="Criando mesa..."
-                >
+            <PizzaButton
+              colorScheme="orange"
+              type="submit"
+              loading={isSubmitting}
+              loadingText="Criando mesa..."
+            >
               Criar Mesa
             </PizzaButton>
           </HStack>

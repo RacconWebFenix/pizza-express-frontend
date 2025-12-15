@@ -8,11 +8,7 @@ import { VStack, HStack, Button } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
 import { PizzaInput, PizzaButton } from "@/components/ui";
 import { useCategorias } from "../hooks/useCategorias";
-import {
-  Categoria,
-  CreateCategoriaData,
-  UpdateCategoriaData,
-} from "@/types/categoria";
+import { Categoria } from "@/types/categoria";
 
 const categoriaSchema = z.object({
   name: z
@@ -74,7 +70,7 @@ export const CategoriaFormModal: React.FC<CategoriaFormModalProps> = ({
       }
       onClose();
       reset();
-    } catch (error) {
+    } catch {
       // Error já tratado no hook
     }
   };
@@ -123,7 +119,6 @@ export const CategoriaFormModal: React.FC<CategoriaFormModalProps> = ({
             placeholder="Ex: pizzas-salgadas"
             {...register("slug")}
             error={errors.slug?.message}
-            helperText="Slug é gerado automaticamente baseado no nome"
           />
 
           <HStack gap={3} justify="flex-end" pt={4}>
@@ -133,7 +128,7 @@ export const CategoriaFormModal: React.FC<CategoriaFormModalProps> = ({
             <PizzaButton
               colorScheme="orange"
               type="submit"
-              isLoading={isSubmitting}
+              loading={isSubmitting}
               loadingText={isEditing ? "Salvando..." : "Criando..."}
             >
               {isEditing ? "Salvar" : "Criar"}

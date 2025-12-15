@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   VStack,
@@ -11,17 +11,26 @@ import {
   IconButton,
   SimpleGrid,
   Image,
-} from '@chakra-ui/react';
-import { FaEdit, FaTrash, FaPlus, FaImage } from 'react-icons/fa';
-import { PizzaCard, PizzaButton } from '@/components/ui';
-import { useProdutos } from '../hooks/useProdutos';
-import { ProdutoFormModal } from './ProdutoFormModal';
-import { Produto } from '@/types/produto';
+  Button,
+} from "@chakra-ui/react";
+import { FaEdit, FaTrash, FaPlus, FaImage } from "react-icons/fa";
+import { PizzaCard, PizzaButton } from "@/components/ui";
+import { useProdutos } from "../hooks/useProdutos";
+import { ProdutoFormModal } from "./ProdutoFormModal";
+import { Produto } from "@/types/produto";
 
 export const ProdutosList: React.FC = () => {
   const { produtos, isLoading, error, remove } = useProdutos();
-  const { isOpen: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const {
+    open: isFormOpen,
+    onOpen: onFormOpen,
+    onClose: onFormClose,
+  } = useDisclosure();
+  const {
+    open: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
   const [produtoToDelete, setProdutoToDelete] = useState<Produto | null>(null);
 
@@ -35,7 +44,7 @@ export const ProdutosList: React.FC = () => {
     onFormOpen();
   };
 
-  const handleDeleteClick = (produto: Produto) => {
+  const handleDelete = (produto: Produto) => {
     setProdutoToDelete(produto);
     onDeleteOpen();
   };
@@ -46,7 +55,7 @@ export const ProdutosList: React.FC = () => {
         await remove(produtoToDelete.id);
         onDeleteClose();
         setProdutoToDelete(null);
-      } catch (error) {
+      } catch {
         // Error já tratado no hook
       }
     }
@@ -58,9 +67,9 @@ export const ProdutosList: React.FC = () => {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(price);
   };
 
@@ -70,7 +79,13 @@ export const ProdutosList: React.FC = () => {
 
   if (error) {
     return (
-      <Box p={4} bg="red.50" borderRadius="md" border="1px solid" borderColor="red.200">
+      <Box
+        p={4}
+        bg="red.50"
+        borderRadius="md"
+        border="1px solid"
+        borderColor="red.200"
+      >
         <Text color="red.600">{error}</Text>
       </Box>
     );
@@ -84,15 +99,9 @@ export const ProdutosList: React.FC = () => {
           <Text fontSize="2xl" fontWeight="bold" color="gray.800">
             Produtos
           </Text>
-          <Text color="gray.600">
-            Gerencie os produtos do cardápio
-          </Text>
+          <Text color="gray.600">Gerencie os produtos do cardápio</Text>
         </Box>
-        <PizzaButton
-          colorScheme="orange"
-          leftIcon={<FaPlus />}
-          onClick={handleCreate}
-        >
+        <PizzaButton colorScheme="orange" icon={FaPlus} onClick={handleCreate}>
           Novo Produto
         </PizzaButton>
       </HStack>
@@ -105,7 +114,7 @@ export const ProdutosList: React.FC = () => {
           </Text>
           <PizzaButton
             colorScheme="orange"
-            leftIcon={<FaPlus />}
+            icon={FaPlus}
             onClick={handleCreate}
           >
             Criar Primeiro Produto
@@ -146,13 +155,22 @@ export const ProdutosList: React.FC = () => {
                 <Box>
                   <HStack justify="space-between" align="start">
                     <Box flex={1}>
-                      <Text fontSize="lg" fontWeight="semibold" color="gray.800">
+                      <Text
+                        fontSize="lg"
+                        fontWeight="semibold"
+                        color="gray.800"
+                      >
                         {produto.name}
                       </Text>
-                      <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                      <Text fontSize="sm" color="gray.600">
                         {produto.description}
                       </Text>
-                      <Text fontSize="lg" fontWeight="bold" color="orange.500" mt={1}>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        color="orange.500"
+                        mt={1}
+                      >
                         {formatPrice(produto.price)}
                       </Text>
                     </Box>
@@ -162,35 +180,33 @@ export const ProdutosList: React.FC = () => {
                         variant="ghost"
                         colorScheme="blue"
                         aria-label="Editar produto"
-                        icon={<FaEdit />}
                         onClick={() => handleEdit(produto)}
-                      />
+                      >
+                        <FaEdit />
+                      </IconButton>
                       <IconButton
                         size="sm"
                         variant="ghost"
                         colorScheme="red"
                         aria-label="Deletar produto"
-                        icon={<FaTrash />}
-                        onClick={() => handleDeleteClick(produto)}
-                      />
+                        onClick={() => handleDelete(produto)}
+                      >
+                        <FaTrash />
+                      </IconButton>
                     </HStack>
                   </HStack>
 
                   {/* Categoria e Status */}
                   <HStack justify="space-between" align="center" mt={3}>
-                    <Badge
-                      colorScheme="blue"
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      {produto.category?.name || 'Sem categoria'}
+                    <Badge colorScheme="blue" variant="subtle" fontSize="xs">
+                      {produto.category?.name || "Sem categoria"}
                     </Badge>
                     <Badge
-                      colorScheme={produto.active ? 'green' : 'red'}
+                      colorScheme={produto.active ? "green" : "red"}
                       variant="subtle"
                       fontSize="xs"
                     >
-                      {produto.active ? 'Ativo' : 'Inativo'}
+                      {produto.active ? "Ativo" : "Inativo"}
                     </Badge>
                   </HStack>
                 </Box>
@@ -198,7 +214,8 @@ export const ProdutosList: React.FC = () => {
                 {/* Data de criação */}
                 <Box pt={2} borderTop="1px solid" borderColor="gray.100">
                   <Text fontSize="xs" color="gray.400">
-                    Criado em: {new Date(produto.createdAt).toLocaleDateString('pt-BR')}
+                    Criado em:{" "}
+                    {new Date(produto.createdAt).toLocaleDateString("pt-BR")}
                   </Text>
                 </Box>
               </VStack>
@@ -243,8 +260,8 @@ export const ProdutosList: React.FC = () => {
               Deletar Produto
             </Text>
             <Text mb={4}>
-              Tem certeza que deseja deletar o produto "{produtoToDelete?.name}"?
-              Esta ação não pode ser desfeita.
+              Tem certeza que deseja deletar o produto &quot;
+              {produtoToDelete?.name}&quot;? Esta ação não pode ser desfeita.
             </Text>
             <HStack gap={3} justify="flex-end">
               <Button variant="outline" onClick={onDeleteClose}>
