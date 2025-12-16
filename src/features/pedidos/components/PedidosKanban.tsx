@@ -8,6 +8,7 @@ import {
   VStack,
   TagRoot,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
 import { PedidoCard } from "./PedidoCard";
 
@@ -26,25 +27,37 @@ const KanbanColumn = ({
   status: StatusPedido;
   pedidos: Pedido[];
   onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
-}) => (
-  <Box
-    bg="background.secondary"
-    p={4}
-    borderRadius="lg"
-    minH="400px"
-    borderWidth="1px"
-    borderColor="background.tertiary"
-    onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-    }}
-    onDrop={(e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      if (onUpdateStatus) {
-        const pedidoId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-        onUpdateStatus(pedidoId, status);
-      }
-    }}
-  >
+}) => {
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  return (
+    <Box
+      bg="background.secondary"
+      p={4}
+      borderRadius="lg"
+      minH="400px"
+      borderWidth="1px"
+      borderColor="background.tertiary"
+      transition="all 0.2s"
+      onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
+      onDragLeave={(e: React.DragEvent<HTMLDivElement>) => {
+        // Verificar se está saindo realmente da coluna
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsDragOver(false);
+        }
+      }}
+      onDrop={(e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragOver(false);
+        if (onUpdateStatus) {
+          const pedidoId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          onUpdateStatus(pedidoId, status);
+        }
+      }}
+    >
     <Flex align="center" mb={4}>
       <TagRoot
         size="lg"
@@ -66,9 +79,29 @@ const KanbanColumn = ({
           onUpdateStatus={onUpdateStatus}
         />
       ))}
+      {isDragOver && (
+        <Box
+          borderWidth="1px"
+          borderRadius="lg"
+          p={4}
+          borderColor="whiteAlpha.200"
+          borderStyle="dashed"
+          bg="transparent"
+          minH="80px"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          color="whiteAlpha.600"
+          fontSize="sm"
+          transition="all 0.2s"
+        >
+          Solte aqui para mover
+        </Box>
+      )}
     </VStack>
   </Box>
-);
+  );
+};
 
 export const PedidosKanban = ({
   pedidos = [],
