@@ -15,6 +15,7 @@ import { usePedidos } from "../hooks/usePedidos";
 import { useMeusPedidos } from "../hooks/useMeusPedidos";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PedidosKanban } from "./PedidosKanban";
+import { PedidosGrid } from "./PedidosGrid";
 import { PizzaLoading } from "@/components/ui";
 
 type ViewMode = "kanban" | "grid";
@@ -81,7 +82,10 @@ export const PedidosPageLayout = () => {
               onUpdateStatus={handleUpdateStatus}
             />
           ) : (
-            <Text>Visualização em Grade (a ser implementada)</Text>
+            <PedidosGrid
+              pedidos={pedidos}
+              onUpdateStatus={handleUpdateStatus}
+            />
           )}
         </Box>
       )}

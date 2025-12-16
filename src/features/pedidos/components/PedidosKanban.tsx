@@ -77,22 +77,24 @@ const KanbanColumn = ({
           key={pedido.id}
           pedido={pedido}
           onUpdateStatus={onUpdateStatus}
+          viewMode="kanban"
         />
       ))}
       {isDragOver && (
         <Box
-          borderWidth="1px"
+          borderWidth="2px"
           borderRadius="lg"
           p={4}
-          borderColor="whiteAlpha.200"
+          borderColor="brand.primary"
           borderStyle="dashed"
-          bg="transparent"
+          bg="background.primary"
           minH="80px"
           display="flex"
           alignItems="center"
           justifyContent="center"
-          color="whiteAlpha.600"
+          color="brand.primary"
           fontSize="sm"
+          fontWeight="600"
           transition="all 0.2s"
         >
           Solte aqui para mover
