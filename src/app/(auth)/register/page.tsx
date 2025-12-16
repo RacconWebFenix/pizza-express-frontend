@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, VStack, Heading, Text, Button } from "@chakra-ui/react";
+import { Box, VStack, Heading, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
