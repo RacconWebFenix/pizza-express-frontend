@@ -128,6 +128,78 @@ import { PizzaLoading, PizzaSpinner } from "@/components/ui";
 <PizzaSpinner size={24} />
 ```
 
+### **Guia de Layout e Responsividade**
+
+#### **Princípios Gerais**
+- **Mobile-First**: Designs otimizados para mobile (320px+), escalando para desktop.
+- **Sem Scroll Desnecessário**: Forms e modais devem caber em 100vh sem scroll da página.
+- **Consistência Visual**: Usar tokens do tema (cores, fontes, espaçamentos).
+- **Acessibilidade**: Contraste mínimo 4.5:1, foco visível, labels claras.
+
+#### **Paleta de Cores (Tokens)**
+- **Primary**: #D92B2B (vermelho) - Ações principais, CTAs.
+- **Secondary**: #2E7D32 (verde) - Estados de sucesso, confirmações.
+- **Accent**: #FFC107 (amarelo) - Destaques, avisos.
+- **Background**: #F5F5F5 (cinza claro) / #FFFFFF (branco para cards).
+- **Text**: #212121 (primário), #757575 (secundário).
+- **Estados**: Success (#2E7D32), Warning (#ECC94B), Error (#D92B2B).
+
+#### **Tipografia**
+- **Headings**: 'Roboto Slab' (serif) - Títulos, destaques.
+- **Body**: 'Roboto' (sans-serif) - Texto comum.
+- **Tamanhos**: Usar escalas do Chakra (xs, sm, md, lg, xl).
+
+#### **Botões (PizzaButton)**
+- **Variantes**:
+  - `solid`: Fundo preenchido (primary) - Ações principais.
+  - `outline`: Borda + texto (primary) - Ações secundárias, como "Entrar com Google".
+  - `accent`: Fundo amarelo - Destaques.
+  - `ghost`: Transparente - Links, ações terciárias.
+- **Tamanhos**: `sm` (mobile), `md` (tablet), `lg` (desktop).
+- **Ícones**: Sempre à esquerda, usar React Icons (ex.: FcGoogle para login social).
+- **Exemplo**:
+  ```tsx
+  <PizzaButton variant="outline" size="md" icon={FcGoogle} w="full">
+    Entrar com Google
+  </PizzaButton>
+  ```
+
+#### **Espaçamentos e Layout**
+- **Paddings**: Responsivos - `p={{ base: 3, md: 4, lg: 6 }}` (12px mobile, 16px tablet, 24px desktop).
+- **Gaps**: `gap={{ base: 3, md: 4, lg: 5 }}` (12-20px).
+- **Containers**: `maxW="400px"` para forms, sem `maxH` para evitar scroll (compactar conteúdo).
+- **Centralização**: Usar Flex com `justifyContent="center"`, `alignItems="center"`, `minH="100vh"`.
+- **Sem Scroll Interno**: Sempre garantir que o conteúdo caiba em 100vh ajustando espaçamentos e tamanhos.
+
+#### **Forms e Inputs**
+- **PizzaInput**: Sempre com `label`, validação visual (borda vermelha para erro).
+- **Validação**: Mensagens claras, toast para erros globais.
+- **Botão Submit**: `w="full"`, `size="lg"` (ou responsivo), com loading state.
+- **Links Secundários**: Usar `PizzaButton` `variant="outline"` com ícone (ex.: FaUserPlus para cadastro).
+
+#### **Responsividade**
+- **Breakpoints**: `base` (< 480px), `sm` (480px+), `md` (768px+), `lg` (1024px+).
+- **Teste**: Simular em Chrome DevTools (320px, 768px, 1024px).
+- **Exemplo de Form Responsivo**:
+  ```tsx
+  <Box p={{ base: 3, md: 4, lg: 6 }} maxW="400px" borderRadius="lg" boxShadow="md">
+    <VStack gap={{ base: 3, md: 4, lg: 5 }}>
+      <Heading size={{ base: "md", md: "lg" }}>Título</Heading>
+      <PizzaInput label="Email" />
+      <PizzaButton size={{ base: "sm", md: "md", lg: "lg" }} w="full">
+        Ação
+      </PizzaButton>
+    </VStack>
+  </Box>
+  ```
+
+#### **Boas Práticas**
+- Evitar scroll: Sempre testar altura total < 100vh.
+- Contraste: Texto escuro em fundo claro.
+- Animações: Usar Framer Motion com `duration: 0.4`.
+- Acessibilidade: `aria-label` em ícones, foco keyboard.
+- Manutenção: Atualizar tema em `src/theme/theme.ts` para mudanças globais.
+
 ## 🏗️ **Arquitetura do Projeto**
 
 ### **Estrutura de Pastas**

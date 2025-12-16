@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
+import { FaSignInAlt } from "react-icons/fa";
 
 interface FormErrors {
   email?: string;
@@ -152,16 +153,20 @@ const RegisterPage = () => {
     >
       <Box
         bg="white"
-        p={8}
+        p={{ base: 4, md: 6, lg: 8 }}
         borderRadius="xl"
         boxShadow="xl"
         w="full"
+        maxW="420px"
+        mx="auto"
         borderTop="4px solid"
         borderColor={showSuccess ? "green.500" : "brand.primary"}
         _dark={{
           bg: "gray.800",
           borderColor: showSuccess ? "green.400" : "brand.secondary",
         }}
+        maxH="90vh"
+        overflowY="auto"
       >
         {showSuccess ? (
           <VStack gap={4} textAlign="center" py={6}>
@@ -175,9 +180,9 @@ const RegisterPage = () => {
             </Text>
           </VStack>
         ) : (
-          <VStack as="form" onSubmit={handleSubmit} gap={4} align="stretch">
+          <VStack as="form" onSubmit={handleSubmit} gap={{ base: 3, md: 4, lg: 4 }} align="stretch">
             <Heading
-              size="lg"
+              size={{ base: "md", md: "lg" }}
               color="gray.700"
               textAlign="center"
               _dark={{ color: "white" }}
@@ -246,7 +251,7 @@ const RegisterPage = () => {
               type="submit"
               variant="solid"
               w="full"
-              size="lg"
+              size={{ base: "md", md: "lg" }}
               disabled={loading}
               mt={2}
             >
@@ -261,9 +266,9 @@ const RegisterPage = () => {
               >
                 Já tem uma conta?{" "}
                 <Link href="/login">
-                  <Button variant="ghost" colorScheme="yellow" size="sm">
+                  <PizzaButton variant="outline" size={{ base: "xs", md: "sm" }} icon={FaSignInAlt} mx="auto" display="block">
                     Fazer login
-                  </Button>
+                  </PizzaButton>
                 </Link>
               </Text>
             </Box>

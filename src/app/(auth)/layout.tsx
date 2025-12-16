@@ -7,7 +7,6 @@ import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { PizzaLoading } from "@/components/ui";
 
-
 export default function AuthLayout({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -29,12 +28,18 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     <Box
       bg="gray.50"
       _dark={{ bg: "gray.900" }}
-      minH="100vh"
+      position="fixed"
+      top={0}
+      left={0}
+      w="100vw"
+      h="100vh"
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
       p={4}
+      overflow="hidden"
+      zIndex={9999}
     >
       {children}
     </Box>

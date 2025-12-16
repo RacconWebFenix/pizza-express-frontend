@@ -206,7 +206,7 @@ export function Header() {
                   )}
 
                   <Menu.Separator />
-                  <Menu.Item value="logout" onClick={logout}>
+                  <Menu.Item value="logout" onClick={logout} _hover={{ bg: "gray.700", cursor: "pointer" }}>
                     <HStack gap={2} color="red.400">
                       <FaSignOutAlt />
                       <Text>Sair</Text>
@@ -279,6 +279,7 @@ export function Header() {
                   colorScheme="red"
                   justifyContent="flex-start"
                   icon={FaSignOutAlt}
+                  _hover={{ bg: "gray.700", cursor: "pointer" }}
                   onClick={() => {
                     logout();
                     onClose();

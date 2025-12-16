@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { Box, VStack, Heading, Text, Button, Flex } from "@chakra-ui/react";
+import { Box, VStack, Heading, Text, Flex } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
@@ -79,32 +79,50 @@ export default function LoginPage() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      style={{ width: "100%", maxWidth: "420px" }}
+      style={{ width: "100%",
+         maxWidth: "400px" }}
     >
       <Box
         bg="white"
-        p={8}
-        borderRadius="xl"
-        boxShadow="xl"
+        p={{ base: 2, md: 3, lg: 4 }}
+        borderRadius="md"
+        boxShadow="md"
         w="full"
+        maxW="380px"
+      
         borderTop="4px solid"
         borderColor="brand.primary"
         _dark={{ bg: "gray.800", borderColor: "brand.secondary" }}
       >
-        <VStack gap={6} as="form" onSubmit={handleSubmit}>
-          <Heading size="lg" color="brand.textPrimary">
+        <VStack
+          gap={{ base: 2, md: 3, lg: 4 }}
+          as="form"
+          onSubmit={handleSubmit}
+          margin={{ base: 1, md: 1, lg: 1 }}
+        >
+          <Heading
+            size={{ base: "sm", md: "md", lg: "lg" }}
+            color="brand.textPrimary"
+          >
             Acessar sua Conta
           </Heading>
 
           {/* O Google Login continua usando a função do AuthContext */}
-          <PizzaButton onClick={signInWithGoogle} w="full" variant="outline">
-            <Flex align="center" gap="2">
-              <FcGoogle size={24} />
-              <Text>Entrar com Google</Text>
+          <PizzaButton
+            onClick={signInWithGoogle}
+            w="full"
+            variant="outline"
+            size={{ base: "sm", md: "md" }}
+          >
+            <Flex align="center" gap="1">
+              <FcGoogle size={18} />
+              <Text fontSize={{ base: "sm", md: "md" }}>Entrar com Google</Text>
             </Flex>
           </PizzaButton>
 
-          <Text color="gray.500">ou entre com seu e-mail</Text>
+          <Text color="gray.500" fontSize={{ base: "xs", md: "sm" }}>
+            ou entre com seu e-mail
+          </Text>
 
           <PizzaInput
             label="Email"
@@ -129,7 +147,7 @@ export default function LoginPage() {
           />
           {error && (
             <Box
-              p={3}
+              p={2}
               bg="red.50"
               border="1px solid"
               borderColor="red.200"
@@ -145,15 +163,20 @@ export default function LoginPage() {
             </Box>
           )}
 
-          <PizzaButton type="submit" w="full" size="lg" loading={isLoading}>
+          <PizzaButton
+            type="submit"
+            w="full"
+            size={{ base: "sm", md: "md", lg: "lg" }}
+            loading={isLoading}
+          >
             Entrar
           </PizzaButton>
 
-          <Box textAlign="center" mt={2}>
-            <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.300" }}>
+          <Box textAlign="center" mt={1}>
+            <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.300" }}>
               Não tem uma conta?{" "}
               <Link href="/register">
-                <PizzaButton variant="outline" size="sm" icon={FaUserPlus}>
+                <PizzaButton variant="outline" size="xs" icon={FaUserPlus}>
                   Cadastre-se
                 </PizzaButton>
               </Link>
