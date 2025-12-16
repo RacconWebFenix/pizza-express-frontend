@@ -34,6 +34,16 @@ const KanbanColumn = ({
     minH="400px"
     borderWidth="1px"
     borderColor="background.tertiary"
+    onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+    }}
+    onDrop={(e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (onUpdateStatus) {
+        const pedidoId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+        onUpdateStatus(pedidoId, status);
+      }
+    }}
   >
     <Flex align="center" mb={4}>
       <TagRoot
