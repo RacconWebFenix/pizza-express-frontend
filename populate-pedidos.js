@@ -31,11 +31,11 @@ const statuses = [
   "ENTREGUE",
 ];
 
-const token =
-  "seu_token_aqui"; // Será obtido via login
+let cookies = ""; // Armazenar cookies de sessão
 
 async function obterToken() {
   try {
+    console.log("🔐 Tentando fazer login...");
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
@@ -45,17 +45,47 @@ async function obterToken() {
         email: "admin@admin.com",
         password: "123",
       }),
+      redirect: "manual", // Não seguir redirecionamentos automaticamente
     });
 
+    console.log(`📊 Status da resposta: ${response.status}`);
+
+    // Capturar cookies
+    const setCookie = response.headers.get("set-cookie");
+    if (setCookie) {
+      cookies = setCookie;
+      console.log("🍪 Cookies capturados");
+    }
+
+    if (response.status === 307 || response.status === 302 || response.status === 301) {
+      console.error("❌ Redirecionado. Backend pode estar usando sessão em vez de JWT.");
+      const text = await response.text();
+      console.log("Resposta:", text.substring(0, 200));
+      return null;
+    }
+
     if (!response.ok) {
-      console.error("Erro ao fazer login");
+      const text = await response.text();
+      console.error(`❌ Erro na resposta (${response.status}):`, text.substring(0, 300));
       return null;
     }
 
     const data = await response.json();
-    return data.data.accessToken;
+    console.log("📦 Resposta de login:", JSON.stringify(data).substring(0, 100));
+    
+    // Tentar diferentes formatos de resposta
+    const token = data.access_token || data.accessToken || data.data?.accessToken || data.data?.access_token;
+    
+    if (!token) {
+      console.error("❌ Token não encontrado na resposta");
+      console.error("Resposta completa:", JSON.stringify(data, null, 2));
+      return null;
+    }
+
+    console.log("✅ Token obtido com sucesso");
+    return token;
   } catch (error) {
-    console.error("Erro ao obter token:", error.message);
+    console.error("❌ Erro ao obter token:", error.message);
     return null;
   }
 }
@@ -99,12 +129,23 @@ async function popularPedidos() {
 
 async function criarPedido(token, clienteId, enderecoId, pizzasIds, status) {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Adicionar token se disponível
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    // Adicionar cookies se disponível (para sessão)
+    if (cookies) {
+      headers["Cookie"] = cookies;
+    }
+
     const response = await fetch(`${API_URL}/pedidos`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
       body: JSON.stringify({
         clienteId,
         enderecoId,
@@ -112,17 +153,24 @@ async function criarPedido(token, clienteId, enderecoId, pizzasIds, status) {
         status,
         observacoes: "Pedido criado via script de teste",
       }),
+      redirect: "manual",
     });
 
+    if (response.status === 307 || response.status === 302) {
+      console.error(`❌ Redirecionado ao criar pedido (${response.status})`);
+      return null;
+    }
+
     if (!response.ok) {
-      const error = await response.json();
-      console.error(`Erro ao criar pedido:`, error.message);
+      const text = await response.text();
+      console.error(`❌ Erro ao criar pedido (${response.status}):`, text.substring(0, 200));
       return null;
     }
 
     const data = await response.json();
-    console.log(`✅ Pedido criado: #${data.data.id} - Cliente: ${nomes[clienteId - 1]} - Status: ${status}`);
-    return data.data;
+    const pedidoId = data.id || data.data?.id;
+    console.log(`✅ Pedido #${pedidoId} - ${nomes[clienteId - 1]} - ${status}`);
+    return data;
   } catch (error) {
     console.error(`❌ Erro na requisição:`, error.message);
     return null;

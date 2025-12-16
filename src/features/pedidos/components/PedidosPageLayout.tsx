@@ -16,7 +16,9 @@ import { useMeusPedidos } from "../hooks/useMeusPedidos";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PedidosKanban } from "./PedidosKanban";
 import { PedidosGrid } from "./PedidosGrid";
+import { PedidosFilters } from "./PedidosFilters";
 import { PizzaLoading } from "@/components/ui";
+import { StatusPedido, Pedido } from "@/types/pedidos";
 
 type ViewMode = "kanban" | "grid";
 
@@ -28,6 +30,9 @@ type ViewMode = "kanban" | "grid";
  */
 export const PedidosPageLayout = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
+  const [statusFilters, setStatusFilters] = useState<StatusPedido[]>([]);
+  const [clienteFilter, setClienteFilter] = useState<string>("");
+  const [pedidoFilter, setPedidoFilter] = useState<string>("");
   const { canViewAllOrders } = usePermissions();
 
   // Sempre chama ambos os hooks, mas só um será executado baseado nas permissões
@@ -42,6 +47,18 @@ export const PedidosPageLayout = () => {
   const handleUpdateStatus = canViewAllOrders()
     ? allOrdersHook.handleUpdateStatus
     : undefined;
+
+  // Filtrar pedidos baseado nos filtros ativos
+  const filteredPedidos = pedidos.filter((pedido: Pedido) => {
+    const statusMatch = statusFilters.length === 0 || statusFilters.includes(pedido.status);
+    const clienteMatch =
+      !clienteFilter ||
+      (pedido.user?.nome ?? "").toLowerCase().includes(clienteFilter.toLowerCase());
+    const pedidoMatch =
+      !pedidoFilter || pedido.id.toString().includes(pedidoFilter);
+
+    return statusMatch && clienteMatch && pedidoMatch;
+  });
 
   return (
     <VStack w="full" p={{ base: 4, md: 8 }} gap={6} align="stretch">
@@ -75,19 +92,38 @@ export const PedidosPageLayout = () => {
       {isLoading ? (
         <PizzaLoading message="Carregando pedidos..." />
       ) : (
-        <Box>
-          {viewMode === "kanban" ? (
-            <PedidosKanban
-              pedidos={pedidos}
-              onUpdateStatus={handleUpdateStatus}
-            />
+        <>
+          <PedidosFilters
+            statusFilters={statusFilters}
+            clienteFilter={clienteFilter}
+            pedidoFilter={pedidoFilter}
+            onStatusChange={setStatusFilters}
+            onClienteChange={setClienteFilter}
+            onPedidoChange={setPedidoFilter}
+          />
+
+          {filteredPedidos.length === 0 ? (
+            <Box textAlign="center" py={8}>
+              <Text color="text.secondary">
+                Nenhum pedido encontrado com os filtros aplicados
+              </Text>
+            </Box>
           ) : (
-            <PedidosGrid
-              pedidos={pedidos}
-              onUpdateStatus={handleUpdateStatus}
-            />
+            <Box>
+              {viewMode === "kanban" ? (
+                <PedidosKanban
+                  pedidos={filteredPedidos}
+                  onUpdateStatus={handleUpdateStatus}
+                />
+              ) : (
+                <PedidosGrid
+                  pedidos={filteredPedidos}
+                  onUpdateStatus={handleUpdateStatus}
+                />
+              )}
+            </Box>
           )}
-        </Box>
+        </>
       )}
     </VStack>
   );
