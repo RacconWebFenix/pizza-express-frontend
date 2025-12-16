@@ -274,17 +274,18 @@ export function Header() {
                   </>
                 )}
 
-                <Button
-                  variant="ghost"
+                <PizzaButton
+                  variant="outline"
+                  colorScheme="red"
                   justifyContent="flex-start"
-                  color="red.300"
+                  icon={FaSignOutAlt}
                   onClick={() => {
                     logout();
                     onClose();
                   }}
                 >
                   Sair
-                </Button>
+                </PizzaButton>
               </>
             )}
           </Stack>

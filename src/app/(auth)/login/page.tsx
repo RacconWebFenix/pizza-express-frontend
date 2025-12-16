@@ -8,6 +8,7 @@ import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
 import { toaster } from "@/components/ui/toaster";
 import { FcGoogle } from "react-icons/fc";
+import { FaUserPlus } from "react-icons/fa";
 
 /**
  * Página de Login.
@@ -152,9 +153,9 @@ export default function LoginPage() {
             <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.300" }}>
               Não tem uma conta?{" "}
               <Link href="/register">
-                <Button variant="ghost" colorScheme="orange" size="sm">
+                <PizzaButton variant="outline" size="sm" icon={FaUserPlus}>
                   Cadastre-se
-                </Button>
+                </PizzaButton>
               </Link>
             </Text>
           </Box>
