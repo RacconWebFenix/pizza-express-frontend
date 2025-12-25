@@ -190,6 +190,7 @@ export function Header() {
                   <Menu.Item
                     value="profile"
                     onClick={() => router.push("/profile")}
+                    _hover={{ bg: "gray.700", cursor: "pointer" }}
                   >
                     <HStack gap={2}>
                       <FaUser />
@@ -243,6 +244,7 @@ export function Header() {
                   variant="ghost"
                   justifyContent="flex-start"
                   color="white"
+                  _hover={{ bg: "gray.700", cursor: "pointer" }}
                   onClick={() => {
                     router.push("/profile");
                     onClose();
