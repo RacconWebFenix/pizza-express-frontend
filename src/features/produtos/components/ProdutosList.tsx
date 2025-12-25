@@ -6,17 +6,14 @@ import {
   VStack,
   HStack,
   Text,
-  Badge,
   useDisclosure,
-  IconButton,
   SimpleGrid,
-  Image,
   Button,
 } from "@chakra-ui/react";
-import { FaEdit, FaTrash, FaPlus, FaImage } from "react-icons/fa";
-import { PizzaCard, PizzaButton } from "@/components/ui";
+import { FaPlus } from "react-icons/fa";
+import { PizzaButton } from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";
-import { ProdutoFormModal } from "./ProdutoFormModal";
+import { ProdutoFormModal, ProdutoCard } from "./index";
 import { Produto } from "@/types/produto";
 
 export const ProdutosList: React.FC = () => {
@@ -64,13 +61,6 @@ export const ProdutosList: React.FC = () => {
   const handleFormClose = () => {
     setSelectedProduto(null);
     onFormClose();
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
   };
 
   if (isLoading) {
@@ -123,103 +113,12 @@ export const ProdutosList: React.FC = () => {
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {produtos.map((produto) => (
-            <PizzaCard key={produto.id}>
-              <VStack align="stretch" gap={3}>
-                {/* Imagem */}
-                <Box position="relative">
-                  {produto.image ? (
-                    <Image
-                      src={produto.image}
-                      alt={produto.name}
-                      borderRadius="md"
-                      w="full"
-                      h="150px"
-                      objectFit="cover"
-                    />
-                  ) : (
-                    <Box
-                      w="full"
-                      h="150px"
-                      bg="gray.100"
-                      borderRadius="md"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <FaImage size={32} color="#A0AEC0" />
-                    </Box>
-                  )}
-                </Box>
-
-                {/* Conteúdo */}
-                <Box>
-                  <HStack justify="space-between" align="start">
-                    <Box flex={1}>
-                      <Text
-                        fontSize="lg"
-                        fontWeight="semibold"
-                        color="gray.800"
-                      >
-                        {produto.name}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        {produto.description}
-                      </Text>
-                      <Text
-                        fontSize="lg"
-                        fontWeight="bold"
-                        color="orange.500"
-                        mt={1}
-                      >
-                        {formatPrice(produto.price)}
-                      </Text>
-                    </Box>
-                    <HStack gap={1}>
-                      <IconButton
-                        size="sm"
-                        variant="ghost"
-                        colorScheme="blue"
-                        aria-label="Editar produto"
-                        onClick={() => handleEdit(produto)}
-                      >
-                        <FaEdit />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        variant="ghost"
-                        colorScheme="red"
-                        aria-label="Deletar produto"
-                        onClick={() => handleDelete(produto)}
-                      >
-                        <FaTrash />
-                      </IconButton>
-                    </HStack>
-                  </HStack>
-
-                  {/* Categoria e Status */}
-                  <HStack justify="space-between" align="center" mt={3}>
-                    <Badge colorScheme="blue" variant="subtle" fontSize="xs">
-                      {produto.category?.name || "Sem categoria"}
-                    </Badge>
-                    <Badge
-                      colorScheme={produto.active ? "green" : "red"}
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      {produto.active ? "Ativo" : "Inativo"}
-                    </Badge>
-                  </HStack>
-                </Box>
-
-                {/* Data de criação */}
-                <Box pt={2} borderTop="1px solid" borderColor="gray.100">
-                  <Text fontSize="xs" color="gray.400">
-                    Criado em:{" "}
-                    {new Date(produto.createdAt).toLocaleDateString("pt-BR")}
-                  </Text>
-                </Box>
-              </VStack>
-            </PizzaCard>
+            <ProdutoCard
+              key={produto.id}
+              produto={produto}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           ))}
         </SimpleGrid>
       )}
