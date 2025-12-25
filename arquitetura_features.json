@@ -1,0 +1,67 @@
+{
+  "auth": {
+    "hooks_usados": ["useAuth"],
+    "componentes_exportados": ["AuthProvider", "useAuth"],
+    "complexidade_estimada_0_10": 7
+  },
+  "cart": {
+    "hooks_usados": ["useCart"],
+    "componentes_exportados": ["CartProvider", "useCart", "CartWidget", "CartModal", "CartItemCard", "CheckoutForm"],
+    "complexidade_estimada_0_10": 8
+  },
+  "categorias": {
+    "hooks_usados": ["useCategorias"],
+    "componentes_exportados": ["CategoriasProvider", "useCategorias", "CategoriasList", "CategoriaFormModal"],
+    "complexidade_estimada_0_10": 6
+  },
+  "dashboard": {
+    "hooks_usados": ["useDashboard"],
+    "componentes_exportados": ["DashboardStats", "DashboardActions"],
+    "complexidade_estimada_0_10": 5
+  },
+  "entregadores": {
+    "hooks_usados": ["useEntregadores"],
+    "componentes_exportados": ["EntregadoresList", "EntregadorFormModal"],
+    "complexidade_estimada_0_10": 6
+  },
+  "mesas": {
+    "hooks_usados": ["useMesas"],
+    "componentes_exportados": ["DashboardMesas", "MesaCard", "CriarMesaModal", "AdicionarPedidoModal", "SessaoDetalhesModal", "PedidoCard"],
+    "complexidade_estimada_0_10": 9
+  },
+  "payments": {
+    "hooks_usados": ["usePayment", "useStripe"],
+    "componentes_exportados": ["CreditCardForm", "DevelopmentCard", "StripeProvider", "useStripe"],
+    "complexidade_estimada_0_10": 8
+  },
+  "pedidos": {
+    "hooks_usados": ["usePedidos", "useMeusPedidos"],
+    "componentes_exportados": ["PedidosPageLayout", "MeusPedidosPageLayout", "PedidosGrid", "PedidosKanban", "PedidosFilters", "PedidoCard"],
+    "complexidade_estimada_0_10": 8
+  },
+  "pizzas": {
+    "hooks_usados": ["usePizzas"],
+    "componentes_exportados": ["GerenciarCardapio", "PizzaCard", "PizzaForm", "PizzaFormContainer"],
+    "complexidade_estimada_0_10": 7
+  },
+  "produtos": {
+    "hooks_usados": ["useProdutos"],
+    "componentes_exportados": ["ProdutosList", "ProdutoFormModal"],
+    "complexidade_estimada_0_10": 7
+  },
+  "profile": {
+    "hooks_usados": ["useProfile", "useEnderecos"],
+    "componentes_exportados": ["ProfilePageLayout", "EditProfileModal", "EnderecoCard", "EnderecoModal", "EnderecoSelectionModal"],
+    "complexidade_estimada_0_10": 7
+  },
+  "upload": {
+    "hooks_usados": ["useFileUpload"],
+    "componentes_exportados": ["FileUploader"],
+    "complexidade_estimada_0_10": 5
+  },
+  "users": {
+    "hooks_usados": ["useUsers"],
+    "componentes_exportados": ["UsersTable", "UserFormModal", "UserFilters"],
+    "complexidade_estimada_0_10": 7
+  }
+}

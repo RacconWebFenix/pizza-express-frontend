@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 const AUTH_TOKEN_KEY = "authToken";
 
 /**
- * Salva o token de autenticação nos cookies.
+ * Salva o token de autenticação nos cookies com configurações de segurança.
  * @param token O token a ser salvo.
  * @param options Opções adicionais para o cookie (ex: expiração).
  */
@@ -15,9 +15,13 @@ export const setCookie = (
   token: string,
   options?: Cookies.CookieAttributes
 ): void => {
+  const isProduction = process.env.NODE_ENV === "production";
+  
   Cookies.set(AUTH_TOKEN_KEY, token, {
     expires: 30, // Expira em 30 dias por padrão
     path: "/",
+    secure: isProduction, // Apenas HTTPS em produção
+    sameSite: "strict", // Proteção contra CSRF
     ...options,
   });
 };

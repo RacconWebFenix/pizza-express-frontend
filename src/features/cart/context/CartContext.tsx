@@ -58,8 +58,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (storedCart) {
         setCart(JSON.parse(storedCart));
       }
-    } catch (error) {
-      console.error("Falha ao carregar o carrinho:", error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao carregar carrinho";
+      console.error("Falha ao carregar o carrinho:", errorMessage);
     }
   }, []);
 

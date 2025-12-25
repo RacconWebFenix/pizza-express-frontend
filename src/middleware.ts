@@ -49,8 +49,10 @@ function hasRequiredRole(userRole: string, requiredRoles: string[]): boolean {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Log para debug em produção
-  console.log(`[MIDDLEWARE] Processing request for: ${pathname}`);
+  // Log apenas em desenvolvimento
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[MIDDLEWARE] Processing request for: ${pathname}`);
+  }
 
   // Arquivos estáticos não precisam de autenticação
   if (
@@ -90,7 +92,9 @@ export async function middleware(request: NextRequest) {
   if (publicPages.includes(pathname)) {
     // Permitir acesso direto ao auth-callback
     if (pathname === "/auth-callback") {
-      console.log(`[MIDDLEWARE] Allowing access to auth-callback`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[MIDDLEWARE] Allowing access to auth-callback`);
+      }
       return NextResponse.next();
     }
 
@@ -99,12 +103,16 @@ export async function middleware(request: NextRequest) {
     if (token) {
       const user = await validateTokenAndGetUser(token);
       if (user) {
-        console.log(`[MIDDLEWARE] Valid token, redirecting to /cardapio`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[MIDDLEWARE] Valid token, redirecting to /cardapio`);
+        }
         return NextResponse.redirect(new URL("/cardapio", request.url));
       } else {
-        console.log(
-          `[MIDDLEWARE] Invalid token, allowing access to ${pathname}`
-        );
+        if (process.env.NODE_ENV !== "production") {
+          console.log(
+            `[MIDDLEWARE] Invalid token, allowing access to ${pathname}`
+          );
+        }
       }
     }
     return NextResponse.next();
@@ -113,14 +121,18 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
 
   if (!token) {
-    console.log(`[MIDDLEWARE] No token, redirecting to login`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[MIDDLEWARE] No token, redirecting to login`);
+    }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const user = await validateTokenAndGetUser(token);
 
   if (!user) {
-    console.log(`[MIDDLEWARE] Invalid token, redirecting to login`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[MIDDLEWARE] Invalid token, redirecting to login`);
+    }
     const response = NextResponse.redirect(new URL("/login", request.url));
     response.cookies.delete("authToken");
     return response;
@@ -132,18 +144,22 @@ export async function middleware(request: NextRequest) {
   )) {
     if (pathname.startsWith(routePrefix)) {
       if (!hasRequiredRole(user.role, allowedRoles)) {
-        console.log(
-          `[MIDDLEWARE] User role ${user.role} not allowed for ${pathname}, redirecting to access-denied`
-        );
+        if (process.env.NODE_ENV !== "production") {
+          console.log(
+            `[MIDDLEWARE] User role ${user.role} not allowed for ${pathname}, redirecting to access-denied`
+          );
+        }
         return NextResponse.redirect(new URL("/access-denied", request.url));
       }
       break;
     }
   }
 
-  console.log(
-    `[MIDDLEWARE] Access granted to ${pathname} for user role ${user.role}`
-  );
+  if (process.env.NODE_ENV !== "production") {
+    console.log(
+      `[MIDDLEWARE] Access granted to ${pathname} for user role ${user.role}`
+    );
+  }
   return NextResponse.next();
 }
 
