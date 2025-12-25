@@ -62,6 +62,13 @@ export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
           border="2px solid"
           borderColor={error ? "red.300" : "gray.300"}
           borderRadius="md"
+          caretColor="gray.800"
+          css={{
+            "&::selection": {
+              backgroundColor: "#007bff",
+              color: "#ffffff",
+            },
+          }}
           _placeholder={{
             color: "gray.500",
             fontSize: currentSize.fontSize,
@@ -73,6 +80,7 @@ export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
             borderColor: error ? "red.500" : "brand.primary",
             boxShadow: `0 0 0 1px ${error ? "red.500" : "brand.primary"}`,
             bg: "white",
+            caretColor: "gray.800",
           }}
           _disabled={{
             opacity: 0.6,

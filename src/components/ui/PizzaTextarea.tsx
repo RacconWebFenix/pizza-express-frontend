@@ -58,6 +58,13 @@ export const PizzaTextarea = forwardRef<
         border="2px solid"
         borderColor={error ? "red.300" : "gray.300"}
         borderRadius="md"
+        caretColor="gray.800"
+        css={{
+          "&::selection": {
+            backgroundColor: "#007bff",
+            color: "#ffffff",
+          },
+        }}
         resize="vertical"
         _placeholder={{
           color: "gray.500",
@@ -70,6 +77,7 @@ export const PizzaTextarea = forwardRef<
           borderColor: error ? "red.500" : "brand.primary",
           boxShadow: `0 0 0 1px ${error ? "red.500" : "brand.primary"}`,
           bg: "white",
+          caretColor: "gray.800",
         }}
         _disabled={{
           opacity: 0.6,
