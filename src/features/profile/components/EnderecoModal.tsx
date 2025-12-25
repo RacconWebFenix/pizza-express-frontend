@@ -6,13 +6,12 @@ import {
   VStack,
   HStack,
   Button,
-  Input,
   Grid,
   GridItem,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { FaSave, FaMapMarkerAlt } from "react-icons/fa";
-import { AppModal, PizzaButton } from "@/components/ui";
+import { AppModal, PizzaButton, PizzaInput, PizzaSelect, PizzaCheckbox } from "@/components/ui";
 import type { Endereco } from "@/types/endereco";
 
 interface EnderecoModalProps {
@@ -126,18 +125,10 @@ export const EnderecoModal = ({
                     Tipo
                   </Text>
                 </HStack>
-                <select
+                <PizzaSelect
                   value={formData.tipo}
                   onChange={(e) => handleChange("tipo", e.target.value)}
-                  style={{
-                    backgroundColor: "#2D3748",
-                    borderColor: "#4A5568",
-                    color: "white",
-                    padding: "8px 12px",
-                    borderRadius: "6px",
-                    border: "1px solid #4A5568",
-                    width: "100%",
-                  }}
+                  required
                 >
                   <option
                     value="residencial"
@@ -163,26 +154,16 @@ export const EnderecoModal = ({
                   >
                     Outro
                   </option>
-                </select>
+                </PizzaSelect>
               </GridItem>
 
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  CEP
-                </Text>
-                <Input
+                <PizzaInput
+                  label="CEP"
                   placeholder="00000-000"
                   value={formData.cep}
                   onChange={(e) => handleChange("cep", e.target.value)}
                   required
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
             </Grid>
@@ -190,42 +171,22 @@ export const EnderecoModal = ({
             {/* Logradouro e Número */}
             <Grid templateColumns="2fr 1fr" gap={4}>
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Logradouro
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Logradouro"
                   placeholder="Rua, Avenida, etc."
                   value={formData.logradouro}
                   onChange={(e) => handleChange("logradouro", e.target.value)}
                   required
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
 
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Número
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Número"
                   placeholder="123"
                   value={formData.numero}
                   onChange={(e) => handleChange("numero", e.target.value)}
                   required
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
             </Grid>
@@ -233,41 +194,21 @@ export const EnderecoModal = ({
             {/* Bairro e Complemento */}
             <Grid templateColumns="1fr 1fr" gap={4}>
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Bairro
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Bairro"
                   placeholder="Nome do bairro"
                   value={formData.bairro}
                   onChange={(e) => handleChange("bairro", e.target.value)}
                   required
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
 
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Complemento
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Complemento"
                   placeholder="Apto, sala, etc. (opcional)"
                   value={formData.complemento}
                   onChange={(e) => handleChange("complemento", e.target.value)}
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
             </Grid>
@@ -275,72 +216,33 @@ export const EnderecoModal = ({
             {/* Cidade e Estado */}
             <Grid templateColumns="2fr 1fr" gap={4}>
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Cidade
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Cidade"
                   placeholder="Nome da cidade"
                   value={formData.cidade}
                   onChange={(e) => handleChange("cidade", e.target.value)}
                   required
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
 
               <GridItem>
-                <Text color="gray.300" fontSize="sm" mb={2}>
-                  Estado
-                </Text>
-                <Input
+                <PizzaInput
+                  label="Estado"
                   placeholder="SP"
                   value={formData.estado}
                   onChange={(e) => handleChange("estado", e.target.value)}
                   required
                   maxLength={2}
-                  bg="gray.700"
-                  borderColor="gray.600"
-                  color="white"
-                  _placeholder={{ color: "gray.400" }}
-                  _focus={{
-                    borderColor: "brand.primary",
-                    boxShadow: "0 0 0 1px #D92B2B",
-                  }}
                 />
               </GridItem>
             </Grid>
 
             {/* Principal */}
-            <Box>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  color: "#A0AEC0",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={formData.principal}
-                  onChange={(e) => handleChange("principal", e.target.checked)}
-                  style={{
-                    accentColor: "#D92B2B",
-                    width: "16px",
-                    height: "16px",
-                  }}
-                />
-                <Text color="gray.300" fontSize="sm">
-                  Definir como endereço principal
-                </Text>
-              </label>
-            </Box>
+            <PizzaCheckbox
+              label="Definir como endereço principal"
+              checked={formData.principal}
+              onChange={(e) => handleChange("principal", e.target.checked)}
+            />
 
             {/* Error Message */}
             {error && (

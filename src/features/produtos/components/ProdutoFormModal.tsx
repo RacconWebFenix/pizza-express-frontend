@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { VStack, HStack, Text, Button, Box } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
-import { PizzaInput, PizzaTextarea, PizzaButton } from "@/components/ui";
+import { PizzaInput, PizzaTextarea, PizzaButton, PizzaSelect } from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";
 import { useCategorias } from "../../categorias/hooks/useCategorias";
 import { Produto } from "@/types/produto";
@@ -131,18 +131,10 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
             />
 
             <Box flex={1}>
-              <Text fontSize="sm" fontWeight="medium" mb={2}>
-                Categoria
-              </Text>
-              <select
+              <PizzaSelect
+                label="Categoria"
                 {...register("categoryId")}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: "1px solid #E2E8F0",
-                  borderRadius: "6px",
-                  fontSize: "14px",
-                }}
+                error={errors.categoryId?.message}
               >
                 <option value="">Selecione uma categoria</option>
                 {categorias.map((categoria) => (
@@ -150,34 +142,20 @@ export const ProdutoFormModal: React.FC<ProdutoFormModalProps> = ({
                     {categoria.name}
                   </option>
                 ))}
-              </select>
-              {errors.categoryId && (
-                <Text fontSize="sm" color="red.500" mt={1}>
-                  {errors.categoryId.message}
-                </Text>
-              )}
+              </PizzaSelect>
             </Box>
           </HStack>
 
           <HStack gap={4}>
             <Box flex={1}>
-              <Text fontSize="sm" fontWeight="medium" mb={2}>
-                Status
-              </Text>
-              <select
+              <PizzaSelect
+                label="Status"
                 {...register("active")}
                 defaultValue="true"
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: "1px solid #E2E8F0",
-                  borderRadius: "6px",
-                  fontSize: "14px",
-                }}
               >
                 <option value="true">Ativo</option>
                 <option value="false">Inativo</option>
-              </select>
+              </PizzaSelect>
             </Box>
           </HStack>
 

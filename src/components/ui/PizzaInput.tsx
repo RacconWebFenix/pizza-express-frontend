@@ -9,11 +9,10 @@ interface PizzaInputProps extends Omit<InputProps, "size"> {
   error?: string;
   required?: boolean;
   size?: "sm" | "md" | "lg";
-  color?: string;
 }
 
 export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
-  ({ label, error, required, color, size = "md", ...props }, ref) => {
+  ({ label, error, required, size = "md", ...props }, ref) => {
     const sizeStyles = {
       sm: {
         fontSize: "sm",
@@ -41,7 +40,7 @@ export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
       <Box w="full">
         {label && (
           <PizzaText
-            color={color || "gray.800 "}
+            color="gray.300"
             mb={2}
             fontSize="sm"
             fontWeight="medium"
@@ -57,35 +56,34 @@ export const PizzaInput = forwardRef<HTMLInputElement, PizzaInputProps>(
 
         <Input
           ref={ref}
-          bg="white"
-          color="gray.800"
-          border="2px solid"
-          borderColor={error ? "red.300" : "gray.300"}
+          bg="gray.700"
+          color="white"
+          border="1px solid"
+          borderColor="gray.600"
           borderRadius="md"
-          caretColor="gray.800"
+          caretColor="white"
           css={{
             "&::selection": {
-              backgroundColor: "#007bff",
-              color: "#ffffff",
+              backgroundColor: "rgba(33, 150, 243, 0.3)",
+              color: "inherit",
             },
           }}
           _placeholder={{
-            color: "gray.500",
-            fontSize: currentSize.fontSize,
+            color: "gray.400",
           }}
           _hover={{
-            borderColor: error ? "red.400" : "brand.secondary",
+            borderColor: "gray.500",
           }}
           _focus={{
-            borderColor: error ? "red.500" : "brand.primary",
-            boxShadow: `0 0 0 1px ${error ? "red.500" : "brand.primary"}`,
-            bg: "white",
-            caretColor: "gray.800",
+            borderColor: "brand.primary",
+            boxShadow: "0 0 0 1px #D92B2B",
+            bg: "gray.700",
+            caretColor: "white",
           }}
           _disabled={{
             opacity: 0.6,
             cursor: "not-allowed",
-            bg: "gray.50",
+            bg: "gray.800",
           }}
           transition="all 0.2s ease-in-out"
           {...currentSize}

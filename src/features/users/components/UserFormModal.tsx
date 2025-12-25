@@ -14,7 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { User } from "@/types/users";
-import { PizzaInput, PizzaButton, AppModal } from "@/components/ui";
+import { PizzaInput, PizzaButton, AppModal, PizzaSelect } from "@/components/ui";
 import { Role } from "@/types/users";
 import { UserCreationData } from "../types/userManagement";
 
@@ -151,33 +151,17 @@ export const UserFormModal = ({
             placeholder="(99) 99999-9999"
           />
 
-          <Box>
-            <Text mb={2} fontSize="sm" fontWeight="medium">
-              Função
-            </Text>
-            <select
-              {...register("role")}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #E2E8F0",
-                borderRadius: "6px",
-                fontSize: "14px",
-                backgroundColor: "white",
-              }}
-            >
-              <option value={Role.FUNCIONARIO}>Funcionário</option>
-              <option value={Role.ADMIN}>Administrador</option>
-              {user?.role === Role.CLIENTE && (
-                <option value={Role.CLIENTE}>Cliente</option>
-              )}
-            </select>
-            {errors.role && (
-              <Text color="red.500" fontSize="sm" mt={1}>
-                {errors.role.message}
-              </Text>
+          <PizzaSelect
+            label="Função"
+            {...register("role")}
+            error={errors.role?.message}
+          >
+            <option value={Role.FUNCIONARIO}>Funcionário</option>
+            <option value={Role.ADMIN}>Administrador</option>
+            {user?.role === Role.CLIENTE && (
+              <option value={Role.CLIENTE}>Cliente</option>
             )}
-          </Box>
+          </PizzaSelect>
 
           {!user && (
             <PizzaInput
