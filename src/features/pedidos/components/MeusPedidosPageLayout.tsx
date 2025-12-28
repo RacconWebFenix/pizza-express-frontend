@@ -92,7 +92,8 @@ const PedidoCard = ({ pedido }: { pedido: Order }) => {
         <VStack align="start" gap={1}>
           {pedido.items?.map((item, index) => (
             <Text key={index} fontSize="sm" color="gray.600">
-              • {item.product.name} (x{item.quantity}) - {formatCurrency(parseFloat(item.subtotal))}
+              • {item.product.name} (x{item.quantity}) -{" "}
+              {formatCurrency(parseFloat(item.subtotal))}
             </Text>
           ))}
         </VStack>
@@ -101,7 +102,7 @@ const PedidoCard = ({ pedido }: { pedido: Order }) => {
       <Flex justify="space-between" align="center">
         <Box>
           <Text fontSize="sm" color="gray.600">
-            Tipo: {pedido.type === 'DELIVERY' ? 'Entrega' : 'Mesa'}
+            Tipo: {pedido.type === "DELIVERY" ? "Entrega" : "Mesa"}
           </Text>
         </Box>
         <Box textAlign="right">

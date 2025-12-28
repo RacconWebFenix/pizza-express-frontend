@@ -460,14 +460,14 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Box,
-  VStack,
-  HStack,
-  Button,
-} from "@chakra-ui/react";
+import { Box, VStack, HStack, Button } from "@chakra-ui/react";
 import { User } from "@/types/users";
-import { PizzaInput, PizzaButton, AppModal, PizzaSelect } from "@/components/ui";
+import {
+  PizzaInput,
+  PizzaButton,
+  AppModal,
+  PizzaSelect,
+} from "@/components/ui";
 import { Role } from "@/types/users";
 import { UserCreationData } from "../types/userManagement";
 
@@ -492,34 +492,41 @@ export const UserFormModal = ({
   isLoading,
 }: UserFormModalProps) => {
   // Schema de validação com Zod - criado dinamicamente baseado no modo
-  const userFormSchema = z.object({
-    nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-    email: z.string().email("Email deve ter um formato válido"),
-    telefone: z.string().regex(
-      /^\(\d{2}\) \d{4,5}-\d{4}$/,
-      "Telefone deve estar no formato (99) 99999-9999"
-    ),
-    role: z.nativeEnum(Role),
-    password: z.string().optional(),
-    confirmPassword: z.string().optional(),
-  }).refine((data) => {
-    // Senha obrigatória apenas na criação
-    if (!data.password && !user) {
-      return false;
-    }
-    // Se senha fornecida, deve ter pelo menos 6 caracteres
-    if (data.password && data.password.length < 6) {
-      return false;
-    }
-    // Se confirmPassword fornecida, deve coincidir com password
-    if (data.confirmPassword && data.password !== data.confirmPassword) {
-      return false;
-    }
-    return true;
-  }, {
-    message: "Validação de senha falhou",
-    path: ["password"],
-  });
+  const userFormSchema = z
+    .object({
+      nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+      email: z.string().email("Email deve ter um formato válido"),
+      telefone: z
+        .string()
+        .regex(
+          /^\(\d{2}\) \d{4,5}-\d{4}$/,
+          "Telefone deve estar no formato (99) 99999-9999"
+        ),
+      role: z.nativeEnum(Role),
+      password: z.string().optional(),
+      confirmPassword: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        // Senha obrigatória apenas na criação
+        if (!data.password && !user) {
+          return false;
+        }
+        // Se senha fornecida, deve ter pelo menos 6 caracteres
+        if (data.password && data.password.length < 6) {
+          return false;
+        }
+        // Se confirmPassword fornecida, deve coincidir com password
+        if (data.confirmPassword && data.password !== data.confirmPassword) {
+          return false;
+        }
+        return true;
+      },
+      {
+        message: "Validação de senha falhou",
+        path: ["password"],
+      }
+    );
 
   type UserFormData = z.infer<typeof userFormSchema>;
 
@@ -575,11 +582,7 @@ export const UserFormModal = ({
   const submitLabel = user ? "Salvar Alterações" : "Criar Usuário";
 
   return (
-    <AppModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-    >
+    <AppModal isOpen={isOpen} onClose={onClose} title={title}>
       <Box as="form" onSubmit={handleSubmit(onFormSubmit)}>
         <VStack gap={4} align="stretch">
           <PizzaInput
@@ -1104,7 +1107,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCart(JSON.parse(storedCart));
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao carregar carrinho";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido ao carregar carrinho";
       console.error("Falha ao carregar o carrinho:", errorMessage);
     }
   }, []);
@@ -1127,7 +1133,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             : item
         );
       } else {
-        updatedItems = [...prevState.items, { product: productToAdd, quantity: 1 }];
+        updatedItems = [
+          ...prevState.items,
+          { product: productToAdd, quantity: 1 },
+        ];
       }
 
       console.log(`Produto ${productToAdd.id} adicionado ao carrinho!`);
@@ -1154,7 +1163,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       setCart((prevState) => {
         const updatedItems = prevState.items.map((item) =>
-          item.product.id === productId ? { ...item, quantity: newQuantity } : item
+          item.product.id === productId
+            ? { ...item, quantity: newQuantity }
+            : item
         );
         const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
         return { items: updatedItems, totalItems, totalPrice };
@@ -1399,7 +1410,8 @@ import {
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
-import { createPedido } from "@/features/pedidos/services/pedidosService";
+import { ordersService } from "@/features/orders/services/ordersService";
+import type { CreateOrderDto } from "@/types/order";
 import { toaster } from "@/components/ui/toaster";
 import { EnderecoSelectionModal } from "@/features/profile/components/EnderecoSelectionModal";
 import { CreditCardForm } from "@/features/payments/components/CreditCardForm";
@@ -1454,16 +1466,17 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     // Agora criar o pedido após pagamento aprovado
     setIsSubmitting(true);
     try {
-      const orderData = {
-        clienteId: user!.id,
-        enderecoId: selectedEndereco!.id,
-        pizzasIds: cart.items.flatMap((item) =>
-          Array(item.quantity).fill(item.product.id)
-        ),
-        paymentIntentId: intentId, // Adicionar ID do pagamento
+      const orderData: CreateOrderDto = {
+        type: "DELIVERY",
+        addressId: selectedEndereco!.id,
+        items: cart.items.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+        })),
+        observations: `Pagamento via Stripe - Intent: ${intentId}`,
       };
 
-      await createPedido(orderData);
+      await ordersService.create(orderData);
       toaster.create({
         title: "Pedido realizado!",
         description: "Seu pedido foi enviado com sucesso.",
@@ -2673,7 +2686,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { VStack, HStack, Button, Box } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
-import { PizzaInput, PizzaTextarea, PizzaButton, PizzaSelect } from "@/components/ui";
+import {
+  PizzaInput,
+  PizzaTextarea,
+  PizzaButton,
+  PizzaSelect,
+} from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";
 import { useCategorias } from "../../categorias/hooks/useCategorias";
 import { Produto } from "@/types/produto";
@@ -3176,10 +3194,18 @@ export const ProdutosList: React.FC = () => {
 ```tsx
 "use client";
 
-import { Box, Image, Text, Button, VStack, HStack, Badge } from '@chakra-ui/react';
-import { Plus } from 'lucide-react';
-import type { Product } from '@/types/product';
-import { parseProductPrice, formatProductPrice } from '@/types/product';
+import {
+  Box,
+  Image,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Badge,
+} from "@chakra-ui/react";
+import { Plus } from "lucide-react";
+import type { Product } from "@/types/product";
+import { parseProductPrice, formatProductPrice } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
@@ -3193,7 +3219,7 @@ interface ProductCardProps {
 export const ProductCard = ({
   product,
   onAddToCart,
-  isLoading = false
+  isLoading = false,
 }: ProductCardProps) => {
   const handleAddToCart = () => {
     onAddToCart?.(product);
@@ -3259,20 +3285,12 @@ export const ProductCard = ({
       {/* Conteúdo */}
       <VStack p="4" align="stretch" gap="3">
         <VStack align="start" gap="1">
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            color="gray.800"
-          >
+          <Text fontSize="lg" fontWeight="semibold" color="gray.800">
             {product.name}
           </Text>
 
           {product.description && (
-            <Text
-              fontSize="sm"
-              color="gray.600"
-              minH="2.5rem"
-            >
+            <Text fontSize="sm" color="gray.600" minH="2.5rem">
               {product.description}
             </Text>
           )}
@@ -3280,11 +3298,7 @@ export const ProductCard = ({
 
         {/* Preço e botão */}
         <HStack justify="space-between" align="center">
-          <Text
-            fontSize="xl"
-            fontWeight="bold"
-            color="orange.600"
-          >
+          <Text fontSize="xl" fontWeight="bold" color="orange.600">
             R$ {formatProductPrice(price)}
           </Text>
 
@@ -3332,10 +3346,14 @@ export * from "./ProdutoCard";
  * @since 28/12/2025
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
-import { productsService } from '../services/productsService';
-import { toaster } from '@/components/ui/toaster';
+import { useState, useCallback, useEffect } from "react";
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+} from "@/types/product";
+import { productsService } from "../services/productsService";
+import { toaster } from "@/components/ui/toaster";
 
 interface UseProductsOptions {
   /**
@@ -3397,10 +3415,11 @@ export const useProducts = (
 
       setProducts(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar produtos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao buscar produtos";
       setError(errorMessage);
       toaster.error({
-        title: 'Erro ao buscar produtos',
+        title: "Erro ao buscar produtos",
         description: errorMessage,
       });
     } finally {
@@ -3427,74 +3446,85 @@ export const useProducts = (
   /**
    * Wrapper para criar produto
    */
-  const handleCreateProduct = useCallback(async (data: CreateProductDto): Promise<Product> => {
-    try {
-      const newProduct = await productsService.create(data);
-      setProducts(prev => [...prev, newProduct]);
-      toaster.success({
-        title: 'Produto criado',
-        description: 'Produto foi criado com sucesso!',
-      });
-      return newProduct;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar produto';
-      toaster.error({
-        title: 'Erro ao criar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleCreateProduct = useCallback(
+    async (data: CreateProductDto): Promise<Product> => {
+      try {
+        const newProduct = await productsService.create(data);
+        setProducts((prev) => [...prev, newProduct]);
+        toaster.success({
+          title: "Produto criado",
+          description: "Produto foi criado com sucesso!",
+        });
+        return newProduct;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao criar produto";
+        toaster.error({
+          title: "Erro ao criar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para atualizar produto
    */
-  const handleUpdateProduct = useCallback(async (
-    productId: string,
-    data: UpdateProductDto
-  ): Promise<Product> => {
-    try {
-      const updatedProduct = await productsService.update(productId, data);
-      setProducts(prev =>
-        prev.map(product =>
-          product.id === productId ? updatedProduct : product
-        )
-      );
-      toaster.success({
-        title: 'Produto atualizado',
-        description: 'Produto foi atualizado com sucesso!',
-      });
-      return updatedProduct;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar produto';
-      toaster.error({
-        title: 'Erro ao atualizar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleUpdateProduct = useCallback(
+    async (productId: string, data: UpdateProductDto): Promise<Product> => {
+      try {
+        const updatedProduct = await productsService.update(productId, data);
+        setProducts((prev) =>
+          prev.map((product) =>
+            product.id === productId ? updatedProduct : product
+          )
+        );
+        toaster.success({
+          title: "Produto atualizado",
+          description: "Produto foi atualizado com sucesso!",
+        });
+        return updatedProduct;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao atualizar produto";
+        toaster.error({
+          title: "Erro ao atualizar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para deletar produto
    */
-  const handleDeleteProduct = useCallback(async (productId: string): Promise<void> => {
-    try {
-      await productsService.delete(productId);
-      setProducts(prev => prev.filter(product => product.id !== productId));
-      toaster.success({
-        title: 'Produto deletado',
-        description: 'Produto foi deletado com sucesso!',
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao deletar produto';
-      toaster.error({
-        title: 'Erro ao deletar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleDeleteProduct = useCallback(
+    async (productId: string): Promise<void> => {
+      try {
+        await productsService.delete(productId);
+        setProducts((prev) =>
+          prev.filter((product) => product.id !== productId)
+        );
+        toaster.success({
+          title: "Produto deletado",
+          description: "Produto foi deletado com sucesso!",
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao deletar produto";
+        toaster.error({
+          title: "Erro ao deletar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   return {
     products,
@@ -3766,8 +3796,12 @@ export const deleteProduto = async (id: string): Promise<void> => {
  * @since 28/12/2025
  */
 
-import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
-import { fetchWithFormData, fetchWithAuth } from '@/utils/fetchHelpers';
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+} from "@/types/product";
+import { fetchWithFormData, fetchWithAuth } from "@/utils/fetchHelpers";
 
 /**
  * Erro customizado para operações de produtos
@@ -3779,7 +3813,7 @@ class ProductServiceError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'ProductServiceError';
+    this.name = "ProductServiceError";
   }
 }
 
@@ -3792,24 +3826,27 @@ const createFormData = (
   const formData = new FormData();
 
   // Adiciona campos de texto
-  if (data.name !== undefined) formData.append('name', data.name);
-  if (data.description !== undefined) formData.append('description', data.description);
-  if (data.categoryId !== undefined) formData.append('categoryId', data.categoryId);
+  if (data.name !== undefined) formData.append("name", data.name);
+  if (data.description !== undefined)
+    formData.append("description", data.description);
+  if (data.categoryId !== undefined)
+    formData.append("categoryId", data.categoryId);
 
   // Adiciona campo active apenas se existir (UpdateProductDto)
-  if ('active' in data && data.active !== undefined) {
-    formData.append('active', data.active.toString());
+  if ("active" in data && data.active !== undefined) {
+    formData.append("active", data.active.toString());
   }
 
   // Converte preço para string se for número
   if (data.price !== undefined) {
-    const priceStr = typeof data.price === 'number' ? data.price.toString() : data.price;
-    formData.append('price', priceStr);
+    const priceStr =
+      typeof data.price === "number" ? data.price.toString() : data.price;
+    formData.append("price", priceStr);
   }
 
   // Adiciona arquivo de imagem
   if (data.image) {
-    formData.append('image', data.image);
+    formData.append("image", data.image);
   }
 
   return formData;
@@ -3820,12 +3857,12 @@ const createFormData = (
  */
 export const getAllProducts = async (): Promise<Product[]> => {
   try {
-    return await fetchWithAuth('/products');
+    return await fetchWithAuth("/products");
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos', 500, error);
+    throw new ProductServiceError("Erro ao buscar produtos", 500, error);
   }
 };
 
@@ -3836,12 +3873,18 @@ export const getProductsByCategory = async (
   categoryId: string
 ): Promise<Product[]> => {
   try {
-    return await fetchWithAuth(`/products?categoryId=${encodeURIComponent(categoryId)}`);
+    return await fetchWithAuth(
+      `/products?categoryId=${encodeURIComponent(categoryId)}`
+    );
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos por categoria', 500, error);
+    throw new ProductServiceError(
+      "Erro ao buscar produtos por categoria",
+      500,
+      error
+    );
   }
 };
 
@@ -3852,10 +3895,10 @@ export const getProductById = async (productId: string): Promise<Product> => {
   try {
     return await fetchWithAuth(`/products/${productId}`);
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produto', 500, error);
+    throw new ProductServiceError("Erro ao buscar produto", 500, error);
   }
 };
 
@@ -3867,12 +3910,12 @@ export const createProduct = async (
 ): Promise<Product> => {
   try {
     const formData = createFormData(data);
-    return await fetchWithFormData('/products', formData, 'POST');
+    return await fetchWithFormData("/products", formData, "POST");
   } catch (error) {
     if (error instanceof ProductServiceError) {
       throw error;
     }
-    throw new ProductServiceError('Erro ao criar produto', 500, error);
+    throw new ProductServiceError("Erro ao criar produto", 500, error);
   }
 };
 
@@ -3885,12 +3928,12 @@ export const updateProduct = async (
 ): Promise<Product> => {
   try {
     const formData = createFormData(data);
-    return await fetchWithFormData(`/products/${productId}`, formData, 'PATCH');
+    return await fetchWithFormData(`/products/${productId}`, formData, "PATCH");
   } catch (error) {
     if (error instanceof ProductServiceError) {
       throw error;
     }
-    throw new ProductServiceError('Erro ao atualizar produto', 500, error);
+    throw new ProductServiceError("Erro ao atualizar produto", 500, error);
   }
 };
 
@@ -3899,12 +3942,12 @@ export const updateProduct = async (
  */
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
-    await fetchWithAuth(`/products/${productId}`, { method: 'DELETE' });
+    await fetchWithAuth(`/products/${productId}`, { method: "DELETE" });
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao deletar produto', 500, error);
+    throw new ProductServiceError("Erro ao deletar produto", 500, error);
   }
 };
 
@@ -3928,14 +3971,18 @@ export const getProductsWithFilters = async (filters?: {
     }
 
     const queryString = params.toString();
-    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/products${queryString ? `?${queryString}` : ""}`;
 
     return await fetchWithAuth(endpoint);
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos com filtros', 500, error);
+    throw new ProductServiceError(
+      "Erro ao buscar produtos com filtros",
+      500,
+      error
+    );
   }
 };
 
@@ -4712,751 +4759,6 @@ export * from './types';
 ---
 
 
-## 📝 `src/features/pizzas/components/PizzaFormContainer.tsx`
-
-```tsx
-"use client";
-
-import { useEffect } from "react";
-import {
-  pizzaFormSchema,
-  PizzaFormInputData,
-  PizzaFormOutputData,
-} from "@/utils/validation";
-import { useForm } from "react-hook-form"; // Não precisamos mais do SubmitHandler aqui
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PizzaForm } from "./PizzaForm";
-
-import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
-import { AppModal } from "@/components/ui/AppModal";
-
-interface PizzaFormContainerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: (data: CreatePizzaWithImageData, pizzaId?: number) => void;
-  pizzaToEdit: Pizza | null;
-  isLoading?: boolean;
-  apiError: string | null;
-}
-
-export const PizzaFormContainer = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  pizzaToEdit,
-}: PizzaFormContainerProps) => {
-  const {
-    handleSubmit,
-    register,
-    reset,
-    control,
-    formState: { errors, isSubmitting },
-    watch,
-  } = useForm<PizzaFormInputData>({
-    resolver: zodResolver(pizzaFormSchema),
-    mode: "onChange",
-    defaultValues: {
-      nome: "",
-      descricao: "",
-      preco: "",
-    },
-  });
-
-  useEffect(() => {
-    if (isOpen) {
-      if (pizzaToEdit) {
-        reset({
-          nome: pizzaToEdit.nome,
-          descricao: pizzaToEdit.descricao || "",
-          preco: String(pizzaToEdit.preco),
-        });
-      } else {
-        reset({
-          nome: "",
-          descricao: "",
-          preco: "",
-        });
-      }
-    }
-  }, [isOpen, pizzaToEdit, reset]);
-
-  // Esta função, que lida com a lógica de negócio, permanece a mesma.
-  const processSubmit = async (data: PizzaFormOutputData) => {
-    const dataToSend: CreatePizzaWithImageData = {
-      ...data,
-      image: data.image,
-    };
-    await onSuccess(dataToSend, pizzaToEdit?.id);
-  };
-
-  // Função `onSubmit` aceita os dados como o `handleSubmit` os vê
-  // (com `preco: unknown`) e usa o `safeParse` do Zod como uma "ponte segura" de tipagem.
-  const onSubmit = async (data: PizzaFormInputData) => {
-    // Usamos `safeParse` para validar os dados novamente.
-    // Isso serve como uma verificação em tempo de execução e, mais importante,
-    // como um "type guard" para o TypeScript.
-    const validationResult = pizzaFormSchema.safeParse(data);
-
-    if (validationResult.success) {
-      // Se a validação for bem-sucedida, `validationResult.data` agora
-      // é GARANTIDO que seja do tipo `PizzaFormOutputData`, com `preco: number`.
-      // Agora podemos chamar nossa função de lógica de negócio com segurança.
-      await processSubmit(validationResult.data);
-    } else {
-      // Este bloco é uma segurança. Teoricamente, o `zodResolver`
-      // já deveria ter impedido dados inválidos de chegar até aqui.
-      console.error(
-        "A validação falhou dentro do onSubmit, o que não deveria acontecer:",
-        validationResult.error
-      );
-    }
-  };
-
-  return (
-    <AppModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={pizzaToEdit ? "Editar Pizza" : "Nova Pizza"}
-    >
-      <PizzaForm
-        onSubmit={handleSubmit(onSubmit)} // Passamos a nova função segura
-        register={register}
-        control={control}
-        errors={errors}
-        isSubmitting={isSubmitting}
-        isEditing={!!pizzaToEdit}
-        onCancel={onClose}
-        watch={watch}
-        pizzaToEdit={pizzaToEdit}
-      />
-    </AppModal>
-  );
-};
-```
-
----
-
-
-## 📝 `src/features/pizzas/components/GerenciarCardapio.tsx`
-
-```tsx
-"use client";
-
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Heading,
-  Icon,
-  Image,
-  Text,
-  AspectRatio,
-  HStack,
-} from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { PlusCircle } from "lucide-react";
-import { TbArrowBack } from "react-icons/tb";
-
-import { formatCurrency } from "@/utils/format";
-
-import { UsePizzasReturn } from "../hooks/usePizzas";
-import { PizzaButton, PizzaLoading } from "@/components/ui";
-
-const MotionBox = motion(Box);
-
-interface GerenciarCardapioProps {
-  onNavigateBack: () => void;
-  pizzaHook: Pick<
-    UsePizzasReturn,
-    "pizzas" | "isLoading" | "handleDelete" | "handleOpenFormModal"
-  >;
-}
-
-export const GerenciarCardapio = ({
-  onNavigateBack,
-  pizzaHook,
-}: GerenciarCardapioProps) => {
-  const { pizzas, isLoading, handleDelete, handleOpenFormModal } = pizzaHook;
-
-  if (isLoading) {
-    return <PizzaLoading />;
-  }
-
-  return (
-    <MotionBox
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      w="full"
-    >
-      <Flex justify="space-between" align="center" mb={6}>
-        <Button onClick={onNavigateBack} variant="ghost">
-          <Icon as={TbArrowBack} mr="2" />
-          Voltar ao Dashboard
-        </Button>
-
-        <Heading size="lg">Gerenciar Cardápio</Heading>
-
-        <PizzaButton onClick={() => handleOpenFormModal()}>
-          <Flex align="center" gap="2">
-            <PlusCircle size={20} />
-            <Text>Nova Pizza</Text>
-          </Flex>
-        </PizzaButton>
-      </Flex>
-
-      <Grid
-        templateColumns={{
-          base: "1fr",
-          md: "repeat(2, 1fr)",
-          lg: "repeat(3, 1fr)",
-        }}
-        gap={6}
-      >
-        {pizzas.map((pizza) => (
-          <Box
-            key={pizza.id}
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            shadow="md"
-          >
-            <AspectRatio ratio={16 / 9}>
-              <Image
-                src={pizza.image || "/default-pizza.png"}
-                alt={pizza.nome}
-                objectFit="cover"
-              />
-            </AspectRatio>
-            <Box p={4}>
-              <Heading size="md">{pizza.nome}</Heading>
-              <Text fontSize="sm" color="gray.500" lineClamp={2} minH="40px">
-                {pizza.descricao}
-              </Text>
-              <Text fontWeight="bold" fontSize="lg" color="green.500" mt={2}>
-                {formatCurrency(pizza.preco)}
-              </Text>
-            </Box>
-            <HStack borderTopWidth="1px" p={2} gap={3}>
-              <Button
-                variant="solid"
-                bg="green.600"
-                color="white"
-                size="sm"
-                flex={1}
-                _hover={{ bg: "green.700" }}
-                onClick={() => handleOpenFormModal(pizza)}
-              >
-                Editar
-              </Button>
-              <Button
-                variant="outline"
-                colorScheme="red"
-                size="sm"
-                borderColor="red.500"
-                color="red.600"
-                flex={1}
-                _hover={{
-                  bg: "transparent",
-                  borderColor: "red.700",
-                  color: "red.700",
-                }}
-                onClick={() => handleDelete(Number(pizza.id))}
-              >
-                Remover
-              </Button>
-            </HStack>
-          </Box>
-        ))}
-      </Grid>
-    </MotionBox>
-  );
-};
-```
-
----
-
-
-## 📝 `src/features/pizzas/components/PizzaCard.tsx`
-
-```tsx
-"use client";
-
-import { AspectRatio, Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
-
-import { Pizza } from "@/types/pizzas";
-import { formatCurrency } from "@/utils/format";
-import { PizzaButton } from "@/components/ui";
-import { usePermissions } from "@/hooks/usePermissions";
-
-// O componente agora só precisa saber como é uma Pizza
-interface PizzaCardProps {
-  pizza: Pizza;
-  onAddToCart: (pizzaId: number) => void; // Função para adicionar ao carrinho (a ser implementada no futuro)
-}
-
-export const PizzaCard = ({ pizza, onAddToCart }: PizzaCardProps) => {
-  const { isCliente } = usePermissions();
-
-  return (
-    <Box
-      borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      shadow="lg"
-      transition="transform 0.2s"
-      _hover={{ transform: "scale(1.02)" }}
-    >
-      <AspectRatio ratio={16 / 9}>
-        <Image
-          src={pizza.image || "/default-pizza.png"}
-          alt={`Pizza ${pizza.nome}`}
-          objectFit="cover"
-        />
-      </AspectRatio>
-
-      <Box p={5}>
-        <Heading size="md" mb={2}>
-          {pizza.nome}
-        </Heading>
-        <Text fontSize="sm" color="gray.600" lineClamp={3} minH="60px">
-          {pizza.descricao}
-        </Text>
-      </Box>
-
-      <Flex borderTopWidth="1px" p={4} justify="space-between" align="center">
-        <Text fontWeight="bold" fontSize="xl" color="green.500">
-          {formatCurrency(pizza.preco)}
-        </Text>
-        {isCliente() && (
-          <PizzaButton onClick={() => onAddToCart(Number(pizza.id))}>
-            Adicionar
-          </PizzaButton>
-        )}
-      </Flex>
-    </Box>
-  );
-};
-```
-
----
-
-
-## 📝 `src/features/pizzas/components/PizzaForm.tsx`
-
-```tsx
-import { PizzaInput, PizzaTextarea, PizzaFileInput } from "@/components/ui";
-import { PizzaFormInputData } from "@/utils/validation";
-import { PizzaCard } from "./PizzaCard";
-import { Pizza } from "@/types/pizzas";
-
-import {
-  Box,
-  Heading,
-  VStack,
-  HStack,
-  Button,
-  BoxProps,
-  TextProps,
-  Text,
-} from "@chakra-ui/react";
-import { FormEvent, ReactNode, useMemo } from "react";
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  Controller,
-  UseFormWatch,
-} from "react-hook-form";
-
-// Interfaces para componentes Field tipados
-interface FieldRootProps extends BoxProps {
-  children: ReactNode;
-}
-
-interface FieldLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  children: ReactNode;
-}
-
-interface FieldErrorTextProps extends TextProps {
-  children?: ReactNode;
-}
-
-// Componentes customizados para Field com tipagem adequada
-const Field = {
-  Root: ({ children, ...props }: FieldRootProps) => (
-    <Box {...props}>{children}</Box>
-  ),
-  Label: ({ children, ...props }: FieldLabelProps) => (
-    <label {...props}>{children}</label>
-  ),
-  ErrorText: ({ children, ...props }: FieldErrorTextProps) => (
-    <Box as="p" color="red.500" fontSize="sm" {...props}>
-      {children}
-    </Box>
-  ),
-};
-
-export interface PizzaFormProps {
-  onSubmit: (e: FormEvent) => void;
-  onCancel: () => void;
-  isSubmitting: boolean;
-  isEditing: boolean;
-  errors: FieldErrors<PizzaFormInputData>;
-  register: UseFormRegister<PizzaFormInputData>;
-  control: Control<PizzaFormInputData>;
-  watch: UseFormWatch<PizzaFormInputData>;
-  pizzaToEdit?: Pizza | null;
-}
-
-export const PizzaForm = ({
-  onSubmit,
-  onCancel,
-  isSubmitting,
-  isEditing,
-  errors,
-  register,
-  control,
-  watch,
-  pizzaToEdit,
-}: PizzaFormProps) => {
-  // Observar os valores do formulário para o preview
-  const watchedValues = watch();
-
-  // Criar um objeto pizza mockado para o preview
-  const previewPizza = useMemo(() => {
-    const preco = parseFloat(String(watchedValues.preco || "0"));
-    const hasNewImage = watchedValues.image;
-    const existingImage = pizzaToEdit?.image;
-
-    return {
-      id: 0, // ID mockado
-      nome: watchedValues.nome || "Nome da Pizza",
-      descricao:
-        watchedValues.descricao || "Descrição da pizza aparecerá aqui...",
-      preco: isNaN(preco) ? 0 : preco,
-      image: hasNewImage && watchedValues.image
-        ? URL.createObjectURL(watchedValues.image)
-        : existingImage || null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  }, [watchedValues, pizzaToEdit]);
-
-  return (
-    <Box as="form" onSubmit={onSubmit} w="full">
-      <VStack gap={6} align="stretch">
-        {/* Preview sempre visível */}
-        <Box>
-          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
-            📱 Preview do Cardápio
-          </Heading>
-          <Box
-            display="flex"
-            justifyContent="center"
-            minH={{ base: "300px", lg: "400px" }}
-            p={4}
-          >
-            <Box w="full" maxW="400px">
-              <PizzaCard
-                pizza={previewPizza as Pizza}
-                onAddToCart={() => {}} // Função vazia para preview
-              />
-            </Box>
-          </Box>
-          <Text fontSize="sm" color="gray.500" textAlign="center" mb={6}>
-            Este é como a pizza aparecerá no cardápio
-          </Text>
-        </Box>
-
-        {/* Formulário */}
-        <Box>
-          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
-            🛠️ Dados da Pizza
-          </Heading>
-          <VStack gap={4} align="stretch">
-            <Field.Root>
-              <Field.Label>Nome da Pizza *</Field.Label>
-              <PizzaInput {...register("nome")} />
-              <Field.ErrorText>{errors.nome?.message}</Field.ErrorText>
-            </Field.Root>
-
-            <Field.Root>
-              <Field.Label>Descrição *</Field.Label>
-              <PizzaTextarea {...register("descricao")} rows={4} />
-              <Field.ErrorText>{errors.descricao?.message}</Field.ErrorText>
-            </Field.Root>
-
-            <Field.Root>
-              <Field.Label>Preço (R$) *</Field.Label>
-              {/* O RHF lida com a conversão de `number` para a `string` que o input espera */}
-              <PizzaInput type="number" step="0.01" {...register("preco")} />
-              <Field.ErrorText>{errors.preco?.message}</Field.ErrorText>
-            </Field.Root>
-
-            <Controller
-              name="image"
-              control={control}
-              render={({ field: { onChange, ...field }, fieldState }) => (
-                <Field.Root>
-                  <Field.Label>Imagem da Pizza</Field.Label>
-                  <PizzaFileInput
-                    onChange={(file) => onChange(file ? [file] : null)}
-                    {...field}
-                  />
-                  <Field.ErrorText>{fieldState.error?.message}</Field.ErrorText>
-                </Field.Root>
-              )}
-            />
-
-            <HStack w="full" gap={4} mt={6}>
-              <Button type="submit" loading={isSubmitting} flex={1}>
-                {isEditing ? "Atualizar Pizza" : "Salvar Pizza"}
-              </Button>
-              <Button onClick={onCancel} variant="outline" flex={1}>
-                Cancelar
-              </Button>
-            </HStack>
-          </VStack>
-        </Box>
-      </VStack>
-    </Box>
-  );
-};
-```
-
----
-
-
-## 📝 `src/features/pizzas/hooks/usePizzas.ts`
-
-```typescript
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-
-import {
-  createPizza,
-  deletePizza,
-  getPizzas,
-  updatePizza,
-} from "../services/pizzasService";
-
-import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
-import { toaster } from "@/components/ui/toaster";
-
-export type UsePizzasReturn = ReturnType<typeof usePizzas>;
-
-/**
- * Hook com a Responsabilidade Única de gerenciar todo o estado e lógica de negócio
- * relacionados a Pizzas. Substitui o useCardapio e a lógica de pizza do useDashboard.
- */
-export const usePizzas = () => {
-  // --- ESTADO ---
-  const [pizzas, setPizzas] = useState<Pizza[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Estado para o modal de criação/edição (antes no useDashboard)
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [pizzaToEdit, setPizzaToEdit] = useState<Pizza | null>(null);
-
-  // --- LÓGICA DE DADOS (API) ---
-  const fetchPizzas = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await getPizzas();
-      setPizzas(data);
-      setError(null);
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Erro ao carregar pizzas.";
-      setError(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPizzas();
-  }, [fetchPizzas]);
-
-  // --- HANDLERS DE AÇÕES (CRUD) ---
-  const handleDelete = async (pizzaId: number) => {
-    // Adicionaremos um try-catch aqui para robustez
-    try {
-      await deletePizza(pizzaId);
-      setPizzas((prevPizzas) => prevPizzas.filter((p) => p.id !== pizzaId));
-      toaster.create({
-        title: "Sucesso!",
-        description: "Pizza deletada.",
-        type: "success",
-      });
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Não foi possível deletar.";
-      toaster.create({ title: "Erro", description: msg, type: "error" });
-    }
-  };
-
-  const handleSavePizza = async (
-    formData: CreatePizzaWithImageData,
-    pizzaId?: number
-  ) => {
-    try {
-      const action = pizzaId
-        ? updatePizza(pizzaId, formData)
-        : createPizza(formData);
-      await action;
-
-      const successMessage = pizzaId
-        ? "Pizza atualizada com sucesso."
-        : "Pizza criada com sucesso.";
-      toaster.create({
-        title: "Sucesso!",
-        description: successMessage,
-        type: "success",
-      });
-
-      handleCloseFormModal();
-      fetchPizzas(); // Re-busca a lista de pizzas para refletir a mudança
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Não foi possível salvar a pizza.";
-      toaster.create({ title: "Erro", description: msg, type: "error" });
-    }
-  };
-
-  // --- HANDLERS DE UI (Modal) ---
-  const handleOpenFormModal = (pizza: Pizza | null = null) => {
-    setPizzaToEdit(pizza);
-    setIsFormModalOpen(true);
-  };
-
-  const handleCloseFormModal = () => {
-    setIsFormModalOpen(false);
-    setPizzaToEdit(null);
-  };
-
-  return {
-    // Dados
-    pizzas,
-    isLoading,
-    error,
-    // Estado do Modal
-    isFormModalOpen,
-    pizzaToEdit,
-    // Funções
-    refetch: fetchPizzas,
-    handleDelete,
-    handleSavePizza,
-    handleOpenFormModal,
-    handleCloseFormModal,
-  };
-};
-```
-
----
-
-
-## 📝 `src/features/pizzas/services/pizzasService.ts`
-
-```typescript
-import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
-import { getAuthToken } from "@/utils/cookies";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper para criar o cabeçalho de autorização (CORRIGIDO)
-const getAuthHeaders = () => {
-  // Inicializamos o objeto de cabeçalhos com o tipo explícito que o fetch espera.
-  const headers: Record<string, string> = {
-    // Podemos adicionar outros cabeçalhos padrão aqui se necessário,
-    // por exemplo: 'Content-Type': 'application/json'
-  };
-
-  const token = getAuthToken();
-  if (token) {
-    // Se o token existir, adicionamos a propriedade Authorization.
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  // O objeto retornado agora sempre será do tipo Record<string, string>,
-  // mesmo que esteja vazio, o que satisfaz o TypeScript.
-  return headers;
-};
-
-const createPizzaFormData = (
-  data: Partial<CreatePizzaWithImageData>
-): FormData => {
-  const formData = new FormData();
-  if (data.nome) formData.append("nome", data.nome);
-  if (data.descricao) formData.append("descricao", data.descricao);
-  if (data.preco !== undefined) formData.append("preco", String(data.preco));
-  if (data.image) formData.append("image", data.image);
-  return formData;
-};
-
-// --- FUNÇÕES USANDO O HELPER CORRIGIDO ---
-
-export const getPizzas = async (): Promise<Pizza[]> => {
-  const response = await fetch(`${API_URL}/pizzas`, {
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) throw new Error("Erro ao buscar as pizzas.");
-  const result = await response.json();
-  return result.data; // Extrair apenas o array de pizzas
-};
-
-export const createPizza = async (
-  data: CreatePizzaWithImageData
-): Promise<Pizza> => {
-  const formData = createPizzaFormData(data);
-  const response = await fetch(`${API_URL}/pizzas/with-image`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: formData,
-  });
-
-  const responseData = await response.json();
-  if (!response.ok)
-    throw new Error(responseData.message || "Erro ao criar a pizza.");
-  return responseData.data;
-};
-
-export const updatePizza = async (
-  id: number,
-  data: Partial<CreatePizzaWithImageData>
-): Promise<Pizza> => {
-  const formData = createPizzaFormData(data);
-  const response = await fetch(`${API_URL}/pizzas/${id}`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: formData,
-  });
-
-  const responseData = await response.json();
-  if (!response.ok)
-    throw new Error(responseData.message || "Erro ao atualizar a pizza.");
-  return responseData.data;
-};
-
-export const deletePizza = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/pizzas/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData.message || "Erro ao deletar a pizza.");
-  }
-};
-```
-
----
-
-
 ## 📝 `src/features/payments/types/payment.ts`
 
 ```typescript
@@ -6146,12 +5448,12 @@ import {
   TagRoot,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
 import { PedidoCard } from "./PedidoCard";
 
 interface PedidosKanbanProps {
-  pedidos?: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedidos?: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }
 
 const KanbanColumn = ({
@@ -6161,9 +5463,9 @@ const KanbanColumn = ({
   onUpdateStatus,
 }: {
   title: string;
-  status: StatusPedido;
-  pedidos: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  status: OrderStatus;
+  pedidos: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -6190,55 +5492,51 @@ const KanbanColumn = ({
         e.preventDefault();
         setIsDragOver(false);
         if (onUpdateStatus) {
-          const pedidoId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const pedidoId = parseInt(e.dataTransfer.getData("text/plain"), 10);
           onUpdateStatus(pedidoId, status);
         }
       }}
     >
-    <Flex align="center" mb={4}>
-      <TagRoot
-        size="lg"
-        variant="solid"
-        colorScheme={statusConfig[status].colorScheme}
-      >
-        {pedidos.length}
-      </TagRoot>
+      <Flex align="center" mb={4}>
+        <TagRoot size="lg" variant="solid" colorScheme="blue">
+          {pedidos.length}
+        </TagRoot>
 
-      <Heading size="md" color="text.primary" ml={3}>
-        {title}
-      </Heading>
-    </Flex>
-    <VStack gap="4" align="stretch">
-      {pedidos.map((pedido) => (
-        <PedidoCard
-          key={pedido.id}
-          pedido={pedido}
-          onUpdateStatus={onUpdateStatus}
-          viewMode="kanban"
-        />
-      ))}
-      {isDragOver && (
-        <Box
-          borderWidth="2px"
-          borderRadius="lg"
-          p={4}
-          borderColor="brand.primary"
-          borderStyle="dashed"
-          bg="background.primary"
-          minH="80px"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          color="brand.primary"
-          fontSize="sm"
-          fontWeight="600"
-          transition="all 0.2s"
-        >
-          Solte aqui para mover
-        </Box>
-      )}
-    </VStack>
-  </Box>
+        <Heading size="md" color="text.primary" ml={3}>
+          {title}
+        </Heading>
+      </Flex>
+      <VStack gap="4" align="stretch">
+        {pedidos.map((pedido) => (
+          <PedidoCard
+            key={pedido.id}
+            pedido={pedido}
+            onUpdateStatus={onUpdateStatus}
+            viewMode="kanban"
+          />
+        ))}
+        {isDragOver && (
+          <Box
+            borderWidth="2px"
+            borderRadius="lg"
+            p={4}
+            borderColor="brand.primary"
+            borderStyle="dashed"
+            bg="background.primary"
+            minH="80px"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color="brand.primary"
+            fontSize="sm"
+            fontWeight="600"
+            transition="all 0.2s"
+          >
+            Solte aqui para mover
+          </Box>
+        )}
+      </VStack>
+    </Box>
   );
 };
 
@@ -6246,7 +5544,7 @@ export const PedidosKanban = ({
   pedidos = [],
   onUpdateStatus,
 }: PedidosKanbanProps) => {
-  const pedidosPorStatus = (status: StatusPedido) =>
+  const pedidosPorStatus = (status: OrderStatus) =>
     pedidos.filter((p) => p.status === status);
 
   return (
@@ -6254,26 +5552,26 @@ export const PedidosKanban = ({
       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap="5">
         <KanbanColumn
           title="Pendentes"
-          status={StatusPedido.PENDENTE}
-          pedidos={pedidosPorStatus(StatusPedido.PENDENTE)}
+          status="PENDENTE"
+          pedidos={pedidosPorStatus("PENDENTE")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="Em Preparo"
-          status={StatusPedido.EM_PREPARO}
-          pedidos={pedidosPorStatus(StatusPedido.EM_PREPARO)}
+          status="EM_PREPARO"
+          pedidos={pedidosPorStatus("EM_PREPARO")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="A Caminho"
-          status={StatusPedido.A_CAMINHO}
-          pedidos={pedidosPorStatus(StatusPedido.A_CAMINHO)}
+          status="A_CAMINHO"
+          pedidos={pedidosPorStatus("A_CAMINHO")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="Entregues"
-          status={StatusPedido.ENTREGUE}
-          pedidos={pedidosPorStatus(StatusPedido.ENTREGUE)}
+          status="ENTREGUE"
+          pedidos={pedidosPorStatus("ENTREGUE")}
           onUpdateStatus={onUpdateStatus}
         />
       </SimpleGrid>
@@ -6291,20 +5589,20 @@ export const PedidosKanban = ({
 "use client";
 
 import { Box, Input, Flex, Button, HStack } from "@chakra-ui/react";
-import { StatusPedido } from "@/types/pedidos";
+import { OrderStatus } from "@/types/order";
 import { X } from "lucide-react";
 
 interface PedidosFiltersProps {
-  statusFilters: StatusPedido[];
+  statusFilters: OrderStatus[];
   clienteFilter: string;
   pedidoFilter: string;
-  onStatusChange: (statuses: StatusPedido[]) => void;
+  onStatusChange: (statuses: OrderStatus[]) => void;
   onClienteChange: (nome: string) => void;
   onPedidoChange: (numero: string) => void;
 }
 
 const statusConfig: Record<
-  StatusPedido,
+  OrderStatus,
   { label: string; bgColor: string; borderColor: string; activeBgColor: string }
 > = {
   PENDENTE: {
@@ -6324,6 +5622,12 @@ const statusConfig: Record<
     bgColor: "#f5f5f5",
     borderColor: "#e0e0e0",
     activeBgColor: "#e3f2fd",
+  },
+  PRONTO: {
+    label: "Pronto",
+    bgColor: "#f5f5f5",
+    borderColor: "#e0e0e0",
+    activeBgColor: "#e8f5e9",
   },
   ENTREGUE: {
     label: "Entregue",
@@ -6347,7 +5651,7 @@ export const PedidosFilters = ({
   onClienteChange,
   onPedidoChange,
 }: PedidosFiltersProps) => {
-  const handleStatusToggle = (status: StatusPedido) => {
+  const handleStatusToggle = (status: OrderStatus) => {
     if (statusFilters.includes(status)) {
       onStatusChange(statusFilters.filter((s) => s !== status));
     } else {
@@ -6362,7 +5666,7 @@ export const PedidosFilters = ({
       "A_CAMINHO",
       "ENTREGUE",
       "CANCELADO",
-    ] as unknown as StatusPedido[];
+    ] as unknown as OrderStatus[];
     onStatusChange(allStatuses);
   };
 
@@ -6372,7 +5676,8 @@ export const PedidosFilters = ({
     onPedidoChange("");
   };
 
-  const hasActiveFilters = statusFilters.length > 0 || clienteFilter || pedidoFilter;
+  const hasActiveFilters =
+    statusFilters.length > 0 || clienteFilter || pedidoFilter;
 
   return (
     <Box
@@ -6396,7 +5701,7 @@ export const PedidosFilters = ({
           Status
         </label>
         <HStack gap={2} flexWrap="wrap">
-          {(Object.keys(statusConfig) as StatusPedido[]).map((status) => {
+          {(Object.keys(statusConfig) as OrderStatus[]).map((status) => {
             const isSelected = statusFilters.includes(status);
             const config = statusConfig[status];
             return (
@@ -6443,43 +5748,42 @@ export const PedidosFilters = ({
       </Box>
 
       <Flex gap={4} flexWrap="wrap" align="flex-end">
+        {/* Filtro por Número do Pedido */}
+        <Box minW="120px">
+          <label style={{ fontSize: "0.875rem", color: "#757575" }}>
+            Pedido #
+          </label>
+          <Input
+            placeholder="Nº do pedido"
+            value={pedidoFilter}
+            onChange={(e) => onPedidoChange(e.target.value)}
+            mt={1}
+            size="sm"
+            type="number"
+            bg="background.primary"
+            borderColor="background.tertiary"
+            color="text.primary"
+            _placeholder={{ color: "text.secondary" }}
+          />
+        </Box>
 
-      {/* Filtro por Número do Pedido */}
-      <Box minW="120px">
-        <label style={{ fontSize: "0.875rem", color: "#757575" }}>
-          Pedido #
-        </label>
-        <Input
-          placeholder="Nº do pedido"
-          value={pedidoFilter}
-          onChange={(e) => onPedidoChange(e.target.value)}
-          mt={1}
-          size="sm"
-          type="number"
-          bg="background.primary"
-          borderColor="background.tertiary"
-          color="text.primary"
-          _placeholder={{ color: "text.secondary" }}
-        />
-      </Box>
-
-      {/* Filtro por Nome do Cliente */}
-      <Box flex={1} minW="200px">
-        <label style={{ fontSize: "0.875rem", color: "#757575" }}>
-          Cliente
-        </label>
-        <Input
-          placeholder="Digite o nome do cliente..."
-          value={clienteFilter}
-          onChange={(e) => onClienteChange(e.target.value)}
-          mt={1}
-          size="sm"
-          bg="background.primary"
-          borderColor="background.tertiary"
-          color="text.primary"
-          _placeholder={{ color: "text.secondary" }}
-        />
-      </Box>
+        {/* Filtro por Nome do Cliente */}
+        <Box flex={1} minW="200px">
+          <label style={{ fontSize: "0.875rem", color: "#757575" }}>
+            Cliente
+          </label>
+          <Input
+            placeholder="Digite o nome do cliente..."
+            value={clienteFilter}
+            onChange={(e) => onClienteChange(e.target.value)}
+            mt={1}
+            size="sm"
+            bg="background.primary"
+            borderColor="background.tertiary"
+            color="text.primary"
+            _placeholder={{ color: "text.secondary" }}
+          />
+        </Box>
 
         {hasActiveFilters && (
           <Button
@@ -6508,22 +5812,29 @@ export const PedidosFilters = ({
 ```tsx
 "use client";
 
-import {
-  Box,
-  Heading,
-  Text,
-  Flex,
-} from "@chakra-ui/react";
-import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
+import { Box, Heading, Text, Flex } from "@chakra-ui/react";
+import { Order, OrderStatus } from "@/types/order";
+
+const ORDER_STATUS_VALUES: OrderStatus[] = [
+  "PENDENTE",
+  "EM_PREPARO",
+  "A_CAMINHO",
+  "PRONTO",
+  "ENTREGUE",
+  "CANCELADO",
+];
 
 interface PedidoCardProps {
-  pedido: Pedido;
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedido: Order;
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
   viewMode?: "kanban" | "grid";
 }
 
-export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: PedidoCardProps) => {
-
+export const PedidoCard = ({
+  pedido,
+  onUpdateStatus,
+  viewMode = "kanban",
+}: PedidoCardProps) => {
   return (
     <Box
       borderWidth="1px"
@@ -6534,10 +5845,10 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
       shadow="sm"
       draggable={!!onUpdateStatus}
       onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
-        e.dataTransfer.setData('text/plain', pedido.id.toString());
+        e.dataTransfer.setData("text/plain", pedido.id.toString());
       }}
-      cursor={onUpdateStatus ? 'grab' : 'default'}
-      _active={{ cursor: onUpdateStatus ? 'grabbing' : 'default' }}
+      cursor={onUpdateStatus ? "grab" : "default"}
+      _active={{ cursor: onUpdateStatus ? "grabbing" : "default" }}
     >
       <Flex justify="space-between" align="flex-start" gap={3}>
         <Box flex={1}>
@@ -6545,7 +5856,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
           <Heading size="md">Pedido #{pedido.id}</Heading>
           {/* ALTERADO: Cor do texto secundário */}
           <Text fontSize="sm" color="text.secondary">
-            Cliente: {pedido.user.nome || "Cliente não identificado"}
+            Tipo: {pedido.type === "DELIVERY" ? "Entrega" : "Mesa"}
           </Text>
         </Box>
 
@@ -6565,6 +5876,8 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 ? "#fff3e0"
                 : pedido.status === "A_CAMINHO"
                 ? "#e3f2fd"
+                : pedido.status === "PRONTO"
+                ? "#e8f5e8"
                 : pedido.status === "ENTREGUE"
                 ? "#e8f5e9"
                 : "#ffebee"
@@ -6576,6 +5889,8 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 ? "#f57c00"
                 : pedido.status === "A_CAMINHO"
                 ? "#1976d2"
+                : pedido.status === "PRONTO"
+                ? "#388e3c"
                 : pedido.status === "ENTREGUE"
                 ? "#388e3c"
                 : "#c62828"
@@ -6593,16 +5908,16 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 : "#ef5350"
             }
           >
-            {statusConfig[pedido.status].label}
+            {pedido.status}
           </Box>
         )}
       </Flex>
 
       <Box mt={3}>
-        {pedido.pizzas.map((pizza) => (
-          // O texto das pizzas também herdará a cor correta
-          <Text key={pizza.id} fontSize="sm">
-            - {pizza.nome}
+        {pedido.items.map((item) => (
+          // O texto dos itens também herdará a cor correta
+          <Text key={item.id} fontSize="sm">
+            - {item.product.name}
           </Text>
         ))}
       </Box>
@@ -6611,22 +5926,24 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
         <Box mt={3}>
           <select
             value={pedido.status}
-            onChange={(e) => onUpdateStatus(pedido.id, e.target.value as StatusPedido)}
+            onChange={(e) =>
+              onUpdateStatus(pedido.id, e.target.value as OrderStatus)
+            }
             style={{
-              width: '100%',
-              padding: '0.5rem',
-              borderRadius: '0.375rem',
-              border: '1px solid #4b5563',
-              backgroundColor: '#2d3748',
-              fontSize: '0.875rem',
-              color: '#e2e8f0',
-              fontFamily: 'Roboto, sans-serif',
-              transition: 'all 0.2s',
+              width: "100%",
+              padding: "0.5rem",
+              borderRadius: "0.375rem",
+              border: "1px solid #4b5563",
+              backgroundColor: "#2d3748",
+              fontSize: "0.875rem",
+              color: "#e2e8f0",
+              fontFamily: "Roboto, sans-serif",
+              transition: "all 0.2s",
             }}
           >
-            {Object.values(StatusPedido).map((status) => (
+            {ORDER_STATUS_VALUES.map((status) => (
               <option key={status} value={status}>
-                {statusConfig[status].label}
+                {status}
               </option>
             ))}
           </select>
@@ -6656,14 +5973,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { LayoutGrid, KanbanSquare } from "lucide-react";
-import { usePedidos } from "../hooks/usePedidos";
-import { useMeusPedidos } from "../hooks/useMeusPedidos";
+import { useOrders } from "@/features/orders/hooks/useOrders";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PedidosKanban } from "./PedidosKanban";
 import { PedidosGrid } from "./PedidosGrid";
 import { PedidosFilters } from "./PedidosFilters";
 import { PizzaLoading } from "@/components/ui";
-import { StatusPedido, Pedido } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
 
 type ViewMode = "kanban" | "grid";
 
@@ -6675,30 +5991,28 @@ type ViewMode = "kanban" | "grid";
  */
 export const PedidosPageLayout = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
-  const [statusFilters, setStatusFilters] = useState<StatusPedido[]>([]);
+  const [statusFilters, setStatusFilters] = useState<OrderStatus[]>([]);
   const [clienteFilter, setClienteFilter] = useState<string>("");
   const [pedidoFilter, setPedidoFilter] = useState<string>("");
   const { canViewAllOrders } = usePermissions();
 
-  // Sempre chama ambos os hooks, mas só um será executado baseado nas permissões
-  const allOrdersHook = usePedidos(canViewAllOrders());
-  const myOrdersHook = useMeusPedidos(!canViewAllOrders());
+  // Usa o hook unificado
+  const ordersHook = useOrders({
+    adminMode: canViewAllOrders(),
+  });
 
-  // Seleciona o hook apropriado baseado nas permissões
-  const ordersHook = canViewAllOrders() ? allOrdersHook : myOrdersHook;
-  const { pedidos, isLoading } = ordersHook;
+  const { orders, isLoading } = ordersHook;
 
   // handleUpdateStatus só existe para funcionários/admins
   const handleUpdateStatus = canViewAllOrders()
-    ? allOrdersHook.handleUpdateStatus
+    ? ordersHook.updateOrderStatus
     : undefined;
 
   // Filtrar pedidos baseado nos filtros ativos
-  const filteredPedidos = pedidos.filter((pedido: Pedido) => {
-    const statusMatch = statusFilters.length === 0 || statusFilters.includes(pedido.status);
-    const clienteMatch =
-      !clienteFilter ||
-      (pedido.user?.nome ?? "").toLowerCase().includes(clienteFilter.toLowerCase());
+  const filteredPedidos = orders.filter((pedido: Order) => {
+    const statusMatch =
+      statusFilters.length === 0 || statusFilters.includes(pedido.status);
+    const clienteMatch = !clienteFilter || true; // TODO: Implementar filtragem por cliente quando houver API
     const pedidoMatch =
       !pedidoFilter || pedido.id.toString().includes(pedidoFilter);
 
@@ -6794,11 +6108,10 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { FaClock, FaCheckCircle, FaTruck, FaTimesCircle } from "react-icons/fa";
-import { useMeusPedidos } from "../hooks/useMeusPedidos";
-import { PizzaCard } from "@/components/ui";
-import { PizzaLoading } from "@/components/ui";
+import { useOrders } from "@/features/orders/hooks/useOrders";
+import { PizzaCard, PizzaLoading } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
-import type { Pedido } from "@/types/pedidos";
+import type { Order } from "@/types/order";
 
 /**
  * Função simples para formatar data.
@@ -6821,12 +6134,12 @@ const StatusBadge = ({ status }: { status: string }) => {
     switch (status) {
       case "PENDENTE":
         return { color: "yellow", icon: FaClock, label: "Pendente" };
-      case "PREPARANDO":
-        return { color: "blue", icon: FaClock, label: "Preparando" };
+      case "EM_PREPARO":
+        return { color: "blue", icon: FaClock, label: "Em Preparo" };
       case "PRONTO":
         return { color: "green", icon: FaCheckCircle, label: "Pronto" };
-      case " SAIU_PARA_ENTREGA":
-        return { color: "purple", icon: FaTruck, label: "Em Trânsito" };
+      case "A_CAMINHO":
+        return { color: "purple", icon: FaTruck, label: "A Caminho" };
       case "ENTREGUE":
         return { color: "green", icon: FaCheckCircle, label: "Entregue" };
       case "CANCELADO":
@@ -6851,10 +6164,9 @@ const StatusBadge = ({ status }: { status: string }) => {
 /**
  * Componente para exibir um pedido individual.
  */
-const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
-  const totalPizzas = pedido.pizzas?.length || 0;
-  const totalValor =
-    pedido.pizzas?.reduce((sum, pizza) => sum + pizza.preco, 0) || 0;
+const PedidoCard = ({ pedido }: { pedido: Order }) => {
+  const totalItems = pedido.items?.length || 0;
+  const totalValor = parseFloat(pedido.total) || 0;
 
   return (
     <PizzaCard className="p-6">
@@ -6864,7 +6176,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
             Pedido #{pedido.id}
           </Heading>
           <Text color="gray.600" fontSize="sm">
-            {formatDate(pedido.criadoEm)}
+            {formatDate(pedido.createdAt)}
           </Text>
         </Box>
         <StatusBadge status={pedido.status} />
@@ -6872,12 +6184,13 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
 
       <Box mb={4}>
         <Text fontWeight="medium" mb={2}>
-          {totalPizzas} pizza{totalPizzas !== 1 ? "s" : ""}
+          {totalItems} item{totalItems !== 1 ? "s" : ""}
         </Text>
         <VStack align="start" gap={1}>
-          {pedido.pizzas?.map((pizza, index) => (
+          {pedido.items?.map((item, index) => (
             <Text key={index} fontSize="sm" color="gray.600">
-              • {pizza.nome} - {formatCurrency(pizza.preco)}
+              • {item.product.name} (x{item.quantity}) -{" "}
+              {formatCurrency(parseFloat(item.subtotal))}
             </Text>
           ))}
         </VStack>
@@ -6886,10 +6199,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
       <Flex justify="space-between" align="center">
         <Box>
           <Text fontSize="sm" color="gray.600">
-            Endereço: {pedido.endereco?.logradouro}, {pedido.endereco?.numero}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            {pedido.endereco?.bairro}, {pedido.endereco?.cidade}
+            Tipo: {pedido.type === "DELIVERY" ? "Entrega" : "Mesa"}
           </Text>
         </Box>
         <Box textAlign="right">
@@ -6907,7 +6217,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
  * Mostra o histórico de pedidos do usuário logado.
  */
 export const MeusPedidosPageLayout = () => {
-  const { pedidos, isLoading, error } = useMeusPedidos();
+  const { orders, isLoading, error } = useOrders();
 
   if (isLoading) {
     return (
@@ -6937,7 +6247,7 @@ export const MeusPedidosPageLayout = () => {
           </Text>
         </Box>
 
-        {pedidos.length === 0 ? (
+        {orders.length === 0 ? (
           <Box textAlign="center" py={12}>
             <Text fontSize="lg" color="gray.500" mb={4}>
               Você ainda não fez nenhum pedido.
@@ -6955,7 +6265,7 @@ export const MeusPedidosPageLayout = () => {
             }}
             gap={6}
           >
-            {pedidos.map((pedido) => (
+            {orders.map((pedido) => (
               <PedidoCard key={pedido.id} pedido={pedido} />
             ))}
           </Grid>
@@ -6974,16 +6284,13 @@ export const MeusPedidosPageLayout = () => {
 ```tsx
 "use client";
 
-import {
-  SimpleGrid,
-  Box,
-} from "@chakra-ui/react";
-import { Pedido, StatusPedido } from "@/types/pedidos";
+import { SimpleGrid, Box } from "@chakra-ui/react";
+import { Order, OrderStatus } from "@/types/order";
 import { PedidoCard } from "./PedidoCard";
 
 interface PedidosGridProps {
-  pedidos?: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedidos?: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }
 
 export const PedidosGrid = ({
@@ -7010,275 +6317,20 @@ export const PedidosGrid = ({
 ---
 
 
-## 📝 `src/features/pedidos/hooks/useMeusPedidos.ts`
-
-```typescript
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { Pedido } from "@/types/pedidos";
-import { getMeusPedidos } from "../services/pedidosService";
-import { toaster } from "@/components/ui/toaster";
-
-export type UseMeusPedidosReturn = ReturnType<typeof useMeusPedidos>;
-
-/**
- * Hook com a Responsabilidade Única de gerenciar os pedidos do usuário logado.
- * Diferente do usePedidos que busca todos os pedidos (para funcionários/admins).
- */
-export const useMeusPedidos = (enabled: boolean = true) => {
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [isLoading, setIsLoading] = useState(enabled);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMeusPedidos = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await getMeusPedidos();
-      setPedidos(data);
-      setError(null);
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Erro ao carregar seus pedidos.";
-      setError(msg);
-      toaster.create({ title: "Erro", description: msg, type: "error" });
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (enabled) {
-      fetchMeusPedidos();
-    } else {
-      setIsLoading(false);
-    }
-  }, [fetchMeusPedidos, enabled]);
-
-  return {
-    pedidos,
-    isLoading,
-    error,
-    refetch: fetchMeusPedidos,
-  };
-};
-```
-
----
-
-
-## 📝 `src/features/pedidos/hooks/usePedidos.ts`
-
-```typescript
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { Pedido, StatusPedido } from "@/types/pedidos";
-
-import { getPedidos, updatePedidoStatus } from "../services/pedidosService";
-import { toaster } from "@/components/ui/toaster";
-
-export type UsePedidosReturn = ReturnType<typeof usePedidos>;
-
-/**
- * Hook com a Responsabilidade Única de gerenciar todo o estado e lógica de negócio
- * relacionados a Pedidos.
- */
-export const usePedidos = (enabled: boolean = true) => {
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [isLoading, setIsLoading] = useState(enabled);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchPedidos = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await getPedidos();
-      setPedidos(data);
-      setError(null);
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Erro ao carregar pedidos.";
-      setError(msg);
-      toaster.create({ title: "Erro", description: msg, type: "error" });
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (enabled) {
-      fetchPedidos();
-    } else {
-      setIsLoading(false);
-    }
-  }, [fetchPedidos, enabled]);
-
-  const handleUpdateStatus = async (pedidoId: number, status: StatusPedido) => {
-    const originalPedidos = [...pedidos];
-    // Atualização otimista da UI
-    setPedidos((current) =>
-      current.map((p) => (p.id === pedidoId ? { ...p, status } : p))
-    );
-
-    try {
-      await updatePedidoStatus(pedidoId, status);
-      toaster.create({
-        title: "Sucesso!",
-        description: `Status do pedido #${pedidoId} atualizado.`,
-        type: "success",
-      });
-      fetchPedidos(); // Re-busca para garantir consistência
-    } catch (err) {
-      setPedidos(originalPedidos); // Reverte a UI em caso de erro
-      const msg =
-        err instanceof Error
-          ? err.message
-          : "Não foi possível atualizar o status.";
-      toaster.create({ title: "Erro", description: msg, type: "error" });
-    }
-  };
-
-  return {
-    pedidos,
-    isLoading,
-    error,
-    refetch: fetchPedidos,
-    handleUpdateStatus,
-  };
-};
-```
-
----
-
-
-## 📝 `src/features/pedidos/services/pedidosService.ts`
-
-```typescript
-import { Pedido, StatusPedido } from "@/types/pedidos";
-import { getAuthToken } from "@/utils/cookies";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
-// DTO para a criação de um pedido
-interface CreatePedidoPayload {
-  clienteId: number;
-  enderecoId: number;
-  pizzasIds: number[];
-  paymentIntentId?: string; // Adicionar ID do pagamento
-}
-
-/**
- * Busca os pedidos do usuário logado.
- */
-export const getMeusPedidos = async (): Promise<Pedido[]> => {
-  const token = getAuthToken();
-  if (!token) throw new Error("Usuário não autenticado.");
-
-  const response = await fetch(`${API_URL}/pedidos/meus-pedidos`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) throw new Error("Falha ao buscar seus pedidos.");
-  const result = await response.json();
-
-  // A API pode retornar tanto um array quanto um objeto único
-  // Vamos normalizar para sempre retornar um array
-  const data = result.data || result;
-  return Array.isArray(data) ? data : [data];
-};
-
-/**
- * Busca todos os pedidos do backend (para funcionários/admins).
- */
-export const getPedidos = async (): Promise<Pedido[]> => {
-  const token = getAuthToken();
-  if (!token) throw new Error("Usuário não autenticado.");
-
-  const response = await fetch(`${API_URL}/pedidos`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) throw new Error("Falha ao buscar os pedidos.");
-  const result = await response.json();
-
-  // A API pode retornar tanto um array quanto um objeto único
-  // Vamos normalizar para sempre retornar um array
-  const data = result.data || result;
-  return Array.isArray(data) ? data : [data];
-};
-
-/**
- * Atualiza o status de um pedido específico.
- */
-export const updatePedidoStatus = async (
-  pedidoId: number,
-  status: StatusPedido
-): Promise<Pedido> => {
-  const token = getAuthToken();
-  if (!token) throw new Error("Usuário não autenticado.");
-
-  const response = await fetch(`${API_URL}/pedidos/${pedidoId}/status`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ status }),
-  });
-
-  const responseData = await response.json();
-  if (!response.ok)
-    throw new Error(responseData.message || "Falha ao atualizar o status.");
-  return responseData.data;
-};
-
-/**
- * Cria um novo pedido no backend.
- */
-export const createPedido = async (
-  payload: CreatePedidoPayload
-): Promise<Pedido> => {
-  const token = getAuthToken();
-  if (!token) throw new Error("Usuário não autenticado.");
-
-  const response = await fetch(`${API_URL}/pedidos`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const responseData = await response.json();
-  if (!response.ok)
-    throw new Error(responseData.message || "Falha ao criar o pedido.");
-  return responseData.data;
-};
-```
-
----
-
-
 ## 📝 `src/features/dashboard/components/DashboardActions.tsx`
 
 ```tsx
 "use client";
 
 import { Button, Flex, Icon } from "@chakra-ui/react";
-import { Utensils, ClipboardList, Pizza, Users, Truck } from "lucide-react";
+import { Utensils, ClipboardList, Users, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
 import { usePermissions } from "@/hooks/usePermissions";
 
-interface DashboardActionsProps {
-  onShowGerenciarCardapio: () => void;
-}
-
-export const DashboardActions = ({
-  onShowGerenciarCardapio,
-}: DashboardActionsProps) => {
+export const DashboardActions = () => {
   const router = useRouter();
-  const { canManagePizzas, canManageUsers, canManageDeliveryPersons } =
-    usePermissions();
+  const { canManageUsers, canManageDeliveryPersons } = usePermissions();
 
   const secondaryButtonStyle = {
     bg: "background.secondary",
@@ -7316,19 +6368,6 @@ export const DashboardActions = ({
       </Button>
 
       {/* Botões de Administração - apenas para admin */}
-      {canManagePizzas() && (
-        <Button
-          onClick={onShowGerenciarCardapio}
-          size="lg"
-          flex="1"
-          minW="200px"
-          variant="solid"
-        >
-          <Icon as={Pizza} mr={2} />
-          Gerenciar Cardápio
-        </Button>
-      )}
-
       {canManageUsers() && (
         <Button
           size="lg"
@@ -7437,9 +6476,9 @@ export const DashboardStats = ({ stats, isLoading }: DashboardStatsProps) => {
 
 import { useState, useCallback, useEffect } from "react";
 
-import { getPedidos } from "@/features/pedidos/services/pedidosService";
+import { ordersService } from "@/features/orders/services/ordersService";
 import { formatCurrency } from "@/utils/format";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import { toaster } from "@/components/ui/toaster";
 
 interface FormattedDashboardStats {
@@ -7462,14 +6501,13 @@ export const useDashboardStats = () => {
   const fetchAndCalculateStats = useCallback(async () => {
     try {
       setIsLoading(true);
-      const todosOsPedidos: Pedido[] = await getPedidos();
+      const todosOsPedidos: Order[] = await ordersService.getWithFilters();
       const hoje = new Date().toISOString().split("T")[0];
       const pedidosDeHoje = todosOsPedidos.filter(
-        (p) => p.criadoEm.split("T")[0] === hoje
+        (p) => p.createdAt.split("T")[0] === hoje
       );
       const faturamentoTotal = todosOsPedidos.reduce(
-        (total, p) =>
-          total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0),
+        (total, p) => total + parseFloat(p.total),
         0
       );
       const totalDePedidos = todosOsPedidos.length;
@@ -9190,7 +8228,7 @@ import {
   SessaoMesa,
   AdicionarPedidoMesaData,
 } from "@/types/mesa";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import {
   getMesas,
   getMesaById,
@@ -9210,7 +8248,7 @@ interface UseMesasReturn {
   getById: (id: string) => Promise<Mesa>;
   abrirSessao: (mesaId: string) => Promise<SessaoMesa>;
   getSessaoAtiva: (mesaId: string) => Promise<SessaoMesa | null>;
-  adicionarPedido: (data: AdicionarPedidoMesaData) => Promise<Pedido>;
+  adicionarPedido: (data: AdicionarPedidoMesaData) => Promise<Order>;
   fecharConta: (mesaId: string) => Promise<void>;
 }
 
@@ -9299,7 +8337,7 @@ export const useMesas = (): UseMesasReturn => {
   );
 
   const handleAdicionarPedido = useCallback(
-    async (data: AdicionarPedidoMesaData): Promise<Pedido> => {
+    async (data: AdicionarPedidoMesaData): Promise<Order> => {
       try {
         const result = await adicionarPedidoMesa(data);
         // Refetch mesas para atualizar dados
@@ -9381,7 +8419,7 @@ import {
   SessaoMesa,
   AdicionarPedidoMesaData,
 } from "@/types/mesa";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import { getAuthToken } from "@/utils/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -9614,7 +8652,7 @@ export const getSessaoAtiva = async (
 // Adicionar pedido à mesa
 export const adicionarPedidoMesa = async (
   data: AdicionarPedidoMesaData
-): Promise<Pedido> => {
+): Promise<Order> => {
   const token = getAuthToken();
   if (!token) {
     throw new Error("Usuário não autenticado");
@@ -9902,10 +8940,10 @@ export const getGoogleSignInUrl = (): string => {
  * @since 28/12/2025
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type { Order, OrderFilters } from '@/types/order';
-import { ordersService } from '../services/ordersService';
-import { toaster } from '@/components/ui/toaster';
+import { useState, useCallback, useEffect } from "react";
+import type { Order, OrderFilters } from "@/types/order";
+import { ordersService } from "../services/ordersService";
+import { toaster } from "@/components/ui/toaster";
 
 interface UseOrdersOptions {
   /**
@@ -9957,10 +8995,11 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
 
       setOrders(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar pedidos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao buscar pedidos";
       setError(errorMessage);
       toaster.error({
-        title: 'Erro ao buscar pedidos',
+        title: "Erro ao buscar pedidos",
         description: errorMessage,
       });
     } finally {
@@ -9987,50 +9026,56 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
   /**
    * Wrapper para criar pedido
    */
-  const handleCreateOrder = useCallback(async (data: Parameters<typeof ordersService.create>[0]) => {
-    try {
-      const newOrder = await ordersService.create(data);
-      setOrders(prev => [newOrder, ...prev]);
-      toaster.success({
-        title: 'Pedido criado',
-        description: 'Seu pedido foi criado com sucesso!',
-      });
-      return newOrder;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar pedido';
-      toaster.error({
-        title: 'Erro ao criar pedido',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleCreateOrder = useCallback(
+    async (data: Parameters<typeof ordersService.create>[0]) => {
+      try {
+        const newOrder = await ordersService.create(data);
+        setOrders((prev) => [newOrder, ...prev]);
+        toaster.success({
+          title: "Pedido criado",
+          description: "Seu pedido foi criado com sucesso!",
+        });
+        return newOrder;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao criar pedido";
+        toaster.error({
+          title: "Erro ao criar pedido",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para atualizar status
    */
-  const handleUpdateOrderStatus = useCallback(async (orderId: number, status: string) => {
-    try {
-      const updatedOrder = await ordersService.updateStatus(orderId, status);
-      setOrders(prev =>
-        prev.map(order =>
-          order.id === orderId ? updatedOrder : order
-        )
-      );
-      toaster.success({
-        title: 'Status atualizado',
-        description: 'Status do pedido foi atualizado com sucesso!',
-      });
-      return updatedOrder;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar status';
-      toaster.error({
-        title: 'Erro ao atualizar status',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleUpdateOrderStatus = useCallback(
+    async (orderId: number, status: string) => {
+      try {
+        const updatedOrder = await ordersService.updateStatus(orderId, status);
+        setOrders((prev) =>
+          prev.map((order) => (order.id === orderId ? updatedOrder : order))
+        );
+        toaster.success({
+          title: "Status atualizado",
+          description: "Status do pedido foi atualizado com sucesso!",
+        });
+        return updatedOrder;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao atualizar status";
+        toaster.error({
+          title: "Erro ao atualizar status",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   return {
     orders,
@@ -10063,10 +9108,10 @@ import type {
   CancelOrderItemDto,
   OrderFilters,
   OrderItem,
-} from '@/types/order';
-import { getAuthToken } from '@/utils/cookies';
+} from "@/types/order";
+import { getAuthToken } from "@/utils/cookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 /**
  * Erro customizado para operações de pedidos
@@ -10078,7 +9123,7 @@ class OrderServiceError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'OrderServiceError';
+    this.name = "OrderServiceError";
   }
 }
 
@@ -10091,21 +9136,21 @@ const fetchWithAuth = async (
 ): Promise<Response> => {
   const token = getAuthToken();
   if (!token) {
-    throw new OrderServiceError('Usuário não autenticado', 401);
+    throw new OrderServiceError("Usuário não autenticado", 401);
   }
 
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
       ...options?.headers,
     },
   });
 
   if (!response.ok) {
-    let errorMessage = 'Erro ao processar requisição';
+    let errorMessage = "Erro ao processar requisição";
     let details;
 
     try {
@@ -10131,8 +9176,8 @@ const fetchWithAuth = async (
  */
 export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
   try {
-    const response = await fetchWithAuth('/orders', {
-      method: 'POST',
+    const response = await fetchWithAuth("/orders", {
+      method: "POST",
       body: JSON.stringify(data),
     });
     return response.json();
@@ -10140,7 +9185,7 @@ export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao criar pedido', 500, error);
+    throw new OrderServiceError("Erro ao criar pedido", 500, error);
   }
 };
 
@@ -10160,7 +9205,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/orders${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -10168,7 +9213,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedidos', 500, error);
+    throw new OrderServiceError("Erro ao buscar pedidos", 500, error);
   }
 };
 
@@ -10183,7 +9228,7 @@ export const getOrderById = async (orderId: number): Promise<Order> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedido', 500, error);
+    throw new OrderServiceError("Erro ao buscar pedido", 500, error);
   }
 };
 
@@ -10196,7 +9241,7 @@ export const addItemToOrder = async (
 ): Promise<OrderItem> => {
   try {
     const response = await fetchWithAuth(`/orders/${orderId}/items`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(item),
     });
     return response.json();
@@ -10204,7 +9249,7 @@ export const addItemToOrder = async (
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao adicionar item', 500, error);
+    throw new OrderServiceError("Erro ao adicionar item", 500, error);
   }
 };
 
@@ -10217,19 +9262,16 @@ export const updateItemQuantity = async (
   data: UpdateOrderItemQuantityDto
 ): Promise<OrderItem> => {
   try {
-    const response = await fetchWithAuth(
-      `/orders/${orderId}/items/${itemId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetchWithAuth(`/orders/${orderId}/items/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
     return response.json();
   } catch (error) {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao atualizar quantidade', 500, error);
+    throw new OrderServiceError("Erro ao atualizar quantidade", 500, error);
   }
 };
 
@@ -10243,21 +9285,23 @@ export const cancelOrderItem = async (
 ): Promise<void> => {
   try {
     await fetchWithAuth(`/orders/${orderId}/items/${itemId}/cancel`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   } catch (error) {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao cancelar item', 500, error);
+    throw new OrderServiceError("Erro ao cancelar item", 500, error);
   }
 };
 
 /**
  * Busca pedidos com filtros (admin/staff)
  */
-export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Order[]> => {
+export const getOrdersWithFilters = async (
+  filters?: OrderFilters
+): Promise<Order[]> => {
   try {
     const params = new URLSearchParams();
 
@@ -10270,7 +9314,7 @@ export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Orde
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -10278,7 +9322,11 @@ export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Orde
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedidos com filtros', 500, error);
+    throw new OrderServiceError(
+      "Erro ao buscar pedidos com filtros",
+      500,
+      error
+    );
   }
 };
 
@@ -10291,7 +9339,7 @@ export const updateOrderStatus = async (
 ): Promise<Order> => {
   try {
     const response = await fetchWithAuth(`/orders/${orderId}/status`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ status }),
     });
     return response.json();
@@ -10299,7 +9347,7 @@ export const updateOrderStatus = async (
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao atualizar status', 500, error);
+    throw new OrderServiceError("Erro ao atualizar status", 500, error);
   }
 };
 
@@ -13082,23 +12130,16 @@ export default function PedidosLayout({ children }: PedidosLayoutProps) {
 ```tsx
 "use client";
 
-import { useState } from "react";
 import { Box, VStack } from "@chakra-ui/react";
 import { DollarSign, ListOrdered, BarChart, ShoppingCart } from "lucide-react";
 
 import { DashboardStats } from "@/features/dashboard/components/DashboardStats";
 import { DashboardActions } from "@/features/dashboard/components/DashboardActions";
 
-import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
-import { GerenciarCardapio } from "@/features/pizzas/components/GerenciarCardapio";
-import { PizzaFormContainer } from "@/features/pizzas/components/PizzaFormContainer";
 import { useDashboardStats } from "@/features/dashboard/hooks/useDashboard";
 
 export default function DashboardPage() {
-  const [isGerenciarView, setIsGerenciarView] = useState(false);
-
   const { stats, isLoading: isLoadingStats } = useDashboardStats();
-  const pizzaHook = usePizzas();
 
   // Criamos o array de estatísticas com os ícones
   const formattedStats = [
@@ -13118,28 +12159,10 @@ export default function DashboardPage() {
 
   return (
     <Box w="full" minH="100vh" bg="background.primary" p={{ base: 4, md: 8 }}>
-      {isGerenciarView ? (
-        <GerenciarCardapio
-          onNavigateBack={() => setIsGerenciarView(false)}
-          pizzaHook={pizzaHook}
-        />
-      ) : (
-        <VStack gap={8} align="stretch">
-          <DashboardStats stats={formattedStats} isLoading={isLoadingStats} />
-          <DashboardActions
-            onShowGerenciarCardapio={() => setIsGerenciarView(true)}
-          />
-        </VStack>
-      )}
-
-      <PizzaFormContainer
-        isOpen={pizzaHook.isFormModalOpen}
-        onClose={pizzaHook.handleCloseFormModal}
-        pizzaToEdit={pizzaHook.pizzaToEdit}
-        onSuccess={pizzaHook.handleSavePizza}
-        isLoading={pizzaHook.isLoading}
-        apiError={pizzaHook.error}
-      />
+      <VStack gap={8} align="stretch">
+        <DashboardStats stats={formattedStats} isLoading={isLoadingStats} />
+        <DashboardActions />
+      </VStack>
     </Box>
   );
 }
@@ -13794,7 +12817,8 @@ import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
-interface PizzaSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface PizzaSelectProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   required?: boolean;
@@ -13806,12 +12830,7 @@ export const PizzaSelect = forwardRef<HTMLSelectElement, PizzaSelectProps>(
     return (
       <Box w="full">
         {label && (
-          <PizzaText
-            color="gray.300"
-            mb={2}
-            fontSize="sm"
-            fontWeight="medium"
-          >
+          <PizzaText color="gray.300" mb={2} fontSize="sm" fontWeight="medium">
             {label}
             {required && (
               <PizzaText as="span" color="red.500" ml={1}>
@@ -14641,7 +13660,8 @@ import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
-interface PizzaCheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+interface PizzaCheckboxProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   label?: string;
   error?: string;
 }
@@ -14986,20 +14006,20 @@ export const PizzaSpinner = ({ size = 24 }: PizzaSpinnerProps) => {
  * Facilita importações e mantém organização
  */
 
-export { PizzaButton } from './PizzaButton';
-export { PizzaCard } from './PizzaCard';
-export { PizzaBadge } from './PizzaBadge';
-export { PizzaText } from './PizzaText';
-export { PizzaInput } from './PizzaInput';
-export { PizzaTextarea } from './PizzaTextarea';
-export { PizzaLoading } from './PizzaLoading';
-export { PizzaSpinner } from './PizzaSpinner';
-export { PizzaFileInput } from './PizzaFileInput';
-export { PizzaSelect } from './PizzaSelect';
-export { PizzaCheckbox } from './PizzaCheckbox';
-export { AppModal } from './AppModal';
-export { PizzaFormPresentation } from './PizzaFormPresentation';
-export { toaster } from './toaster';
+export { PizzaButton } from "./PizzaButton";
+export { PizzaCard } from "./PizzaCard";
+export { PizzaBadge } from "./PizzaBadge";
+export { PizzaText } from "./PizzaText";
+export { PizzaInput } from "./PizzaInput";
+export { PizzaTextarea } from "./PizzaTextarea";
+export { PizzaLoading } from "./PizzaLoading";
+export { PizzaSpinner } from "./PizzaSpinner";
+export { PizzaFileInput } from "./PizzaFileInput";
+export { PizzaSelect } from "./PizzaSelect";
+export { PizzaCheckbox } from "./PizzaCheckbox";
+export { AppModal } from "./AppModal";
+export { PizzaFormPresentation } from "./PizzaFormPresentation";
+export { toaster } from "./toaster";
 ```
 
 ---
@@ -15579,37 +14599,10 @@ export interface Endereco {
 ---
 
 
-## 📝 `src/types/pizzas.ts`
-
-```typescript
-// src/types/pizzas.ts
-
-import { PizzaFormOutputData } from "@/utils/validation";
-
-// A interface principal que representa uma Pizza vinda do backend (sem alterações)
-export interface Pizza {
-  id: number;
-  nome: string;
-  descricao: string | null;
-  preco: number;
-  image: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-// Tipo para criação de pizza com imagem opcional
-export type CreatePizzaWithImageData = Omit<PizzaFormOutputData, "image"> & {
-  image?: File;
-};
-```
-
----
-
-
 ## 📝 `src/types/cart.ts`
 
 ```typescript
 import { Product } from "./product";
-
 
 /**
  * @interface CartItem
@@ -15651,28 +14644,28 @@ export interface Cart {
 /**
  * Tipo de pedido
  */
-export type OrderType = 'DELIVERY' | 'DINE_IN';
+export type OrderType = "DELIVERY" | "DINE_IN";
 
 /**
  * Status do pedido
  */
 export type OrderStatus =
-  | 'PENDENTE'       // Aguardando confirmação
-  | 'EM_PREPARO'     // Em preparação
-  | 'A_CAMINHO'      // A caminho (delivery)
-  | 'PRONTO'         // Pronto para retirada (dine-in)
-  | 'ENTREGUE'       // Entregue
-  | 'CANCELADO';     // Cancelado
+  | "PENDENTE" // Aguardando confirmação
+  | "EM_PREPARO" // Em preparação
+  | "A_CAMINHO" // A caminho (delivery)
+  | "PRONTO" // Pronto para retirada (dine-in)
+  | "ENTREGUE" // Entregue
+  | "CANCELADO"; // Cancelado
 
 /**
  * Status do item do pedido
  */
 export type OrderItemStatus =
-  | 'PENDING'        // Aguardando confirmação
-  | 'CONFIRMED'      // Confirmado
-  | 'PREPARING'      // Em preparação
-  | 'READY'          // Pronto
-  | 'CANCELLED';     // Cancelado
+  | "PENDING" // Aguardando confirmação
+  | "CONFIRMED" // Confirmado
+  | "PREPARING" // Em preparação
+  | "READY" // Pronto
+  | "CANCELLED"; // Cancelado
 
 /**
  * Item de um pedido
@@ -15687,8 +14680,8 @@ export interface OrderItem {
     imageUrl?: string;
   };
   quantity: number;
-  price: string;           // Preço unitário no momento do pedido
-  subtotal: string;        // quantity * price
+  price: string; // Preço unitário no momento do pedido
+  subtotal: string; // quantity * price
   status: OrderItemStatus;
   notes?: string;
   cancelReason?: string;
@@ -15703,13 +14696,13 @@ export interface Order {
   id: number;
   type: OrderType;
   status: OrderStatus;
-  total: string;           // Total calculado
-  deliveryFee?: string;    // Taxa de entrega (se aplicável)
+  total: string; // Total calculado
+  deliveryFee?: string; // Taxa de entrega (se aplicável)
   userId?: number;
   addressId?: number;
-  sessionId?: string;      // Para pedidos DINE_IN
+  sessionId?: string; // Para pedidos DINE_IN
   items: OrderItem[];
-  canModify: boolean;      // Se ainda pode modificar itens
+  canModify: boolean; // Se ainda pode modificar itens
   createdAt: string;
   updatedAt?: string;
 }
@@ -15719,8 +14712,8 @@ export interface Order {
  */
 export interface CreateOrderDto {
   type: OrderType;
-  addressId?: number;      // Obrigatório para DELIVERY
-  sessionId?: string;      // Obrigatório para DINE_IN
+  addressId?: number; // Obrigatório para DELIVERY
+  sessionId?: string; // Obrigatório para DINE_IN
   items: {
     productId: string;
     quantity: number;
@@ -15777,53 +14770,63 @@ export const calculateOrderTotal = (items: OrderItem[]): number => {
  * Helper para verificar se pedido pode ser modificado
  */
 export const canModifyOrder = (order: Order): boolean => {
-  return order.canModify &&
-         (order.status === 'PENDENTE' || order.status === 'EM_PREPARO');
+  return (
+    order.canModify &&
+    (order.status === "PENDENTE" || order.status === "EM_PREPARO")
+  );
 };
 
 /**
  * Helper para verificar se pedido é delivery
  */
 export const isDeliveryOrder = (order: Order): boolean => {
-  return order.type === 'DELIVERY';
+  return order.type === "DELIVERY";
 };
 
 /**
  * Helper para verificar se pedido é dine-in
  */
 export const isDineInOrder = (order: Order): boolean => {
-  return order.type === 'DINE_IN';
+  return order.type === "DINE_IN";
 };
 
 /**
  * Helper para obter status display do pedido
  */
-export const getOrderStatusDisplay = (status: OrderStatus): { label: string; colorScheme: string } => {
-  const statusMap: Record<OrderStatus, { label: string; colorScheme: string }> = {
-    PENDENTE: { label: 'Pendente', colorScheme: 'gray' },
-    EM_PREPARO: { label: 'Em Preparo', colorScheme: 'yellow' },
-    A_CAMINHO: { label: 'A Caminho', colorScheme: 'blue' },
-    PRONTO: { label: 'Pronto', colorScheme: 'green' },
-    ENTREGUE: { label: 'Entregue', colorScheme: 'green' },
-    CANCELADO: { label: 'Cancelado', colorScheme: 'red' },
-  };
+export const getOrderStatusDisplay = (
+  status: OrderStatus
+): { label: string; colorScheme: string } => {
+  const statusMap: Record<OrderStatus, { label: string; colorScheme: string }> =
+    {
+      PENDENTE: { label: "Pendente", colorScheme: "gray" },
+      EM_PREPARO: { label: "Em Preparo", colorScheme: "yellow" },
+      A_CAMINHO: { label: "A Caminho", colorScheme: "blue" },
+      PRONTO: { label: "Pronto", colorScheme: "green" },
+      ENTREGUE: { label: "Entregue", colorScheme: "green" },
+      CANCELADO: { label: "Cancelado", colorScheme: "red" },
+    };
 
-  return statusMap[status] || { label: status, colorScheme: 'gray' };
+  return statusMap[status] || { label: status, colorScheme: "gray" };
 };
 
 /**
  * Helper para obter status display do item
  */
-export const getOrderItemStatusDisplay = (status: OrderItemStatus): { label: string; colorScheme: string } => {
-  const statusMap: Record<OrderItemStatus, { label: string; colorScheme: string }> = {
-    PENDING: { label: 'Pendente', colorScheme: 'gray' },
-    CONFIRMED: { label: 'Confirmado', colorScheme: 'blue' },
-    PREPARING: { label: 'Preparando', colorScheme: 'yellow' },
-    READY: { label: 'Pronto', colorScheme: 'green' },
-    CANCELLED: { label: 'Cancelado', colorScheme: 'red' },
+export const getOrderItemStatusDisplay = (
+  status: OrderItemStatus
+): { label: string; colorScheme: string } => {
+  const statusMap: Record<
+    OrderItemStatus,
+    { label: string; colorScheme: string }
+  > = {
+    PENDING: { label: "Pendente", colorScheme: "gray" },
+    CONFIRMED: { label: "Confirmado", colorScheme: "blue" },
+    PREPARING: { label: "Preparando", colorScheme: "yellow" },
+    READY: { label: "Pronto", colorScheme: "green" },
+    CANCELLED: { label: "Cancelado", colorScheme: "red" },
   };
 
-  return statusMap[status] || { label: status, colorScheme: 'gray' };
+  return statusMap[status] || { label: status, colorScheme: "gray" };
 };
 ```
 
@@ -15995,55 +14998,6 @@ export interface FecharContaData {
 ---
 
 
-## 📝 `src/types/pedidos.ts`
-
-```typescript
-import { User } from ".";
-import { Endereco } from "./endereco";
-import { Entregador } from "./entregador";
-import { Pizza } from "./pizzas";
-
-// Enum para os status do pedido, deve ser idêntico ao do backend
-export enum StatusPedido {
-  PENDENTE = "PENDENTE",
-  EM_PREPARO = "EM_PREPARO",
-  A_CAMINHO = "A_CAMINHO",
-  ENTREGUE = "ENTREGUE",
-  CANCELADO = "CANCELADO",
-}
-
-// Objeto para configurar a aparência de cada status (cores do Chakra UI)
-export const statusConfig: Record<
-  StatusPedido,
-  { label: string; colorScheme: string }
-> = {
-  [StatusPedido.PENDENTE]: { label: "Pendente", colorScheme: "gray" },
-  [StatusPedido.EM_PREPARO]: { label: "Em Preparo", colorScheme: "yellow" },
-  [StatusPedido.A_CAMINHO]: { label: "A Caminho", colorScheme: "blue" },
-  [StatusPedido.ENTREGUE]: { label: "Entregue", colorScheme: "green" },
-  [StatusPedido.CANCELADO]: { label: "Cancelado", colorScheme: "red" },
-};
-
-export interface Pedido {
-  id: number;
-  user: User;
-  userId: number;
-  endereco: Endereco;
-  enderecoId: number;
-  pizzas: Pizza[];
-  status: StatusPedido; // Tipo atualizado para o enum
-  entregador?: Entregador;
-  entregadorId?: number;
-  latitude?: number;
-  longitude?: number;
-  criadoEm: string;
-  atualizadoEm: string;
-}
-```
-
----
-
-
 ## 📝 `src/types/entregador.ts`
 
 ```typescript
@@ -16072,10 +15026,10 @@ export interface Entregador {
  * Produto do catálogo
  */
 export interface Product {
-  id: string;              // UUID do backend
+  id: string; // UUID do backend
   name: string;
   description?: string;
-  price: string;           // Decimal como string (backend)
+  price: string; // Decimal como string (backend)
   imageUrl?: string;
   categoryId: string;
   category: {
@@ -16107,7 +15061,7 @@ export interface Category {
 export interface CreateProductDto {
   name: string;
   description?: string;
-  price: number;           // Será convertido para string no backend
+  price: number; // Será convertido para string no backend
   categoryId: string;
   image?: File;
 }
@@ -16118,7 +15072,7 @@ export interface CreateProductDto {
 export interface UpdateProductDto {
   name?: string;
   description?: string;
-  price?: number;          // Será convertido para string no backend
+  price?: number; // Será convertido para string no backend
   categoryId?: string;
   active?: boolean;
   image?: File;
@@ -16248,25 +15202,21 @@ export interface DashboardStats {
 // Exporta todos os tipos do sistema
 
 // Auth
-export * from './users';
+export * from "./users";
 
 // Products (substitui pizzas)
-export * from './product';
-export * from './categoria';
+export * from "./product";
+export * from "./categoria";
 
 // Orders (substitui pedidos)
-export * from './order';
+export * from "./order";
 
 // Others
-export * from './endereco';
-export * from './entregador';
-export * from './mesa';
-export * from './upload';
-export * from './cart';
-
-// DEPRECATED - Manter por compatibilidade temporária
-// export * from './pizzas';  // ⚠️ Remover após migração
-// export * from './pedidos'; // ⚠️ Remover após migração
+export * from "./endereco";
+export * from "./entregador";
+export * from "./mesa";
+export * from "./upload";
+export * from "./cart";
 ```
 
 ---
@@ -16281,21 +15231,28 @@ export * from './cart';
  * @since 28/12/2025
  */
 
-import { z } from 'zod';
-import { FILE_SIZE_LIMITS, ACCEPTED_IMAGE_TYPES, VALIDATION_RULES } from '@/constants/validation';
+import { z } from "zod";
+import {
+  FILE_SIZE_LIMITS,
+  ACCEPTED_IMAGE_TYPES,
+  VALIDATION_RULES,
+} from "@/constants/validation";
 
 /**
  * Schema para validação de imagem
  */
 const imageSchema = z
-  .instanceof(File, { message: 'Arquivo inválido' })
+  .instanceof(File, { message: "Arquivo inválido" })
   .refine(
     (file) => file.size <= FILE_SIZE_LIMITS.IMAGE,
     `Tamanho máximo de 5MB.`
   )
   .refine(
-    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type as typeof ACCEPTED_IMAGE_TYPES[number]),
-    'Apenas formatos .jpg, .jpeg, .png e .webp são suportados.'
+    (file) =>
+      ACCEPTED_IMAGE_TYPES.includes(
+        file.type as (typeof ACCEPTED_IMAGE_TYPES)[number]
+      ),
+    "Apenas formatos .jpg, .jpeg, .png e .webp são suportados."
   );
 
 /**
@@ -16304,26 +15261,32 @@ const imageSchema = z
 export const productFormSchema = z.object({
   name: z
     .string()
-    .min(VALIDATION_RULES.PRODUCT_NAME.MIN_LENGTH, { message: 'O nome deve ter no mínimo 3 caracteres.' })
-    .max(VALIDATION_RULES.PRODUCT_NAME.MAX_LENGTH, { message: 'O nome deve ter no máximo 100 caracteres.' }),
+    .min(VALIDATION_RULES.PRODUCT_NAME.MIN_LENGTH, {
+      message: "O nome deve ter no mínimo 3 caracteres.",
+    })
+    .max(VALIDATION_RULES.PRODUCT_NAME.MAX_LENGTH, {
+      message: "O nome deve ter no máximo 100 caracteres.",
+    }),
   description: z
     .string()
-    .min(VALIDATION_RULES.PRODUCT_DESCRIPTION.MIN_LENGTH, { message: 'A descrição deve ter no mínimo 10 caracteres.' })
-    .max(VALIDATION_RULES.PRODUCT_DESCRIPTION.MAX_LENGTH, { message: 'A descrição deve ter no máximo 500 caracteres.' }),
+    .min(VALIDATION_RULES.PRODUCT_DESCRIPTION.MIN_LENGTH, {
+      message: "A descrição deve ter no mínimo 10 caracteres.",
+    })
+    .max(VALIDATION_RULES.PRODUCT_DESCRIPTION.MAX_LENGTH, {
+      message: "A descrição deve ter no máximo 500 caracteres.",
+    }),
   price: z.coerce
     .number()
     .refine((val) => !isNaN(val), {
-      message: 'O preço deve ser um número válido.',
+      message: "O preço deve ser um número válido.",
     })
     .min(VALIDATION_RULES.PRODUCT_PRICE.MIN, {
-      message: 'O preço deve ser maior que R$ 0,00.',
+      message: "O preço deve ser maior que R$ 0,00.",
     })
     .max(VALIDATION_RULES.PRODUCT_PRICE.MAX, {
-      message: 'O preço deve ser menor que R$ 999.999,99.',
+      message: "O preço deve ser menor que R$ 999.999,99.",
     }),
-  categoryId: z
-    .string()
-    .min(1, { message: 'Categoria é obrigatória.' }),
+  categoryId: z.string().min(1, { message: "Categoria é obrigatória." }),
   image: imageSchema.optional(),
 });
 
@@ -16336,17 +15299,19 @@ export type ProductFormData = z.infer<typeof productFormSchema>;
  * Schema para formulário de pedido
  */
 export const orderFormSchema = z.object({
-  type: z.enum(['DELIVERY', 'DINE_IN']),
+  type: z.enum(["DELIVERY", "DINE_IN"]),
   addressId: z.number().optional(),
   sessionId: z.string().optional(),
-  items: z.array(
-    z.object({
-      productId: z.string().min(1, 'Produto é obrigatório'),
-      quantity: z.number().min(1, 'Quantidade deve ser maior que 0'),
-      notes: z.string().optional(),
-    })
-  ).min(1, 'Pedido deve ter pelo menos um item'),
-  observations: z.string().max(500, 'Máximo de 500 caracteres').optional(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().min(1, "Produto é obrigatório"),
+        quantity: z.number().min(1, "Quantidade deve ser maior que 0"),
+        notes: z.string().optional(),
+      })
+    )
+    .min(1, "Pedido deve ter pelo menos um item"),
+  observations: z.string().max(500, "Máximo de 500 caracteres").optional(),
 });
 
 /**
@@ -16360,17 +15325,17 @@ export type OrderFormData = z.infer<typeof orderFormSchema>;
 export const pizzaFormSchema = z.object({
   nome: z
     .string()
-    .min(3, { message: 'O nome deve ter no mínimo 3 caracteres.' }),
+    .min(3, { message: "O nome deve ter no mínimo 3 caracteres." }),
   descricao: z
     .string()
-    .min(10, { message: 'A descrição deve ter no mínimo 10 caracteres.' }),
+    .min(10, { message: "A descrição deve ter no mínimo 10 caracteres." }),
   preco: z.coerce
     .number()
     .refine((val) => !isNaN(val), {
-      message: 'O preço deve ser um número válido.',
+      message: "O preço deve ser um número válido.",
     })
     .min(0.01, {
-      message: 'O preço deve ser maior que R$ 0,00.',
+      message: "O preço deve ser maior que R$ 0,00.",
     }),
   image: z
     .instanceof(File)
@@ -16380,8 +15345,12 @@ export const pizzaFormSchema = z.object({
       `Tamanho máximo de 5MB.`
     )
     .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type as typeof ACCEPTED_IMAGE_TYPES[number]),
-      'Apenas formatos .jpg, .jpeg, .png e .webp são suportados.'
+      (file) =>
+        !file ||
+        ACCEPTED_IMAGE_TYPES.includes(
+          file.type as (typeof ACCEPTED_IMAGE_TYPES)[number]
+        ),
+      "Apenas formatos .jpg, .jpeg, .png e .webp são suportados."
     ),
 });
 
@@ -16464,7 +15433,7 @@ export const deleteCookie = (): void => {
  * @since 28/12/2025
  */
 
-import { getAuthToken } from './cookies';
+import { getAuthToken } from "./cookies";
 
 /**
  * Erro customizado para requisições
@@ -16476,7 +15445,7 @@ export class FetchError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'FetchError';
+    this.name = "FetchError";
   }
 }
 
@@ -16486,11 +15455,11 @@ export class FetchError extends Error {
 export const getJsonHeaders = (): HeadersInit => {
   const token = getAuthToken();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;
@@ -16504,7 +15473,7 @@ export const getFormDataHeaders = (): HeadersInit => {
   const headers: Record<string, string> = {};
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;
@@ -16514,7 +15483,7 @@ export const getFormDataHeaders = (): HeadersInit => {
  * Trata erros da API
  */
 export const handleFetchError = async (response: Response): Promise<never> => {
-  let message = 'Erro ao processar requisição';
+  let message = "Erro ao processar requisição";
   let details: unknown;
 
   try {
@@ -16537,10 +15506,12 @@ export const fetchWithAuth = async <T = unknown>(
 ): Promise<T> => {
   const token = getAuthToken();
   if (!token) {
-    throw new FetchError('Usuário não autenticado', 401);
+    throw new FetchError("Usuário não autenticado", 401);
   }
 
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const fullUrl = `${
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+  }${url}`;
   const response = await fetch(fullUrl, {
     ...options,
     headers: {
@@ -16562,14 +15533,16 @@ export const fetchWithAuth = async <T = unknown>(
 export const fetchWithFormData = async <T = unknown>(
   url: string,
   formData: FormData,
-  method: 'POST' | 'PATCH' = 'POST'
+  method: "POST" | "PATCH" = "POST"
 ): Promise<T> => {
   const token = getAuthToken();
   if (!token) {
-    throw new FetchError('Usuário não autenticado', 401);
+    throw new FetchError("Usuário não autenticado", 401);
   }
 
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const fullUrl = `${
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+  }${url}`;
   const response = await fetch(fullUrl, {
     method,
     headers: getFormDataHeaders(),
@@ -16788,30 +15761,30 @@ export const FILE_SIZE_LIMITS = {
  * Tipos de arquivo aceitos
  */
 export const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
 ] as const;
 
 /**
  * Tipos MIME aceitos para imagens
  */
 export const ACCEPTED_IMAGE_MIME_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
 ] as const;
 
 /**
  * Extensões de arquivo aceitas
  */
 export const ACCEPTED_IMAGE_EXTENSIONS = [
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.webp',
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
 ] as const;
 
 /**
@@ -16843,14 +15816,14 @@ export const VALIDATION_RULES = {
  * Mensagens de erro padronizadas
  */
 export const ERROR_MESSAGES = {
-  REQUIRED: 'Campo obrigatório',
-  INVALID_FORMAT: 'Formato inválido',
-  FILE_TOO_LARGE: 'Arquivo muito grande',
-  UNSUPPORTED_FILE_TYPE: 'Tipo de arquivo não suportado',
-  NETWORK_ERROR: 'Erro de conexão',
-  UNAUTHORIZED: 'Não autorizado',
-  NOT_FOUND: 'Não encontrado',
-  SERVER_ERROR: 'Erro interno do servidor',
+  REQUIRED: "Campo obrigatório",
+  INVALID_FORMAT: "Formato inválido",
+  FILE_TOO_LARGE: "Arquivo muito grande",
+  UNSUPPORTED_FILE_TYPE: "Tipo de arquivo não suportado",
+  NETWORK_ERROR: "Erro de conexão",
+  UNAUTHORIZED: "Não autorizado",
+  NOT_FOUND: "Não encontrado",
+  SERVER_ERROR: "Erro interno do servidor",
 } as const;
 ```
 
@@ -17137,9 +16110,9 @@ export const pizzaExpressSystem = createSystem(defaultConfig, config);
 
 | Item | Valor |
 |------|-------|
-| **Gerado em** | 28/12/2025 às 14:58:44 |
-| **Arquivos processados** | 179 |
-| **Tamanho do snapshot** | 432K |
+| **Gerado em** | 28/12/2025 às 15:17:15 |
+| **Arquivos processados** | 168 |
+| **Tamanho do snapshot** | 400K |
 
 ---
 

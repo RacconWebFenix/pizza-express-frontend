@@ -1,20 +1,15 @@
 "use client";
 
-import {
-  Box,
-  Heading,
-  Text,
-  Flex,
-} from "@chakra-ui/react";
+import { Box, Heading, Text, Flex } from "@chakra-ui/react";
 import { Order, OrderStatus } from "@/types/order";
 
 const ORDER_STATUS_VALUES: OrderStatus[] = [
   "PENDENTE",
-  "EM_PREPARO", 
+  "EM_PREPARO",
   "A_CAMINHO",
   "PRONTO",
   "ENTREGUE",
-  "CANCELADO"
+  "CANCELADO",
 ];
 
 interface PedidoCardProps {
@@ -23,8 +18,11 @@ interface PedidoCardProps {
   viewMode?: "kanban" | "grid";
 }
 
-export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: PedidoCardProps) => {
-
+export const PedidoCard = ({
+  pedido,
+  onUpdateStatus,
+  viewMode = "kanban",
+}: PedidoCardProps) => {
   return (
     <Box
       borderWidth="1px"
@@ -35,10 +33,10 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
       shadow="sm"
       draggable={!!onUpdateStatus}
       onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
-        e.dataTransfer.setData('text/plain', pedido.id.toString());
+        e.dataTransfer.setData("text/plain", pedido.id.toString());
       }}
-      cursor={onUpdateStatus ? 'grab' : 'default'}
-      _active={{ cursor: onUpdateStatus ? 'grabbing' : 'default' }}
+      cursor={onUpdateStatus ? "grab" : "default"}
+      _active={{ cursor: onUpdateStatus ? "grabbing" : "default" }}
     >
       <Flex justify="space-between" align="flex-start" gap={3}>
         <Box flex={1}>
@@ -46,7 +44,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
           <Heading size="md">Pedido #{pedido.id}</Heading>
           {/* ALTERADO: Cor do texto secundário */}
           <Text fontSize="sm" color="text.secondary">
-            Tipo: {pedido.type === 'DELIVERY' ? 'Entrega' : 'Mesa'}
+            Tipo: {pedido.type === "DELIVERY" ? "Entrega" : "Mesa"}
           </Text>
         </Box>
 
@@ -116,17 +114,19 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
         <Box mt={3}>
           <select
             value={pedido.status}
-            onChange={(e) => onUpdateStatus(pedido.id, e.target.value as OrderStatus)}
+            onChange={(e) =>
+              onUpdateStatus(pedido.id, e.target.value as OrderStatus)
+            }
             style={{
-              width: '100%',
-              padding: '0.5rem',
-              borderRadius: '0.375rem',
-              border: '1px solid #4b5563',
-              backgroundColor: '#2d3748',
-              fontSize: '0.875rem',
-              color: '#e2e8f0',
-              fontFamily: 'Roboto, sans-serif',
-              transition: 'all 0.2s',
+              width: "100%",
+              padding: "0.5rem",
+              borderRadius: "0.375rem",
+              border: "1px solid #4b5563",
+              backgroundColor: "#2d3748",
+              fontSize: "0.875rem",
+              color: "#e2e8f0",
+              fontFamily: "Roboto, sans-serif",
+              transition: "all 0.2s",
             }}
           >
             {ORDER_STATUS_VALUES.map((status) => (

@@ -53,55 +53,51 @@ const KanbanColumn = ({
         e.preventDefault();
         setIsDragOver(false);
         if (onUpdateStatus) {
-          const pedidoId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const pedidoId = parseInt(e.dataTransfer.getData("text/plain"), 10);
           onUpdateStatus(pedidoId, status);
         }
       }}
     >
-    <Flex align="center" mb={4}>
-      <TagRoot
-        size="lg"
-        variant="solid"
-        colorScheme="blue"
-      >
-        {pedidos.length}
-      </TagRoot>
+      <Flex align="center" mb={4}>
+        <TagRoot size="lg" variant="solid" colorScheme="blue">
+          {pedidos.length}
+        </TagRoot>
 
-      <Heading size="md" color="text.primary" ml={3}>
-        {title}
-      </Heading>
-    </Flex>
-    <VStack gap="4" align="stretch">
-      {pedidos.map((pedido) => (
-        <PedidoCard
-          key={pedido.id}
-          pedido={pedido}
-          onUpdateStatus={onUpdateStatus}
-          viewMode="kanban"
-        />
-      ))}
-      {isDragOver && (
-        <Box
-          borderWidth="2px"
-          borderRadius="lg"
-          p={4}
-          borderColor="brand.primary"
-          borderStyle="dashed"
-          bg="background.primary"
-          minH="80px"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          color="brand.primary"
-          fontSize="sm"
-          fontWeight="600"
-          transition="all 0.2s"
-        >
-          Solte aqui para mover
-        </Box>
-      )}
-    </VStack>
-  </Box>
+        <Heading size="md" color="text.primary" ml={3}>
+          {title}
+        </Heading>
+      </Flex>
+      <VStack gap="4" align="stretch">
+        {pedidos.map((pedido) => (
+          <PedidoCard
+            key={pedido.id}
+            pedido={pedido}
+            onUpdateStatus={onUpdateStatus}
+            viewMode="kanban"
+          />
+        ))}
+        {isDragOver && (
+          <Box
+            borderWidth="2px"
+            borderRadius="lg"
+            p={4}
+            borderColor="brand.primary"
+            borderStyle="dashed"
+            bg="background.primary"
+            minH="80px"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color="brand.primary"
+            fontSize="sm"
+            fontWeight="600"
+            transition="all 0.2s"
+          >
+            Solte aqui para mover
+          </Box>
+        )}
+      </VStack>
+    </Box>
   );
 };
 

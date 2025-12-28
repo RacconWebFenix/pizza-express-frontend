@@ -67,5 +67,3 @@ export * from "./entregador";
 export * from "./mesa";
 export * from "./upload";
 export * from "./cart";
-
-

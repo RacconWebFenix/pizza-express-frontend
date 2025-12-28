@@ -48,7 +48,8 @@ export const PedidosPageLayout = () => {
 
   // Filtrar pedidos baseado nos filtros ativos
   const filteredPedidos = orders.filter((pedido: Order) => {
-    const statusMatch = statusFilters.length === 0 || statusFilters.includes(pedido.status);
+    const statusMatch =
+      statusFilters.length === 0 || statusFilters.includes(pedido.status);
     const clienteMatch = !clienteFilter || true; // TODO: Implementar filtragem por cliente quando houver API
     const pedidoMatch =
       !pedidoFilter || pedido.id.toString().includes(pedidoFilter);

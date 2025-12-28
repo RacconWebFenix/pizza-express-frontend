@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SimpleGrid,
-  Box,
-} from "@chakra-ui/react";
+import { SimpleGrid, Box } from "@chakra-ui/react";
 import { Order, OrderStatus } from "@/types/order";
 import { PedidoCard } from "./PedidoCard";
 
