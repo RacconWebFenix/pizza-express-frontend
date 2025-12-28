@@ -125,6 +125,20 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
 };
 
 /**
+ * Busca pedidos de delivery (para Kanban)
+ */
+export const getDeliveryOrders = async (filters?: Omit<OrderFilters, 'type'>): Promise<Order[]> => {
+  return getOrdersWithFilters({ ...filters, type: 'DELIVERY' });
+};
+
+/**
+ * Busca pedidos de mesa (dine-in)
+ */
+export const getDineInOrders = async (filters?: Omit<OrderFilters, 'type'>): Promise<Order[]> => {
+  return getOrdersWithFilters({ ...filters, type: 'DINE_IN' });
+};
+
+/**
  * Busca pedido por ID
  */
 export const getOrderById = async (orderId: number): Promise<Order> => {
@@ -272,6 +286,8 @@ export const ordersService = {
   updateItemQuantity,
   cancelItem: cancelOrderItem,
   getWithFilters: getOrdersWithFilters,
+  getDelivery: getDeliveryOrders,
+  getDineIn: getDineInOrders,
   updateStatus: updateOrderStatus,
 };
 

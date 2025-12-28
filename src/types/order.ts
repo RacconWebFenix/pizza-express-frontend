@@ -4,6 +4,8 @@
  * @since 28/12/2025
  */
 
+import type { Endereco } from "./endereco";
+
 /**
  * Tipo de pedido
  */
@@ -62,8 +64,21 @@ export interface Order {
   total: string; // Total calculado
   deliveryFee?: string; // Taxa de entrega (se aplicável)
   userId?: number;
+  user?: {
+    id: number;
+    nome: string;
+    email: string;
+  };
   addressId?: number;
+  address?: Endereco;
   sessionId?: string; // Para pedidos DINE_IN
+  session?: {
+    id: string;
+    table: {
+      id: string;
+      number: number;
+    };
+  };
   items: OrderItem[];
   canModify: boolean; // Se ainda pode modificar itens
   createdAt: string;

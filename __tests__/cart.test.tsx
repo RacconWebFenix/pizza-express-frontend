@@ -4,7 +4,7 @@ import {
   CartProvider,
   useCart,
 } from "../src/features/cart/context/CartContext";
-import { Pizza } from "../src/types/pizzas";
+import { Product } from "../src/types/product";
 
 // Mock do localStorage
 const localStorageMock = {
@@ -15,12 +15,19 @@ const localStorageMock = {
 };
 Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
-const mockPizza: Pizza = {
-  id: 1,
-  nome: "Pizza Margherita",
-  descricao: "Pizza clássica com molho de tomate e queijo",
-  preco: 25.99,
-  image: "/pizza-margherita.jpg",
+const mockProduct: Product = {
+  id: "1",
+  name: "Pizza Margherita",
+  description: "Pizza clássica com molho de tomate e queijo",
+  price: "25.99",
+  imageUrl: "/pizza-margherita.jpg",
+  categoryId: "1",
+  category: {
+    id: "1",
+    name: "Pizzas",
+    slug: "pizzas",
+  },
+  active: true,
   createdAt: "2023-01-01T00:00:00Z",
   updatedAt: "2023-01-01T00:00:00Z",
 };
@@ -30,7 +37,7 @@ const TestComponent = () => {
 
   return (
     <div>
-      <button onClick={() => addToCart(mockPizza)}>Add Pizza</button>
+      <button onClick={() => addToCart(mockProduct)}>Add Product</button>
       <div data-testid="total-items">{cart.totalItems}</div>
       <div data-testid="total-price">{cart.totalPrice}</div>
     </div>
@@ -50,7 +57,7 @@ describe("CartContext", () => {
       </CartProvider>
     );
 
-    const addButton = screen.getByText("Add Pizza");
+    const addButton = screen.getByText("Add Product");
     await act(async () => {
       addButton.click();
     });
@@ -66,7 +73,7 @@ describe("CartContext", () => {
       </CartProvider>
     );
 
-    const addButton = screen.getByText("Add Pizza");
+    const addButton = screen.getByText("Add Product");
     addButton.click();
 
     expect(localStorageMock.setItem).toHaveBeenCalledWith(

@@ -24,6 +24,11 @@ interface UseOrdersOptions {
    * Se deve buscar pedidos de admin (todos os pedidos)
    */
   adminMode?: boolean;
+
+  /**
+   * Tipo específico de pedido para filtrar
+   */
+  orderType?: 'DELIVERY' | 'DINE_IN';
 }
 
 interface UseOrdersReturn {
@@ -39,7 +44,7 @@ interface UseOrdersReturn {
  * Hook para gerenciar lista de pedidos
  */
 export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
-  const { autoFetch = true, filters, adminMode = false } = options;
+  const { autoFetch = true, filters, adminMode = false, orderType } = options;
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,9 +58,18 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
       setIsLoading(true);
       setError(null);
 
-      const data = adminMode
-        ? await ordersService.getWithFilters(filters || {})
-        : await ordersService.getMy(filters || {});
+      let data: Order[];
+
+      if (orderType === 'DELIVERY') {
+        data = await ordersService.getDelivery(filters || {});
+      } else if (orderType === 'DINE_IN') {
+        data = await ordersService.getDineIn(filters || {});
+      } else {
+        // Fallback para comportamento anterior
+        data = adminMode
+          ? await ordersService.getWithFilters(filters || {})
+          : await ordersService.getMy(filters || {});
+      }
 
       setOrders(data);
     } catch (err) {
@@ -69,7 +83,7 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, adminMode]);
+  }, [filters, adminMode, orderType]);
 
   /**
    * Refetch manual
