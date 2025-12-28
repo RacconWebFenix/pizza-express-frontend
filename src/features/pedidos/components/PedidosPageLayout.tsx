@@ -11,14 +11,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { LayoutGrid, KanbanSquare } from "lucide-react";
-import { usePedidos } from "../hooks/usePedidos";
-import { useMeusPedidos } from "../hooks/useMeusPedidos";
+import { useOrders } from "@/features/orders/hooks/useOrders";
 import { usePermissions } from "@/hooks/usePermissions";
 import { PedidosKanban } from "./PedidosKanban";
 import { PedidosGrid } from "./PedidosGrid";
 import { PedidosFilters } from "./PedidosFilters";
 import { PizzaLoading } from "@/components/ui";
-import { StatusPedido, Pedido } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
 
 type ViewMode = "kanban" | "grid";
 
@@ -30,30 +29,27 @@ type ViewMode = "kanban" | "grid";
  */
 export const PedidosPageLayout = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
-  const [statusFilters, setStatusFilters] = useState<StatusPedido[]>([]);
+  const [statusFilters, setStatusFilters] = useState<OrderStatus[]>([]);
   const [clienteFilter, setClienteFilter] = useState<string>("");
   const [pedidoFilter, setPedidoFilter] = useState<string>("");
   const { canViewAllOrders } = usePermissions();
 
-  // Sempre chama ambos os hooks, mas só um será executado baseado nas permissões
-  const allOrdersHook = usePedidos(canViewAllOrders());
-  const myOrdersHook = useMeusPedidos(!canViewAllOrders());
+  // Usa o hook unificado
+  const ordersHook = useOrders({
+    adminMode: canViewAllOrders(),
+  });
 
-  // Seleciona o hook apropriado baseado nas permissões
-  const ordersHook = canViewAllOrders() ? allOrdersHook : myOrdersHook;
-  const { pedidos, isLoading } = ordersHook;
+  const { orders, isLoading } = ordersHook;
 
   // handleUpdateStatus só existe para funcionários/admins
   const handleUpdateStatus = canViewAllOrders()
-    ? allOrdersHook.handleUpdateStatus
+    ? ordersHook.updateOrderStatus
     : undefined;
 
   // Filtrar pedidos baseado nos filtros ativos
-  const filteredPedidos = pedidos.filter((pedido: Pedido) => {
+  const filteredPedidos = orders.filter((pedido: Order) => {
     const statusMatch = statusFilters.length === 0 || statusFilters.includes(pedido.status);
-    const clienteMatch =
-      !clienteFilter ||
-      (pedido.user?.nome ?? "").toLowerCase().includes(clienteFilter.toLowerCase());
+    const clienteMatch = !clienteFilter || true; // TODO: Implementar filtragem por cliente quando houver API
     const pedidoMatch =
       !pedidoFilter || pedido.id.toString().includes(pedidoFilter);
 

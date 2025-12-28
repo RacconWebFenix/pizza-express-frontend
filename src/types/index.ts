@@ -68,6 +68,4 @@ export * from "./mesa";
 export * from "./upload";
 export * from "./cart";
 
-// DEPRECATED - Manter por compatibilidade temporária
-// export * from './pizzas';  // ⚠️ Remover após migração
-// export * from './pedidos'; // ⚠️ Remover após migração
+

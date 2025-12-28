@@ -4,12 +4,12 @@ import {
   SimpleGrid,
   Box,
 } from "@chakra-ui/react";
-import { Pedido, StatusPedido } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
 import { PedidoCard } from "./PedidoCard";
 
 interface PedidosGridProps {
-  pedidos?: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedidos?: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }
 
 export const PedidosGrid = ({

@@ -1,20 +1,20 @@
 "use client";
 
 import { Box, Input, Flex, Button, HStack } from "@chakra-ui/react";
-import { StatusPedido } from "@/types/pedidos";
+import { OrderStatus } from "@/types/order";
 import { X } from "lucide-react";
 
 interface PedidosFiltersProps {
-  statusFilters: StatusPedido[];
+  statusFilters: OrderStatus[];
   clienteFilter: string;
   pedidoFilter: string;
-  onStatusChange: (statuses: StatusPedido[]) => void;
+  onStatusChange: (statuses: OrderStatus[]) => void;
   onClienteChange: (nome: string) => void;
   onPedidoChange: (numero: string) => void;
 }
 
 const statusConfig: Record<
-  StatusPedido,
+  OrderStatus,
   { label: string; bgColor: string; borderColor: string; activeBgColor: string }
 > = {
   PENDENTE: {
@@ -34,6 +34,12 @@ const statusConfig: Record<
     bgColor: "#f5f5f5",
     borderColor: "#e0e0e0",
     activeBgColor: "#e3f2fd",
+  },
+  PRONTO: {
+    label: "Pronto",
+    bgColor: "#f5f5f5",
+    borderColor: "#e0e0e0",
+    activeBgColor: "#e8f5e9",
   },
   ENTREGUE: {
     label: "Entregue",
@@ -57,7 +63,7 @@ export const PedidosFilters = ({
   onClienteChange,
   onPedidoChange,
 }: PedidosFiltersProps) => {
-  const handleStatusToggle = (status: StatusPedido) => {
+  const handleStatusToggle = (status: OrderStatus) => {
     if (statusFilters.includes(status)) {
       onStatusChange(statusFilters.filter((s) => s !== status));
     } else {
@@ -72,7 +78,7 @@ export const PedidosFilters = ({
       "A_CAMINHO",
       "ENTREGUE",
       "CANCELADO",
-    ] as unknown as StatusPedido[];
+    ] as unknown as OrderStatus[];
     onStatusChange(allStatuses);
   };
 
@@ -106,7 +112,7 @@ export const PedidosFilters = ({
           Status
         </label>
         <HStack gap={2} flexWrap="wrap">
-          {(Object.keys(statusConfig) as StatusPedido[]).map((status) => {
+          {(Object.keys(statusConfig) as OrderStatus[]).map((status) => {
             const isSelected = statusFilters.includes(status);
             const config = statusConfig[status];
             return (

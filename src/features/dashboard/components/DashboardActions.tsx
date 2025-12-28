@@ -1,21 +1,14 @@
 "use client";
 
 import { Button, Flex, Icon } from "@chakra-ui/react";
-import { Utensils, ClipboardList, Pizza, Users, Truck } from "lucide-react";
+import { Utensils, ClipboardList, Users, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
 import { usePermissions } from "@/hooks/usePermissions";
 
-interface DashboardActionsProps {
-  onShowGerenciarCardapio: () => void;
-}
-
-export const DashboardActions = ({
-  onShowGerenciarCardapio,
-}: DashboardActionsProps) => {
+export const DashboardActions = () => {
   const router = useRouter();
-  const { canManagePizzas, canManageUsers, canManageDeliveryPersons } =
-    usePermissions();
+  const { canManageUsers, canManageDeliveryPersons } = usePermissions();
 
   const secondaryButtonStyle = {
     bg: "background.secondary",
@@ -53,19 +46,6 @@ export const DashboardActions = ({
       </Button>
 
       {/* Botões de Administração - apenas para admin */}
-      {canManagePizzas() && (
-        <Button
-          onClick={onShowGerenciarCardapio}
-          size="lg"
-          flex="1"
-          minW="200px"
-          variant="solid"
-        >
-          <Icon as={Pizza} mr={2} />
-          Gerenciar Cardápio
-        </Button>
-      )}
-
       {canManageUsers() && (
         <Button
           size="lg"

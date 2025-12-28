@@ -6,7 +6,7 @@ import {
   SessaoMesa,
   AdicionarPedidoMesaData,
 } from "@/types/mesa";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import {
   getMesas,
   getMesaById,
@@ -26,7 +26,7 @@ interface UseMesasReturn {
   getById: (id: string) => Promise<Mesa>;
   abrirSessao: (mesaId: string) => Promise<SessaoMesa>;
   getSessaoAtiva: (mesaId: string) => Promise<SessaoMesa | null>;
-  adicionarPedido: (data: AdicionarPedidoMesaData) => Promise<Pedido>;
+  adicionarPedido: (data: AdicionarPedidoMesaData) => Promise<Order>;
   fecharConta: (mesaId: string) => Promise<void>;
 }
 
@@ -115,7 +115,7 @@ export const useMesas = (): UseMesasReturn => {
   );
 
   const handleAdicionarPedido = useCallback(
-    async (data: AdicionarPedidoMesaData): Promise<Pedido> => {
+    async (data: AdicionarPedidoMesaData): Promise<Order> => {
       try {
         const result = await adicionarPedidoMesa(data);
         // Refetch mesas para atualizar dados

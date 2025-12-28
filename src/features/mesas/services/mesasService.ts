@@ -4,7 +4,7 @@ import {
   SessaoMesa,
   AdicionarPedidoMesaData,
 } from "@/types/mesa";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import { getAuthToken } from "@/utils/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -237,7 +237,7 @@ export const getSessaoAtiva = async (
 // Adicionar pedido à mesa
 export const adicionarPedidoMesa = async (
   data: AdicionarPedidoMesaData
-): Promise<Pedido> => {
+): Promise<Order> => {
   const token = getAuthToken();
   if (!token) {
     throw new Error("Usuário não autenticado");

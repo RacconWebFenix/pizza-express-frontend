@@ -13,7 +13,8 @@ import {
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
-import { createPedido } from "@/features/pedidos/services/pedidosService";
+import { ordersService } from "@/features/orders/services/ordersService";
+import type { CreateOrderDto } from "@/types/order";
 import { toaster } from "@/components/ui/toaster";
 import { EnderecoSelectionModal } from "@/features/profile/components/EnderecoSelectionModal";
 import { CreditCardForm } from "@/features/payments/components/CreditCardForm";
@@ -68,16 +69,17 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     // Agora criar o pedido após pagamento aprovado
     setIsSubmitting(true);
     try {
-      const orderData = {
-        clienteId: user!.id,
-        enderecoId: selectedEndereco!.id,
-        pizzasIds: cart.items.flatMap((item) =>
-          Array(item.quantity).fill(item.product.id)
-        ),
-        paymentIntentId: intentId, // Adicionar ID do pagamento
+      const orderData: CreateOrderDto = {
+        type: "DELIVERY",
+        addressId: selectedEndereco!.id,
+        items: cart.items.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+        })),
+        observations: `Pagamento via Stripe - Intent: ${intentId}`,
       };
 
-      await createPedido(orderData);
+      await ordersService.create(orderData);
       toaster.create({
         title: "Pedido realizado!",
         description: "Seu pedido foi enviado com sucesso.",

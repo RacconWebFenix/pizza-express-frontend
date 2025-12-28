@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect } from "react";
 
-import { getPedidos } from "@/features/pedidos/services/pedidosService";
+import { ordersService } from "@/features/orders/services/ordersService";
 import { formatCurrency } from "@/utils/format";
-import { Pedido } from "@/types/pedidos";
+import { Order } from "@/types/order";
 import { toaster } from "@/components/ui/toaster";
 
 interface FormattedDashboardStats {
@@ -27,14 +27,13 @@ export const useDashboardStats = () => {
   const fetchAndCalculateStats = useCallback(async () => {
     try {
       setIsLoading(true);
-      const todosOsPedidos: Pedido[] = await getPedidos();
+      const todosOsPedidos: Order[] = await ordersService.getWithFilters();
       const hoje = new Date().toISOString().split("T")[0];
       const pedidosDeHoje = todosOsPedidos.filter(
-        (p) => p.criadoEm.split("T")[0] === hoje
+        (p) => p.createdAt.split("T")[0] === hoje
       );
       const faturamentoTotal = todosOsPedidos.reduce(
-        (total, p) =>
-          total + p.pizzas.reduce((sum, pizza) => sum + pizza.preco, 0),
+        (total, p) => total + parseFloat(p.total),
         0
       );
       const totalDePedidos = todosOsPedidos.length;

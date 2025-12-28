@@ -9,12 +9,12 @@ import {
   TagRoot,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
 import { PedidoCard } from "./PedidoCard";
 
 interface PedidosKanbanProps {
-  pedidos?: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedidos?: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }
 
 const KanbanColumn = ({
@@ -24,9 +24,9 @@ const KanbanColumn = ({
   onUpdateStatus,
 }: {
   title: string;
-  status: StatusPedido;
-  pedidos: Pedido[];
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  status: OrderStatus;
+  pedidos: Order[];
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -62,7 +62,7 @@ const KanbanColumn = ({
       <TagRoot
         size="lg"
         variant="solid"
-        colorScheme={statusConfig[status].colorScheme}
+        colorScheme="blue"
       >
         {pedidos.length}
       </TagRoot>
@@ -109,7 +109,7 @@ export const PedidosKanban = ({
   pedidos = [],
   onUpdateStatus,
 }: PedidosKanbanProps) => {
-  const pedidosPorStatus = (status: StatusPedido) =>
+  const pedidosPorStatus = (status: OrderStatus) =>
     pedidos.filter((p) => p.status === status);
 
   return (
@@ -117,26 +117,26 @@ export const PedidosKanban = ({
       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap="5">
         <KanbanColumn
           title="Pendentes"
-          status={StatusPedido.PENDENTE}
-          pedidos={pedidosPorStatus(StatusPedido.PENDENTE)}
+          status="PENDENTE"
+          pedidos={pedidosPorStatus("PENDENTE")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="Em Preparo"
-          status={StatusPedido.EM_PREPARO}
-          pedidos={pedidosPorStatus(StatusPedido.EM_PREPARO)}
+          status="EM_PREPARO"
+          pedidos={pedidosPorStatus("EM_PREPARO")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="A Caminho"
-          status={StatusPedido.A_CAMINHO}
-          pedidos={pedidosPorStatus(StatusPedido.A_CAMINHO)}
+          status="A_CAMINHO"
+          pedidos={pedidosPorStatus("A_CAMINHO")}
           onUpdateStatus={onUpdateStatus}
         />
         <KanbanColumn
           title="Entregues"
-          status={StatusPedido.ENTREGUE}
-          pedidos={pedidosPorStatus(StatusPedido.ENTREGUE)}
+          status="ENTREGUE"
+          pedidos={pedidosPorStatus("ENTREGUE")}
           onUpdateStatus={onUpdateStatus}
         />
       </SimpleGrid>

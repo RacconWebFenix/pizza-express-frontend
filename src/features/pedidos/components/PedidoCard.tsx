@@ -6,11 +6,20 @@ import {
   Text,
   Flex,
 } from "@chakra-ui/react";
-import { Pedido, StatusPedido, statusConfig } from "@/types/pedidos";
+import { Order, OrderStatus } from "@/types/order";
+
+const ORDER_STATUS_VALUES: OrderStatus[] = [
+  "PENDENTE",
+  "EM_PREPARO", 
+  "A_CAMINHO",
+  "PRONTO",
+  "ENTREGUE",
+  "CANCELADO"
+];
 
 interface PedidoCardProps {
-  pedido: Pedido;
-  onUpdateStatus?: (pedidoId: number, status: StatusPedido) => void;
+  pedido: Order;
+  onUpdateStatus?: (pedidoId: number, status: OrderStatus) => void;
   viewMode?: "kanban" | "grid";
 }
 
@@ -37,7 +46,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
           <Heading size="md">Pedido #{pedido.id}</Heading>
           {/* ALTERADO: Cor do texto secundário */}
           <Text fontSize="sm" color="text.secondary">
-            Cliente: {pedido.user.nome || "Cliente não identificado"}
+            Tipo: {pedido.type === 'DELIVERY' ? 'Entrega' : 'Mesa'}
           </Text>
         </Box>
 
@@ -57,6 +66,8 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 ? "#fff3e0"
                 : pedido.status === "A_CAMINHO"
                 ? "#e3f2fd"
+                : pedido.status === "PRONTO"
+                ? "#e8f5e8"
                 : pedido.status === "ENTREGUE"
                 ? "#e8f5e9"
                 : "#ffebee"
@@ -68,6 +79,8 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 ? "#f57c00"
                 : pedido.status === "A_CAMINHO"
                 ? "#1976d2"
+                : pedido.status === "PRONTO"
+                ? "#388e3c"
                 : pedido.status === "ENTREGUE"
                 ? "#388e3c"
                 : "#c62828"
@@ -85,16 +98,16 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
                 : "#ef5350"
             }
           >
-            {statusConfig[pedido.status].label}
+            {pedido.status}
           </Box>
         )}
       </Flex>
 
       <Box mt={3}>
-        {pedido.pizzas.map((pizza) => (
-          // O texto das pizzas também herdará a cor correta
-          <Text key={pizza.id} fontSize="sm">
-            - {pizza.nome}
+        {pedido.items.map((item) => (
+          // O texto dos itens também herdará a cor correta
+          <Text key={item.id} fontSize="sm">
+            - {item.product.name}
           </Text>
         ))}
       </Box>
@@ -103,7 +116,7 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
         <Box mt={3}>
           <select
             value={pedido.status}
-            onChange={(e) => onUpdateStatus(pedido.id, e.target.value as StatusPedido)}
+            onChange={(e) => onUpdateStatus(pedido.id, e.target.value as OrderStatus)}
             style={{
               width: '100%',
               padding: '0.5rem',
@@ -116,9 +129,9 @@ export const PedidoCard = ({ pedido, onUpdateStatus, viewMode = "kanban" }: Pedi
               transition: 'all 0.2s',
             }}
           >
-            {Object.values(StatusPedido).map((status) => (
+            {ORDER_STATUS_VALUES.map((status) => (
               <option key={status} value={status}>
-                {statusConfig[status].label}
+                {status}
               </option>
             ))}
           </select>

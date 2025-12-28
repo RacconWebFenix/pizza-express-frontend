@@ -11,11 +11,10 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { FaClock, FaCheckCircle, FaTruck, FaTimesCircle } from "react-icons/fa";
-import { useMeusPedidos } from "../hooks/useMeusPedidos";
-import { PizzaCard } from "@/components/ui";
-import { PizzaLoading } from "@/components/ui";
+import { useOrders } from "@/features/orders/hooks/useOrders";
+import { PizzaCard, PizzaLoading } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
-import type { Pedido } from "@/types/pedidos";
+import type { Order } from "@/types/order";
 
 /**
  * Função simples para formatar data.
@@ -38,12 +37,12 @@ const StatusBadge = ({ status }: { status: string }) => {
     switch (status) {
       case "PENDENTE":
         return { color: "yellow", icon: FaClock, label: "Pendente" };
-      case "PREPARANDO":
-        return { color: "blue", icon: FaClock, label: "Preparando" };
+      case "EM_PREPARO":
+        return { color: "blue", icon: FaClock, label: "Em Preparo" };
       case "PRONTO":
         return { color: "green", icon: FaCheckCircle, label: "Pronto" };
-      case " SAIU_PARA_ENTREGA":
-        return { color: "purple", icon: FaTruck, label: "Em Trânsito" };
+      case "A_CAMINHO":
+        return { color: "purple", icon: FaTruck, label: "A Caminho" };
       case "ENTREGUE":
         return { color: "green", icon: FaCheckCircle, label: "Entregue" };
       case "CANCELADO":
@@ -68,10 +67,9 @@ const StatusBadge = ({ status }: { status: string }) => {
 /**
  * Componente para exibir um pedido individual.
  */
-const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
-  const totalPizzas = pedido.pizzas?.length || 0;
-  const totalValor =
-    pedido.pizzas?.reduce((sum, pizza) => sum + pizza.preco, 0) || 0;
+const PedidoCard = ({ pedido }: { pedido: Order }) => {
+  const totalItems = pedido.items?.length || 0;
+  const totalValor = parseFloat(pedido.total) || 0;
 
   return (
     <PizzaCard className="p-6">
@@ -81,7 +79,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
             Pedido #{pedido.id}
           </Heading>
           <Text color="gray.600" fontSize="sm">
-            {formatDate(pedido.criadoEm)}
+            {formatDate(pedido.createdAt)}
           </Text>
         </Box>
         <StatusBadge status={pedido.status} />
@@ -89,12 +87,12 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
 
       <Box mb={4}>
         <Text fontWeight="medium" mb={2}>
-          {totalPizzas} pizza{totalPizzas !== 1 ? "s" : ""}
+          {totalItems} item{totalItems !== 1 ? "s" : ""}
         </Text>
         <VStack align="start" gap={1}>
-          {pedido.pizzas?.map((pizza, index) => (
+          {pedido.items?.map((item, index) => (
             <Text key={index} fontSize="sm" color="gray.600">
-              • {pizza.nome} - {formatCurrency(pizza.preco)}
+              • {item.product.name} (x{item.quantity}) - {formatCurrency(parseFloat(item.subtotal))}
             </Text>
           ))}
         </VStack>
@@ -103,10 +101,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
       <Flex justify="space-between" align="center">
         <Box>
           <Text fontSize="sm" color="gray.600">
-            Endereço: {pedido.endereco?.logradouro}, {pedido.endereco?.numero}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            {pedido.endereco?.bairro}, {pedido.endereco?.cidade}
+            Tipo: {pedido.type === 'DELIVERY' ? 'Entrega' : 'Mesa'}
           </Text>
         </Box>
         <Box textAlign="right">
@@ -124,7 +119,7 @@ const PedidoCard = ({ pedido }: { pedido: Pedido }) => {
  * Mostra o histórico de pedidos do usuário logado.
  */
 export const MeusPedidosPageLayout = () => {
-  const { pedidos, isLoading, error } = useMeusPedidos();
+  const { orders, isLoading, error } = useOrders();
 
   if (isLoading) {
     return (
@@ -154,7 +149,7 @@ export const MeusPedidosPageLayout = () => {
           </Text>
         </Box>
 
-        {pedidos.length === 0 ? (
+        {orders.length === 0 ? (
           <Box textAlign="center" py={12}>
             <Text fontSize="lg" color="gray.500" mb={4}>
               Você ainda não fez nenhum pedido.
@@ -172,7 +167,7 @@ export const MeusPedidosPageLayout = () => {
             }}
             gap={6}
           >
-            {pedidos.map((pedido) => (
+            {orders.map((pedido) => (
               <PedidoCard key={pedido.id} pedido={pedido} />
             ))}
           </Grid>
