@@ -88,9 +88,10 @@ export const PizzaForm = ({
       descricao:
         watchedValues.descricao || "Descrição da pizza aparecerá aqui...",
       preco: isNaN(preco) ? 0 : preco,
-      image: hasNewImage && watchedValues.image
-        ? URL.createObjectURL(watchedValues.image)
-        : existingImage || null,
+      image:
+        hasNewImage && watchedValues.image
+          ? URL.createObjectURL(watchedValues.image)
+          : existingImage || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

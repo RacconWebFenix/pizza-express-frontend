@@ -1,6 +1,5 @@
 import { Product } from "./product";
 
-
 /**
  * @interface CartItem
  * @description Interface para um item dentro do carrinho de compras.

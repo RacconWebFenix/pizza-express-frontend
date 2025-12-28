@@ -6,7 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { VStack, HStack, Button, Box } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
-import { PizzaInput, PizzaTextarea, PizzaButton, PizzaSelect } from "@/components/ui";
+import {
+  PizzaInput,
+  PizzaTextarea,
+  PizzaButton,
+  PizzaSelect,
+} from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";
 import { useCategorias } from "../../categorias/hooks/useCategorias";
 import { Produto } from "@/types/produto";

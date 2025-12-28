@@ -4,7 +4,8 @@ import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
-interface PizzaCheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+interface PizzaCheckboxProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   label?: string;
   error?: string;
 }

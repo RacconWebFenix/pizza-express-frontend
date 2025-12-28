@@ -4,10 +4,10 @@
  * @since 28/12/2025
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type { Order, OrderFilters } from '@/types/order';
-import { ordersService } from '../services/ordersService';
-import { toaster } from '@/components/ui/toaster';
+import { useState, useCallback, useEffect } from "react";
+import type { Order, OrderFilters } from "@/types/order";
+import { ordersService } from "../services/ordersService";
+import { toaster } from "@/components/ui/toaster";
 
 interface UseOrdersOptions {
   /**
@@ -59,10 +59,11 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
 
       setOrders(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar pedidos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao buscar pedidos";
       setError(errorMessage);
       toaster.error({
-        title: 'Erro ao buscar pedidos',
+        title: "Erro ao buscar pedidos",
         description: errorMessage,
       });
     } finally {
@@ -89,50 +90,56 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
   /**
    * Wrapper para criar pedido
    */
-  const handleCreateOrder = useCallback(async (data: Parameters<typeof ordersService.create>[0]) => {
-    try {
-      const newOrder = await ordersService.create(data);
-      setOrders(prev => [newOrder, ...prev]);
-      toaster.success({
-        title: 'Pedido criado',
-        description: 'Seu pedido foi criado com sucesso!',
-      });
-      return newOrder;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar pedido';
-      toaster.error({
-        title: 'Erro ao criar pedido',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleCreateOrder = useCallback(
+    async (data: Parameters<typeof ordersService.create>[0]) => {
+      try {
+        const newOrder = await ordersService.create(data);
+        setOrders((prev) => [newOrder, ...prev]);
+        toaster.success({
+          title: "Pedido criado",
+          description: "Seu pedido foi criado com sucesso!",
+        });
+        return newOrder;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao criar pedido";
+        toaster.error({
+          title: "Erro ao criar pedido",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para atualizar status
    */
-  const handleUpdateOrderStatus = useCallback(async (orderId: number, status: string) => {
-    try {
-      const updatedOrder = await ordersService.updateStatus(orderId, status);
-      setOrders(prev =>
-        prev.map(order =>
-          order.id === orderId ? updatedOrder : order
-        )
-      );
-      toaster.success({
-        title: 'Status atualizado',
-        description: 'Status do pedido foi atualizado com sucesso!',
-      });
-      return updatedOrder;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar status';
-      toaster.error({
-        title: 'Erro ao atualizar status',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleUpdateOrderStatus = useCallback(
+    async (orderId: number, status: string) => {
+      try {
+        const updatedOrder = await ordersService.updateStatus(orderId, status);
+        setOrders((prev) =>
+          prev.map((order) => (order.id === orderId ? updatedOrder : order))
+        );
+        toaster.success({
+          title: "Status atualizado",
+          description: "Status do pedido foi atualizado com sucesso!",
+        });
+        return updatedOrder;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao atualizar status";
+        toaster.error({
+          title: "Erro ao atualizar status",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   return {
     orders,

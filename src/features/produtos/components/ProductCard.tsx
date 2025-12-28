@@ -1,9 +1,17 @@
 "use client";
 
-import { Box, Image, Text, Button, VStack, HStack, Badge } from '@chakra-ui/react';
-import { Plus } from 'lucide-react';
-import type { Product } from '@/types/product';
-import { parseProductPrice, formatProductPrice } from '@/types/product';
+import {
+  Box,
+  Image,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Badge,
+} from "@chakra-ui/react";
+import { Plus } from "lucide-react";
+import type { Product } from "@/types/product";
+import { parseProductPrice, formatProductPrice } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
@@ -17,7 +25,7 @@ interface ProductCardProps {
 export const ProductCard = ({
   product,
   onAddToCart,
-  isLoading = false
+  isLoading = false,
 }: ProductCardProps) => {
   const handleAddToCart = () => {
     onAddToCart?.(product);
@@ -83,20 +91,12 @@ export const ProductCard = ({
       {/* Conteúdo */}
       <VStack p="4" align="stretch" gap="3">
         <VStack align="start" gap="1">
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            color="gray.800"
-          >
+          <Text fontSize="lg" fontWeight="semibold" color="gray.800">
             {product.name}
           </Text>
 
           {product.description && (
-            <Text
-              fontSize="sm"
-              color="gray.600"
-              minH="2.5rem"
-            >
+            <Text fontSize="sm" color="gray.600" minH="2.5rem">
               {product.description}
             </Text>
           )}
@@ -104,11 +104,7 @@ export const ProductCard = ({
 
         {/* Preço e botão */}
         <HStack justify="space-between" align="center">
-          <Text
-            fontSize="xl"
-            fontWeight="bold"
-            color="orange.600"
-          >
+          <Text fontSize="xl" fontWeight="bold" color="orange.600">
             R$ {formatProductPrice(price)}
           </Text>
 

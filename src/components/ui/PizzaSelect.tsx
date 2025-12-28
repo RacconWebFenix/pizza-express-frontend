@@ -4,7 +4,8 @@ import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
-interface PizzaSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface PizzaSelectProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   required?: boolean;
@@ -16,12 +17,7 @@ export const PizzaSelect = forwardRef<HTMLSelectElement, PizzaSelectProps>(
     return (
       <Box w="full">
         {label && (
-          <PizzaText
-            color="gray.300"
-            mb={2}
-            fontSize="sm"
-            fontWeight="medium"
-          >
+          <PizzaText color="gray.300" mb={2} fontSize="sm" fontWeight="medium">
             {label}
             {required && (
               <PizzaText as="span" color="red.500" ml={1}>

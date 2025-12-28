@@ -6,14 +6,14 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Box,
-  VStack,
-  HStack,
-  Button,
-} from "@chakra-ui/react";
+import { Box, VStack, HStack, Button } from "@chakra-ui/react";
 import { User } from "@/types/users";
-import { PizzaInput, PizzaButton, AppModal, PizzaSelect } from "@/components/ui";
+import {
+  PizzaInput,
+  PizzaButton,
+  AppModal,
+  PizzaSelect,
+} from "@/components/ui";
 import { Role } from "@/types/users";
 import { UserCreationData } from "../types/userManagement";
 
@@ -38,34 +38,41 @@ export const UserFormModal = ({
   isLoading,
 }: UserFormModalProps) => {
   // Schema de validação com Zod - criado dinamicamente baseado no modo
-  const userFormSchema = z.object({
-    nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-    email: z.string().email("Email deve ter um formato válido"),
-    telefone: z.string().regex(
-      /^\(\d{2}\) \d{4,5}-\d{4}$/,
-      "Telefone deve estar no formato (99) 99999-9999"
-    ),
-    role: z.nativeEnum(Role),
-    password: z.string().optional(),
-    confirmPassword: z.string().optional(),
-  }).refine((data) => {
-    // Senha obrigatória apenas na criação
-    if (!data.password && !user) {
-      return false;
-    }
-    // Se senha fornecida, deve ter pelo menos 6 caracteres
-    if (data.password && data.password.length < 6) {
-      return false;
-    }
-    // Se confirmPassword fornecida, deve coincidir com password
-    if (data.confirmPassword && data.password !== data.confirmPassword) {
-      return false;
-    }
-    return true;
-  }, {
-    message: "Validação de senha falhou",
-    path: ["password"],
-  });
+  const userFormSchema = z
+    .object({
+      nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+      email: z.string().email("Email deve ter um formato válido"),
+      telefone: z
+        .string()
+        .regex(
+          /^\(\d{2}\) \d{4,5}-\d{4}$/,
+          "Telefone deve estar no formato (99) 99999-9999"
+        ),
+      role: z.nativeEnum(Role),
+      password: z.string().optional(),
+      confirmPassword: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        // Senha obrigatória apenas na criação
+        if (!data.password && !user) {
+          return false;
+        }
+        // Se senha fornecida, deve ter pelo menos 6 caracteres
+        if (data.password && data.password.length < 6) {
+          return false;
+        }
+        // Se confirmPassword fornecida, deve coincidir com password
+        if (data.confirmPassword && data.password !== data.confirmPassword) {
+          return false;
+        }
+        return true;
+      },
+      {
+        message: "Validação de senha falhou",
+        path: ["password"],
+      }
+    );
 
   type UserFormData = z.infer<typeof userFormSchema>;
 
@@ -121,11 +128,7 @@ export const UserFormModal = ({
   const submitLabel = user ? "Salvar Alterações" : "Criar Usuário";
 
   return (
-    <AppModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-    >
+    <AppModal isOpen={isOpen} onClose={onClose} title={title}>
       <Box as="form" onSubmit={handleSubmit(onFormSubmit)}>
         <VStack gap={4} align="stretch">
           <PizzaInput

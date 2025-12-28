@@ -4,8 +4,12 @@
  * @since 28/12/2025
  */
 
-import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
-import { fetchWithFormData, fetchWithAuth } from '@/utils/fetchHelpers';
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+} from "@/types/product";
+import { fetchWithFormData, fetchWithAuth } from "@/utils/fetchHelpers";
 
 /**
  * Erro customizado para operações de produtos
@@ -17,7 +21,7 @@ class ProductServiceError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'ProductServiceError';
+    this.name = "ProductServiceError";
   }
 }
 
@@ -30,24 +34,27 @@ const createFormData = (
   const formData = new FormData();
 
   // Adiciona campos de texto
-  if (data.name !== undefined) formData.append('name', data.name);
-  if (data.description !== undefined) formData.append('description', data.description);
-  if (data.categoryId !== undefined) formData.append('categoryId', data.categoryId);
+  if (data.name !== undefined) formData.append("name", data.name);
+  if (data.description !== undefined)
+    formData.append("description", data.description);
+  if (data.categoryId !== undefined)
+    formData.append("categoryId", data.categoryId);
 
   // Adiciona campo active apenas se existir (UpdateProductDto)
-  if ('active' in data && data.active !== undefined) {
-    formData.append('active', data.active.toString());
+  if ("active" in data && data.active !== undefined) {
+    formData.append("active", data.active.toString());
   }
 
   // Converte preço para string se for número
   if (data.price !== undefined) {
-    const priceStr = typeof data.price === 'number' ? data.price.toString() : data.price;
-    formData.append('price', priceStr);
+    const priceStr =
+      typeof data.price === "number" ? data.price.toString() : data.price;
+    formData.append("price", priceStr);
   }
 
   // Adiciona arquivo de imagem
   if (data.image) {
-    formData.append('image', data.image);
+    formData.append("image", data.image);
   }
 
   return formData;
@@ -58,12 +65,12 @@ const createFormData = (
  */
 export const getAllProducts = async (): Promise<Product[]> => {
   try {
-    return await fetchWithAuth('/products');
+    return await fetchWithAuth("/products");
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos', 500, error);
+    throw new ProductServiceError("Erro ao buscar produtos", 500, error);
   }
 };
 
@@ -74,12 +81,18 @@ export const getProductsByCategory = async (
   categoryId: string
 ): Promise<Product[]> => {
   try {
-    return await fetchWithAuth(`/products?categoryId=${encodeURIComponent(categoryId)}`);
+    return await fetchWithAuth(
+      `/products?categoryId=${encodeURIComponent(categoryId)}`
+    );
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos por categoria', 500, error);
+    throw new ProductServiceError(
+      "Erro ao buscar produtos por categoria",
+      500,
+      error
+    );
   }
 };
 
@@ -90,10 +103,10 @@ export const getProductById = async (productId: string): Promise<Product> => {
   try {
     return await fetchWithAuth(`/products/${productId}`);
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produto', 500, error);
+    throw new ProductServiceError("Erro ao buscar produto", 500, error);
   }
 };
 
@@ -105,12 +118,12 @@ export const createProduct = async (
 ): Promise<Product> => {
   try {
     const formData = createFormData(data);
-    return await fetchWithFormData('/products', formData, 'POST');
+    return await fetchWithFormData("/products", formData, "POST");
   } catch (error) {
     if (error instanceof ProductServiceError) {
       throw error;
     }
-    throw new ProductServiceError('Erro ao criar produto', 500, error);
+    throw new ProductServiceError("Erro ao criar produto", 500, error);
   }
 };
 
@@ -123,12 +136,12 @@ export const updateProduct = async (
 ): Promise<Product> => {
   try {
     const formData = createFormData(data);
-    return await fetchWithFormData(`/products/${productId}`, formData, 'PATCH');
+    return await fetchWithFormData(`/products/${productId}`, formData, "PATCH");
   } catch (error) {
     if (error instanceof ProductServiceError) {
       throw error;
     }
-    throw new ProductServiceError('Erro ao atualizar produto', 500, error);
+    throw new ProductServiceError("Erro ao atualizar produto", 500, error);
   }
 };
 
@@ -137,12 +150,12 @@ export const updateProduct = async (
  */
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
-    await fetchWithAuth(`/products/${productId}`, { method: 'DELETE' });
+    await fetchWithAuth(`/products/${productId}`, { method: "DELETE" });
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao deletar produto', 500, error);
+    throw new ProductServiceError("Erro ao deletar produto", 500, error);
   }
 };
 
@@ -166,14 +179,18 @@ export const getProductsWithFilters = async (filters?: {
     }
 
     const queryString = params.toString();
-    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/products${queryString ? `?${queryString}` : ""}`;
 
     return await fetchWithAuth(endpoint);
   } catch (error) {
-    if (error instanceof Error && error.name === 'FetchError') {
+    if (error instanceof Error && error.name === "FetchError") {
       throw error;
     }
-    throw new ProductServiceError('Erro ao buscar produtos com filtros', 500, error);
+    throw new ProductServiceError(
+      "Erro ao buscar produtos com filtros",
+      500,
+      error
+    );
   }
 };
 

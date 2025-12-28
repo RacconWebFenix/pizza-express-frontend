@@ -52,21 +52,21 @@ export interface DashboardStats {
 // Exporta todos os tipos do sistema
 
 // Auth
-export * from './users';
+export * from "./users";
 
 // Products (substitui pizzas)
-export * from './product';
-export * from './categoria';
+export * from "./product";
+export * from "./categoria";
 
 // Orders (substitui pedidos)
-export * from './order';
+export * from "./order";
 
 // Others
-export * from './endereco';
-export * from './entregador';
-export * from './mesa';
-export * from './upload';
-export * from './cart';
+export * from "./endereco";
+export * from "./entregador";
+export * from "./mesa";
+export * from "./upload";
+export * from "./cart";
 
 // DEPRECATED - Manter por compatibilidade temporária
 // export * from './pizzas';  // ⚠️ Remover após migração

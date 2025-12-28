@@ -8,10 +8,10 @@
  * Produto do catálogo
  */
 export interface Product {
-  id: string;              // UUID do backend
+  id: string; // UUID do backend
   name: string;
   description?: string;
-  price: string;           // Decimal como string (backend)
+  price: string; // Decimal como string (backend)
   imageUrl?: string;
   categoryId: string;
   category: {
@@ -43,7 +43,7 @@ export interface Category {
 export interface CreateProductDto {
   name: string;
   description?: string;
-  price: number;           // Será convertido para string no backend
+  price: number; // Será convertido para string no backend
   categoryId: string;
   image?: File;
 }
@@ -54,7 +54,7 @@ export interface CreateProductDto {
 export interface UpdateProductDto {
   name?: string;
   description?: string;
-  price?: number;          // Será convertido para string no backend
+  price?: number; // Será convertido para string no backend
   categoryId?: string;
   active?: boolean;
   image?: File;

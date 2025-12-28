@@ -4,7 +4,7 @@
  * @since 28/12/2025
  */
 
-import { getAuthToken } from './cookies';
+import { getAuthToken } from "./cookies";
 
 /**
  * Erro customizado para requisições
@@ -16,7 +16,7 @@ export class FetchError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'FetchError';
+    this.name = "FetchError";
   }
 }
 
@@ -26,11 +26,11 @@ export class FetchError extends Error {
 export const getJsonHeaders = (): HeadersInit => {
   const token = getAuthToken();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;
@@ -44,7 +44,7 @@ export const getFormDataHeaders = (): HeadersInit => {
   const headers: Record<string, string> = {};
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;
@@ -54,7 +54,7 @@ export const getFormDataHeaders = (): HeadersInit => {
  * Trata erros da API
  */
 export const handleFetchError = async (response: Response): Promise<never> => {
-  let message = 'Erro ao processar requisição';
+  let message = "Erro ao processar requisição";
   let details: unknown;
 
   try {
@@ -77,10 +77,12 @@ export const fetchWithAuth = async <T = unknown>(
 ): Promise<T> => {
   const token = getAuthToken();
   if (!token) {
-    throw new FetchError('Usuário não autenticado', 401);
+    throw new FetchError("Usuário não autenticado", 401);
   }
 
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const fullUrl = `${
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+  }${url}`;
   const response = await fetch(fullUrl, {
     ...options,
     headers: {
@@ -102,14 +104,16 @@ export const fetchWithAuth = async <T = unknown>(
 export const fetchWithFormData = async <T = unknown>(
   url: string,
   formData: FormData,
-  method: 'POST' | 'PATCH' = 'POST'
+  method: "POST" | "PATCH" = "POST"
 ): Promise<T> => {
   const token = getAuthToken();
   if (!token) {
-    throw new FetchError('Usuário não autenticado', 401);
+    throw new FetchError("Usuário não autenticado", 401);
   }
 
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const fullUrl = `${
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+  }${url}`;
   const response = await fetch(fullUrl, {
     method,
     headers: getFormDataHeaders(),

@@ -59,7 +59,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCart(JSON.parse(storedCart));
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao carregar carrinho";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido ao carregar carrinho";
       console.error("Falha ao carregar o carrinho:", errorMessage);
     }
   }, []);
@@ -82,7 +85,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             : item
         );
       } else {
-        updatedItems = [...prevState.items, { product: productToAdd, quantity: 1 }];
+        updatedItems = [
+          ...prevState.items,
+          { product: productToAdd, quantity: 1 },
+        ];
       }
 
       console.log(`Produto ${productToAdd.id} adicionado ao carrinho!`);
@@ -109,7 +115,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       setCart((prevState) => {
         const updatedItems = prevState.items.map((item) =>
-          item.product.id === productId ? { ...item, quantity: newQuantity } : item
+          item.product.id === productId
+            ? { ...item, quantity: newQuantity }
+            : item
         );
         const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
         return { items: updatedItems, totalItems, totalPrice };

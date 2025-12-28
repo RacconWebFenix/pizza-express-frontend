@@ -16,30 +16,30 @@ export const FILE_SIZE_LIMITS = {
  * Tipos de arquivo aceitos
  */
 export const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
 ] as const;
 
 /**
  * Tipos MIME aceitos para imagens
  */
 export const ACCEPTED_IMAGE_MIME_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
 ] as const;
 
 /**
  * Extensões de arquivo aceitas
  */
 export const ACCEPTED_IMAGE_EXTENSIONS = [
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.webp',
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
 ] as const;
 
 /**
@@ -71,12 +71,12 @@ export const VALIDATION_RULES = {
  * Mensagens de erro padronizadas
  */
 export const ERROR_MESSAGES = {
-  REQUIRED: 'Campo obrigatório',
-  INVALID_FORMAT: 'Formato inválido',
-  FILE_TOO_LARGE: 'Arquivo muito grande',
-  UNSUPPORTED_FILE_TYPE: 'Tipo de arquivo não suportado',
-  NETWORK_ERROR: 'Erro de conexão',
-  UNAUTHORIZED: 'Não autorizado',
-  NOT_FOUND: 'Não encontrado',
-  SERVER_ERROR: 'Erro interno do servidor',
+  REQUIRED: "Campo obrigatório",
+  INVALID_FORMAT: "Formato inválido",
+  FILE_TOO_LARGE: "Arquivo muito grande",
+  UNSUPPORTED_FILE_TYPE: "Tipo de arquivo não suportado",
+  NETWORK_ERROR: "Erro de conexão",
+  UNAUTHORIZED: "Não autorizado",
+  NOT_FOUND: "Não encontrado",
+  SERVER_ERROR: "Erro interno do servidor",
 } as const;

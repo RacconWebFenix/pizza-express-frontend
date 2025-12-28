@@ -12,10 +12,10 @@ import type {
   CancelOrderItemDto,
   OrderFilters,
   OrderItem,
-} from '@/types/order';
-import { getAuthToken } from '@/utils/cookies';
+} from "@/types/order";
+import { getAuthToken } from "@/utils/cookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 /**
  * Erro customizado para operações de pedidos
@@ -27,7 +27,7 @@ class OrderServiceError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'OrderServiceError';
+    this.name = "OrderServiceError";
   }
 }
 
@@ -40,21 +40,21 @@ const fetchWithAuth = async (
 ): Promise<Response> => {
   const token = getAuthToken();
   if (!token) {
-    throw new OrderServiceError('Usuário não autenticado', 401);
+    throw new OrderServiceError("Usuário não autenticado", 401);
   }
 
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
       ...options?.headers,
     },
   });
 
   if (!response.ok) {
-    let errorMessage = 'Erro ao processar requisição';
+    let errorMessage = "Erro ao processar requisição";
     let details;
 
     try {
@@ -80,8 +80,8 @@ const fetchWithAuth = async (
  */
 export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
   try {
-    const response = await fetchWithAuth('/orders', {
-      method: 'POST',
+    const response = await fetchWithAuth("/orders", {
+      method: "POST",
       body: JSON.stringify(data),
     });
     return response.json();
@@ -89,7 +89,7 @@ export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao criar pedido', 500, error);
+    throw new OrderServiceError("Erro ao criar pedido", 500, error);
   }
 };
 
@@ -109,7 +109,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/orders${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -117,7 +117,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedidos', 500, error);
+    throw new OrderServiceError("Erro ao buscar pedidos", 500, error);
   }
 };
 
@@ -132,7 +132,7 @@ export const getOrderById = async (orderId: number): Promise<Order> => {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedido', 500, error);
+    throw new OrderServiceError("Erro ao buscar pedido", 500, error);
   }
 };
 
@@ -145,7 +145,7 @@ export const addItemToOrder = async (
 ): Promise<OrderItem> => {
   try {
     const response = await fetchWithAuth(`/orders/${orderId}/items`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(item),
     });
     return response.json();
@@ -153,7 +153,7 @@ export const addItemToOrder = async (
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao adicionar item', 500, error);
+    throw new OrderServiceError("Erro ao adicionar item", 500, error);
   }
 };
 
@@ -166,19 +166,16 @@ export const updateItemQuantity = async (
   data: UpdateOrderItemQuantityDto
 ): Promise<OrderItem> => {
   try {
-    const response = await fetchWithAuth(
-      `/orders/${orderId}/items/${itemId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetchWithAuth(`/orders/${orderId}/items/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
     return response.json();
   } catch (error) {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao atualizar quantidade', 500, error);
+    throw new OrderServiceError("Erro ao atualizar quantidade", 500, error);
   }
 };
 
@@ -192,21 +189,23 @@ export const cancelOrderItem = async (
 ): Promise<void> => {
   try {
     await fetchWithAuth(`/orders/${orderId}/items/${itemId}/cancel`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   } catch (error) {
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao cancelar item', 500, error);
+    throw new OrderServiceError("Erro ao cancelar item", 500, error);
   }
 };
 
 /**
  * Busca pedidos com filtros (admin/staff)
  */
-export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Order[]> => {
+export const getOrdersWithFilters = async (
+  filters?: OrderFilters
+): Promise<Order[]> => {
   try {
     const params = new URLSearchParams();
 
@@ -219,7 +218,7 @@ export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Orde
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -227,7 +226,11 @@ export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Orde
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao buscar pedidos com filtros', 500, error);
+    throw new OrderServiceError(
+      "Erro ao buscar pedidos com filtros",
+      500,
+      error
+    );
   }
 };
 
@@ -240,7 +243,7 @@ export const updateOrderStatus = async (
 ): Promise<Order> => {
   try {
     const response = await fetchWithAuth(`/orders/${orderId}/status`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ status }),
     });
     return response.json();
@@ -248,7 +251,7 @@ export const updateOrderStatus = async (
     if (error instanceof OrderServiceError) {
       throw error;
     }
-    throw new OrderServiceError('Erro ao atualizar status', 500, error);
+    throw new OrderServiceError("Erro ao atualizar status", 500, error);
   }
 };
 

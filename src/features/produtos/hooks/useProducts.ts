@@ -4,10 +4,14 @@
  * @since 28/12/2025
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
-import { productsService } from '../services/productsService';
-import { toaster } from '@/components/ui/toaster';
+import { useState, useCallback, useEffect } from "react";
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+} from "@/types/product";
+import { productsService } from "../services/productsService";
+import { toaster } from "@/components/ui/toaster";
 
 interface UseProductsOptions {
   /**
@@ -69,10 +73,11 @@ export const useProducts = (
 
       setProducts(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar produtos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao buscar produtos";
       setError(errorMessage);
       toaster.error({
-        title: 'Erro ao buscar produtos',
+        title: "Erro ao buscar produtos",
         description: errorMessage,
       });
     } finally {
@@ -99,74 +104,85 @@ export const useProducts = (
   /**
    * Wrapper para criar produto
    */
-  const handleCreateProduct = useCallback(async (data: CreateProductDto): Promise<Product> => {
-    try {
-      const newProduct = await productsService.create(data);
-      setProducts(prev => [...prev, newProduct]);
-      toaster.success({
-        title: 'Produto criado',
-        description: 'Produto foi criado com sucesso!',
-      });
-      return newProduct;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar produto';
-      toaster.error({
-        title: 'Erro ao criar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleCreateProduct = useCallback(
+    async (data: CreateProductDto): Promise<Product> => {
+      try {
+        const newProduct = await productsService.create(data);
+        setProducts((prev) => [...prev, newProduct]);
+        toaster.success({
+          title: "Produto criado",
+          description: "Produto foi criado com sucesso!",
+        });
+        return newProduct;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao criar produto";
+        toaster.error({
+          title: "Erro ao criar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para atualizar produto
    */
-  const handleUpdateProduct = useCallback(async (
-    productId: string,
-    data: UpdateProductDto
-  ): Promise<Product> => {
-    try {
-      const updatedProduct = await productsService.update(productId, data);
-      setProducts(prev =>
-        prev.map(product =>
-          product.id === productId ? updatedProduct : product
-        )
-      );
-      toaster.success({
-        title: 'Produto atualizado',
-        description: 'Produto foi atualizado com sucesso!',
-      });
-      return updatedProduct;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar produto';
-      toaster.error({
-        title: 'Erro ao atualizar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleUpdateProduct = useCallback(
+    async (productId: string, data: UpdateProductDto): Promise<Product> => {
+      try {
+        const updatedProduct = await productsService.update(productId, data);
+        setProducts((prev) =>
+          prev.map((product) =>
+            product.id === productId ? updatedProduct : product
+          )
+        );
+        toaster.success({
+          title: "Produto atualizado",
+          description: "Produto foi atualizado com sucesso!",
+        });
+        return updatedProduct;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao atualizar produto";
+        toaster.error({
+          title: "Erro ao atualizar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   /**
    * Wrapper para deletar produto
    */
-  const handleDeleteProduct = useCallback(async (productId: string): Promise<void> => {
-    try {
-      await productsService.delete(productId);
-      setProducts(prev => prev.filter(product => product.id !== productId));
-      toaster.success({
-        title: 'Produto deletado',
-        description: 'Produto foi deletado com sucesso!',
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao deletar produto';
-      toaster.error({
-        title: 'Erro ao deletar produto',
-        description: errorMessage,
-      });
-      throw err;
-    }
-  }, []);
+  const handleDeleteProduct = useCallback(
+    async (productId: string): Promise<void> => {
+      try {
+        await productsService.delete(productId);
+        setProducts((prev) =>
+          prev.filter((product) => product.id !== productId)
+        );
+        toaster.success({
+          title: "Produto deletado",
+          description: "Produto foi deletado com sucesso!",
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao deletar produto";
+        toaster.error({
+          title: "Erro ao deletar produto",
+          description: errorMessage,
+        });
+        throw err;
+      }
+    },
+    []
+  );
 
   return {
     products,
