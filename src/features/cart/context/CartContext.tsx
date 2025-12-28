@@ -1,6 +1,6 @@
 "use client";
 
-import { Pizza } from "@/types/pizzas";
+import { Product } from "@/types/product";
 import {
   createContext,
   ReactNode,
@@ -12,7 +12,7 @@ import {
 
 // --- TIPAGEM ---
 interface CartItem {
-  pizza: Pizza;
+  product: Product;
   quantity: number;
 }
 
@@ -24,9 +24,9 @@ interface CartState {
 
 interface CartContextType {
   cart: CartState;
-  addToCart: (pizza: Pizza) => void;
-  removeFromCart: (pizzaId: number) => void;
-  updateQuantity: (pizzaId: number, newQuantity: number) => void;
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
   clearCart: () => void;
 }
 
@@ -43,7 +43,7 @@ const calculateCartTotals = (
 ): { totalItems: number; totalPrice: number } => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
-    (sum, item) => sum + item.pizza.preco * item.quantity,
+    (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
     0
   );
   return { totalItems, totalPrice };
@@ -68,33 +68,33 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("pizza-express-cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = useCallback((pizzaToAdd: Pizza) => {
+  const addToCart = useCallback((productToAdd: Product) => {
     setCart((prevState) => {
       const existingItem = prevState.items.find(
-        (item) => item.pizza.id === pizzaToAdd.id
+        (item) => item.product.id === productToAdd.id
       );
       let updatedItems: CartItem[];
 
       if (existingItem) {
         updatedItems = prevState.items.map((item) =>
-          item.pizza.id === pizzaToAdd.id
+          item.product.id === productToAdd.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        updatedItems = [...prevState.items, { pizza: pizzaToAdd, quantity: 1 }];
+        updatedItems = [...prevState.items, { product: productToAdd, quantity: 1 }];
       }
 
-      console.log(`Pizza ${pizzaToAdd.id} adicionada ao carrinho!`);
+      console.log(`Produto ${productToAdd.id} adicionado ao carrinho!`);
       const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
       return { items: updatedItems, totalItems, totalPrice };
     });
   }, []);
 
-  const removeFromCart = useCallback((pizzaId: number) => {
+  const removeFromCart = useCallback((productId: string) => {
     setCart((prevState) => {
       const updatedItems = prevState.items.filter(
-        (item) => item.pizza.id !== pizzaId
+        (item) => item.product.id !== productId
       );
       const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
       return { items: updatedItems, totalItems, totalPrice };
@@ -102,14 +102,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateQuantity = useCallback(
-    (pizzaId: number, newQuantity: number) => {
+    (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
-        removeFromCart(pizzaId);
+        removeFromCart(productId);
         return;
       }
       setCart((prevState) => {
         const updatedItems = prevState.items.map((item) =>
-          item.pizza.id === pizzaId ? { ...item, quantity: newQuantity } : item
+          item.product.id === productId ? { ...item, quantity: newQuantity } : item
         );
         const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
         return { items: updatedItems, totalItems, totalPrice };

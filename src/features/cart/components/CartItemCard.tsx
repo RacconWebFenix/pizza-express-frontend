@@ -18,16 +18,16 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleIncrease = () => {
-    updateQuantity(item.pizza.id, item.quantity + 1);
+    updateQuantity(item.product.id, item.quantity + 1);
   };
 
   const handleDecrease = () => {
-    updateQuantity(item.pizza.id, item.quantity - 1);
+    updateQuantity(item.product.id, item.quantity - 1);
   };
 
   return (
     <Flex
-      key={item.pizza.id}
+      key={item.product.id}
       alignItems="center"
       justifyContent="space-between"
       p={3}
@@ -38,16 +38,16 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
     >
       <HStack gap={4}>
         <Image
-          src={item.pizza.image || "/placeholder-image.png"}
-          alt={`Imagem da pizza ${item.pizza.nome}`}
+          src={item.product.imageUrl || "/placeholder-image.png"}
+          alt={`Imagem do produto ${item.product.name}`}
           boxSize="60px"
           objectFit="cover"
           borderRadius="md"
         />
         <VStack alignItems="flex-start" gap={0}>
-          <Text fontWeight="bold">{item.pizza.nome}</Text>
+          <Text fontWeight="bold">{item.product.name}</Text>
           <Text fontSize="sm" color="gray.500">
-            {formatCurrency(item.pizza.preco)}
+            {formatCurrency(parseFloat(item.product.price))}
           </Text>
         </VStack>
       </HStack>
@@ -74,13 +74,13 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
           </PizzaButton>
         </HStack>
         <Text fontWeight="bold" minW="70px" textAlign="right">
-          {formatCurrency(item.pizza.preco * item.quantity)}
+          {formatCurrency(parseFloat(item.product.price) * item.quantity)}
         </Text>
         <PizzaButton
           aria-label="Remover item do carrinho"
           color="red.500"
           variant="solid"
-          onClick={() => removeFromCart(item.pizza.id)}
+          onClick={() => removeFromCart(item.product.id)}
         />
       </HStack>
     </Flex>

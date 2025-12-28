@@ -4,7 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { VStack, HStack, Text, Button, Box } from "@chakra-ui/react";
+import { VStack, HStack, Button, Box } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
 import { PizzaInput, PizzaTextarea, PizzaButton, PizzaSelect } from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";

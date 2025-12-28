@@ -49,25 +49,25 @@ export interface DashboardStats {
 // Exporta todos os tipos relacionados a pizza
 // export * from "./pizza"; // Removido porque o módulo não existe
 
-// Exporta todos os tipos relacionados a pedidos
-export * from "./pedidos";
+// Exporta todos os tipos do sistema
 
-// Exporta todos os tipos relacionados ao carrinho de compras
-export * from "./cart";
+// Auth
+export * from './users';
 
-// Exporta todos os tipos relacionados a usuarios
+// Products (substitui pizzas)
+export * from './product';
+export * from './categoria';
 
-export * from "./pizzas";
+// Orders (substitui pedidos)
+export * from './order';
 
-// Exporta todos os tipos relacionados a pedidos
-export * from "./pedidos";
+// Others
+export * from './endereco';
+export * from './entregador';
+export * from './mesa';
+export * from './upload';
+export * from './cart';
 
-// Exporta todos os tipos relacionados a usuarios e endereços
-export * from "./endereco"; // <<< ADICIONADO
-export * from "./entregador"; // <<< ADICIONADO
-
-// Exporta tipos de categorias, produtos, mesas e upload
-export * from "./categoria";
-export * from "./produto";
-export * from "./mesa";
-export * from "./upload";
+// DEPRECATED - Manter por compatibilidade temporária
+// export * from './pizzas';  // ⚠️ Remover após migração
+// export * from './pedidos'; // ⚠️ Remover após migração

@@ -26,9 +26,9 @@ const CartWidget = () => {
   };
 
   const modalCartItems = cart.items.map((item) => ({
-    id: item.pizza.id,
-    name: item.pizza.nome,
-    price: item.pizza.preco,
+    id: item.product.id,
+    name: item.product.name,
+    price: item.product.price,
     quantity: item.quantity,
   }));
 

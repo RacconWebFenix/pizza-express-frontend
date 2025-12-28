@@ -1,31 +1,29 @@
 "use client";
 
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
-import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
-import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
+import { useProducts } from "@/features/produtos/hooks/useProducts";
+import { ProductCard } from "@/features/produtos/components/ProductCard";
 import { PizzaLoading } from "@/components/ui";
 import { useCart } from "@/features/cart/context/CartContext";
 import { toaster } from "@/components/ui/toaster";
+import type { Product } from "@/types/product";
 
 /**
  * Página do Cardápio.
  * Agora utiliza o hook centralizado 'usePizzas' para buscar e exibir os dados.
  */
 export default function CardapioPage() {
-  const { pizzas, isLoading, error } = usePizzas();
+  const { products, isLoading, error } = useProducts();
   const { addToCart } = useCart();
 
-  // Função para adicionar pizza ao carrinho
-  const handleAddToCart = (pizzaId: number) => {
-    const pizza = pizzas.find((p) => p.id === pizzaId);
-    if (pizza) {
-      addToCart(pizza);
-      toaster.create({
-        title: "Pizza adicionada!",
-        description: `${pizza.nome} foi adicionada ao carrinho.`,
-        type: "success",
-      });
-    }
+  // Função para adicionar produto ao carrinho
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toaster.create({
+      title: "Produto adicionado!",
+      description: `${product.name} foi adicionado ao carrinho.`,
+      type: "success",
+    });
   };
 
   if (isLoading) {
@@ -50,10 +48,10 @@ export default function CardapioPage() {
         }}
         gap={8}
       >
-        {pizzas.map((pizza) => (
-          <PizzaCard
-            key={pizza.id}
-            pizza={pizza}
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
             onAddToCart={handleAddToCart}
           />
         ))}

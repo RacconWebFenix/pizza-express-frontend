@@ -79,7 +79,7 @@ export const PizzaForm = ({
   // Criar um objeto pizza mockado para o preview
   const previewPizza = useMemo(() => {
     const preco = parseFloat(String(watchedValues.preco || "0"));
-    const hasNewImage = watchedValues.image?.[0];
+    const hasNewImage = watchedValues.image;
     const existingImage = pizzaToEdit?.image;
 
     return {
@@ -88,8 +88,8 @@ export const PizzaForm = ({
       descricao:
         watchedValues.descricao || "Descrição da pizza aparecerá aqui...",
       preco: isNaN(preco) ? 0 : preco,
-      image: hasNewImage
-        ? URL.createObjectURL(watchedValues.image[0])
+      image: hasNewImage && watchedValues.image
+        ? URL.createObjectURL(watchedValues.image)
         : existingImage || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

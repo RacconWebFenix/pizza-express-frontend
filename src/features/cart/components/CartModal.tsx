@@ -15,9 +15,9 @@ import {
 import { IoMdClose, IoMdTrash, IoMdAdd, IoMdRemove } from "react-icons/io";
 
 interface CartItem {
-  id: number;
+  id: string;
   name: string;
-  price: number;
+  price: string;
   quantity: number;
 }
 
@@ -25,9 +25,9 @@ interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onRemoveItem: (itemId: number) => void;
+  onRemoveItem: (itemId: string) => void;
   onCheckout: () => void;
-  onUpdateQuantity: (itemId: number, newQuantity: number) => void;
+  onUpdateQuantity: (itemId: string, newQuantity: number) => void;
 }
 
 const CartModal: React.FC<CartModalProps> = ({
@@ -41,7 +41,7 @@ const CartModal: React.FC<CartModalProps> = ({
   if (!isOpen) return null;
 
   const total = (cartItems || []).reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + parseFloat(item.price) * item.quantity,
     0
   );
 
@@ -146,7 +146,7 @@ const CartModal: React.FC<CartModalProps> = ({
                         color="green.600"
                         _dark={{ color: "green.400" }}
                       >
-                        R$ {(item.price * item.quantity).toFixed(2)}
+                        R$ {(parseFloat(item.price) * item.quantity).toFixed(2)}
                       </Text>
                       <IconButton
                         aria-label="Remover item"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 

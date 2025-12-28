@@ -1,14 +1,14 @@
-import { Pizza } from ".";
+import { Product } from "./product";
 
 
 /**
  * @interface CartItem
  * @description Interface para um item dentro do carrinho de compras.
- * @property {Pizza} pizza - O objeto completo da pizza.
- * @property {number} quantity - A quantidade desta pizza no carrinho.
+ * @property {Product} product - O objeto completo do produto.
+ * @property {number} quantity - A quantidade deste produto no carrinho.
  */
 export interface CartItem {
-  pizza: Pizza;
+  product: Product;
   quantity: number;
 }
 

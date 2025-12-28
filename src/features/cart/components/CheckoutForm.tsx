@@ -72,7 +72,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
         clienteId: user!.id,
         enderecoId: selectedEndereco!.id,
         pizzasIds: cart.items.flatMap((item) =>
-          Array(item.quantity).fill(item.pizza.id)
+          Array(item.quantity).fill(item.product.id)
         ),
         paymentIntentId: intentId, // Adicionar ID do pagamento
       };
@@ -121,9 +121,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
             Resumo do Pedido
           </Heading>
           {cart.items.map((item) => (
-            <Text key={item.pizza.id}>
-              {item.quantity}x {item.pizza.nome} - R${" "}
-              {(item.pizza.preco * item.quantity).toFixed(2)}
+            <Text key={item.product.id}>
+              {item.quantity}x {item.product.name} - R${" "}
+              {(parseFloat(item.product.price) * item.quantity).toFixed(2)}
             </Text>
           ))}
           <Separator my={2} />

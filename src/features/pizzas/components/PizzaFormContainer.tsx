@@ -67,7 +67,7 @@ export const PizzaFormContainer = ({
   const processSubmit = async (data: PizzaFormOutputData) => {
     const dataToSend: CreatePizzaWithImageData = {
       ...data,
-      image: data.image?.[0],
+      image: data.image,
     };
     await onSuccess(dataToSend, pizzaToEdit?.id);
   };
