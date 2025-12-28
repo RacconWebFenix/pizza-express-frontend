@@ -135,6 +135,42 @@ export default nextConfig;
 ---
 
 
+## 📝 `tsconfig.json`
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "ES6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+---
+
+
 ## 📝 `src/features/users/types/userManagement.ts`
 
 ```typescript
@@ -429,7 +465,6 @@ import {
   VStack,
   HStack,
   Button,
-  Text,
 } from "@chakra-ui/react";
 import { User } from "@/types/users";
 import { PizzaInput, PizzaButton, AppModal, PizzaSelect } from "@/components/ui";
@@ -1010,7 +1045,7 @@ export type { UserFilters, UserFormData, UserCreationData } from "./types/userMa
 ```tsx
 "use client";
 
-import { Pizza } from "@/types/pizzas";
+import { Product } from "@/types/product";
 import {
   createContext,
   ReactNode,
@@ -1022,7 +1057,7 @@ import {
 
 // --- TIPAGEM ---
 interface CartItem {
-  pizza: Pizza;
+  product: Product;
   quantity: number;
 }
 
@@ -1034,9 +1069,9 @@ interface CartState {
 
 interface CartContextType {
   cart: CartState;
-  addToCart: (pizza: Pizza) => void;
-  removeFromCart: (pizzaId: number) => void;
-  updateQuantity: (pizzaId: number, newQuantity: number) => void;
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, newQuantity: number) => void;
   clearCart: () => void;
 }
 
@@ -1053,7 +1088,7 @@ const calculateCartTotals = (
 ): { totalItems: number; totalPrice: number } => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
-    (sum, item) => sum + item.pizza.preco * item.quantity,
+    (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
     0
   );
   return { totalItems, totalPrice };
@@ -1078,33 +1113,33 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("pizza-express-cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = useCallback((pizzaToAdd: Pizza) => {
+  const addToCart = useCallback((productToAdd: Product) => {
     setCart((prevState) => {
       const existingItem = prevState.items.find(
-        (item) => item.pizza.id === pizzaToAdd.id
+        (item) => item.product.id === productToAdd.id
       );
       let updatedItems: CartItem[];
 
       if (existingItem) {
         updatedItems = prevState.items.map((item) =>
-          item.pizza.id === pizzaToAdd.id
+          item.product.id === productToAdd.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        updatedItems = [...prevState.items, { pizza: pizzaToAdd, quantity: 1 }];
+        updatedItems = [...prevState.items, { product: productToAdd, quantity: 1 }];
       }
 
-      console.log(`Pizza ${pizzaToAdd.id} adicionada ao carrinho!`);
+      console.log(`Produto ${productToAdd.id} adicionado ao carrinho!`);
       const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
       return { items: updatedItems, totalItems, totalPrice };
     });
   }, []);
 
-  const removeFromCart = useCallback((pizzaId: number) => {
+  const removeFromCart = useCallback((productId: string) => {
     setCart((prevState) => {
       const updatedItems = prevState.items.filter(
-        (item) => item.pizza.id !== pizzaId
+        (item) => item.product.id !== productId
       );
       const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
       return { items: updatedItems, totalItems, totalPrice };
@@ -1112,14 +1147,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateQuantity = useCallback(
-    (pizzaId: number, newQuantity: number) => {
+    (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
-        removeFromCart(pizzaId);
+        removeFromCart(productId);
         return;
       }
       setCart((prevState) => {
         const updatedItems = prevState.items.map((item) =>
-          item.pizza.id === pizzaId ? { ...item, quantity: newQuantity } : item
+          item.product.id === productId ? { ...item, quantity: newQuantity } : item
         );
         const { totalItems, totalPrice } = calculateCartTotals(updatedItems);
         return { items: updatedItems, totalItems, totalPrice };
@@ -1186,9 +1221,9 @@ const CartWidget = () => {
   };
 
   const modalCartItems = cart.items.map((item) => ({
-    id: item.pizza.id,
-    name: item.pizza.nome,
-    price: item.pizza.preco,
+    id: item.product.id,
+    name: item.product.name,
+    price: item.product.price,
     quantity: item.quantity,
   }));
 
@@ -1271,16 +1306,16 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleIncrease = () => {
-    updateQuantity(item.pizza.id, item.quantity + 1);
+    updateQuantity(item.product.id, item.quantity + 1);
   };
 
   const handleDecrease = () => {
-    updateQuantity(item.pizza.id, item.quantity - 1);
+    updateQuantity(item.product.id, item.quantity - 1);
   };
 
   return (
     <Flex
-      key={item.pizza.id}
+      key={item.product.id}
       alignItems="center"
       justifyContent="space-between"
       p={3}
@@ -1291,16 +1326,16 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
     >
       <HStack gap={4}>
         <Image
-          src={item.pizza.image || "/placeholder-image.png"}
-          alt={`Imagem da pizza ${item.pizza.nome}`}
+          src={item.product.imageUrl || "/placeholder-image.png"}
+          alt={`Imagem do produto ${item.product.name}`}
           boxSize="60px"
           objectFit="cover"
           borderRadius="md"
         />
         <VStack alignItems="flex-start" gap={0}>
-          <Text fontWeight="bold">{item.pizza.nome}</Text>
+          <Text fontWeight="bold">{item.product.name}</Text>
           <Text fontSize="sm" color="gray.500">
-            {formatCurrency(item.pizza.preco)}
+            {formatCurrency(parseFloat(item.product.price))}
           </Text>
         </VStack>
       </HStack>
@@ -1327,13 +1362,13 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
           </PizzaButton>
         </HStack>
         <Text fontWeight="bold" minW="70px" textAlign="right">
-          {formatCurrency(item.pizza.preco * item.quantity)}
+          {formatCurrency(parseFloat(item.product.price) * item.quantity)}
         </Text>
         <PizzaButton
           aria-label="Remover item do carrinho"
           color="red.500"
           variant="solid"
-          onClick={() => removeFromCart(item.pizza.id)}
+          onClick={() => removeFromCart(item.product.id)}
         />
       </HStack>
     </Flex>
@@ -1423,7 +1458,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
         clienteId: user!.id,
         enderecoId: selectedEndereco!.id,
         pizzasIds: cart.items.flatMap((item) =>
-          Array(item.quantity).fill(item.pizza.id)
+          Array(item.quantity).fill(item.product.id)
         ),
         paymentIntentId: intentId, // Adicionar ID do pagamento
       };
@@ -1472,9 +1507,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
             Resumo do Pedido
           </Heading>
           {cart.items.map((item) => (
-            <Text key={item.pizza.id}>
-              {item.quantity}x {item.pizza.nome} - R${" "}
-              {(item.pizza.preco * item.quantity).toFixed(2)}
+            <Text key={item.product.id}>
+              {item.quantity}x {item.product.name} - R${" "}
+              {(parseFloat(item.product.price) * item.quantity).toFixed(2)}
             </Text>
           ))}
           <Separator my={2} />
@@ -1610,9 +1645,9 @@ import {
 import { IoMdClose, IoMdTrash, IoMdAdd, IoMdRemove } from "react-icons/io";
 
 interface CartItem {
-  id: number;
+  id: string;
   name: string;
-  price: number;
+  price: string;
   quantity: number;
 }
 
@@ -1620,9 +1655,9 @@ interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onRemoveItem: (itemId: number) => void;
+  onRemoveItem: (itemId: string) => void;
   onCheckout: () => void;
-  onUpdateQuantity: (itemId: number, newQuantity: number) => void;
+  onUpdateQuantity: (itemId: string, newQuantity: number) => void;
 }
 
 const CartModal: React.FC<CartModalProps> = ({
@@ -1636,7 +1671,7 @@ const CartModal: React.FC<CartModalProps> = ({
   if (!isOpen) return null;
 
   const total = (cartItems || []).reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + parseFloat(item.price) * item.quantity,
     0
   );
 
@@ -1741,7 +1776,7 @@ const CartModal: React.FC<CartModalProps> = ({
                         color="green.600"
                         _dark={{ color: "green.400" }}
                       >
-                        R$ {(item.price * item.quantity).toFixed(2)}
+                        R$ {(parseFloat(item.price) * item.quantity).toFixed(2)}
                       </Text>
                       <IconButton
                         aria-label="Remover item"
@@ -2636,7 +2671,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { VStack, HStack, Text, Button, Box } from "@chakra-ui/react";
+import { VStack, HStack, Button, Box } from "@chakra-ui/react";
 import { AppModal } from "@/components/ui";
 import { PizzaInput, PizzaTextarea, PizzaButton, PizzaSelect } from "@/components/ui";
 import { useProdutos } from "../hooks/useProdutos";
@@ -3136,12 +3171,341 @@ export const ProdutosList: React.FC = () => {
 ---
 
 
+## 📝 `src/features/produtos/components/ProductCard.tsx`
+
+```tsx
+"use client";
+
+import { Box, Image, Text, Button, VStack, HStack, Badge } from '@chakra-ui/react';
+import { Plus } from 'lucide-react';
+import type { Product } from '@/types/product';
+import { parseProductPrice, formatProductPrice } from '@/types/product';
+
+interface ProductCardProps {
+  product: Product;
+  onAddToCart?: (product: Product) => void;
+  isLoading?: boolean;
+}
+
+/**
+ * Card para exibir produto no catálogo
+ */
+export const ProductCard = ({
+  product,
+  onAddToCart,
+  isLoading = false
+}: ProductCardProps) => {
+  const handleAddToCart = () => {
+    onAddToCart?.(product);
+  };
+
+  const price = parseProductPrice(product.price);
+
+  return (
+    <Box
+      bg="white"
+      borderRadius="lg"
+      boxShadow="md"
+      border="1px solid"
+      borderColor="gray.200"
+      overflow="hidden"
+      transition="all 0.3s ease"
+      _hover={{
+        boxShadow: "lg",
+        transform: "translateY(-2px)",
+        borderColor: "orange.300",
+      }}
+    >
+      {/* Imagem do produto */}
+      <Box position="relative" h="200px" bg="gray.100">
+        {product.imageUrl ? (
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            w="full"
+            h="full"
+            objectFit="cover"
+          />
+        ) : (
+          <Box
+            w="full"
+            h="full"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg="gray.200"
+            color="gray.500"
+          >
+            Sem imagem
+          </Box>
+        )}
+
+        {/* Badge de categoria */}
+        <Badge
+          position="absolute"
+          top="2"
+          right="2"
+          bg="orange.500"
+          color="white"
+          fontSize="xs"
+          px="2"
+          py="1"
+          borderRadius="md"
+        >
+          {product.category.name}
+        </Badge>
+      </Box>
+
+      {/* Conteúdo */}
+      <VStack p="4" align="stretch" gap="3">
+        <VStack align="start" gap="1">
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color="gray.800"
+          >
+            {product.name}
+          </Text>
+
+          {product.description && (
+            <Text
+              fontSize="sm"
+              color="gray.600"
+              minH="2.5rem"
+            >
+              {product.description}
+            </Text>
+          )}
+        </VStack>
+
+        {/* Preço e botão */}
+        <HStack justify="space-between" align="center">
+          <Text
+            fontSize="xl"
+            fontWeight="bold"
+            color="orange.600"
+          >
+            R$ {formatProductPrice(price)}
+          </Text>
+
+          <Button
+            size="sm"
+            bg="orange.500"
+            color="white"
+            _hover={{ bg: "orange.600" }}
+            onClick={handleAddToCart}
+            loading={isLoading}
+            loadingText="Adicionando..."
+          >
+            <HStack gap="1">
+              <Plus size={16} />
+              <Text>Adicionar</Text>
+            </HStack>
+          </Button>
+        </HStack>
+      </VStack>
+    </Box>
+  );
+};
+```
+
+---
+
+
 ## 📝 `src/features/produtos/components/index.ts`
 
 ```typescript
 export * from "./ProdutosList";
 export * from "./ProdutoFormModal";
 export * from "./ProdutoCard";
+```
+
+---
+
+
+## 📝 `src/features/produtos/hooks/useProducts.ts`
+
+```typescript
+/**
+ * Hook para gerenciar estado de produtos
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+import { useState, useCallback, useEffect } from 'react';
+import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
+import { productsService } from '../services/productsService';
+import { toaster } from '@/components/ui/toaster';
+
+interface UseProductsOptions {
+  /**
+   * Se deve buscar automaticamente na montagem
+   */
+  autoFetch?: boolean;
+
+  /**
+   * ID da categoria para filtrar produtos
+   */
+  categoryId?: string;
+
+  /**
+   * Filtros adicionais
+   */
+  filters?: {
+    active?: boolean;
+    search?: string;
+  };
+}
+
+interface UseProductsReturn {
+  products: Product[];
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+  createProduct: (data: CreateProductDto) => Promise<Product>;
+  updateProduct: (id: string, data: UpdateProductDto) => Promise<Product>;
+  deleteProduct: (id: string) => Promise<void>;
+}
+
+/**
+ * Hook para gerenciar produtos
+ */
+export const useProducts = (
+  options: UseProductsOptions = {}
+): UseProductsReturn => {
+  const { autoFetch = true, categoryId, filters } = options;
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Busca produtos
+   */
+  const fetchProducts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      let data: Product[];
+
+      if (categoryId) {
+        data = await productsService.getByCategory(categoryId);
+      } else {
+        data = await productsService.getWithFilters(filters);
+      }
+
+      setProducts(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar produtos';
+      setError(errorMessage);
+      toaster.error({
+        title: 'Erro ao buscar produtos',
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [categoryId, filters]);
+
+  /**
+   * Refetch manual
+   */
+  const refetch = useCallback(async () => {
+    await fetchProducts();
+  }, [fetchProducts]);
+
+  /**
+   * Busca automática na montagem
+   */
+  useEffect(() => {
+    if (autoFetch) {
+      fetchProducts();
+    }
+  }, [autoFetch, fetchProducts]);
+
+  /**
+   * Wrapper para criar produto
+   */
+  const handleCreateProduct = useCallback(async (data: CreateProductDto): Promise<Product> => {
+    try {
+      const newProduct = await productsService.create(data);
+      setProducts(prev => [...prev, newProduct]);
+      toaster.success({
+        title: 'Produto criado',
+        description: 'Produto foi criado com sucesso!',
+      });
+      return newProduct;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar produto';
+      toaster.error({
+        title: 'Erro ao criar produto',
+        description: errorMessage,
+      });
+      throw err;
+    }
+  }, []);
+
+  /**
+   * Wrapper para atualizar produto
+   */
+  const handleUpdateProduct = useCallback(async (
+    productId: string,
+    data: UpdateProductDto
+  ): Promise<Product> => {
+    try {
+      const updatedProduct = await productsService.update(productId, data);
+      setProducts(prev =>
+        prev.map(product =>
+          product.id === productId ? updatedProduct : product
+        )
+      );
+      toaster.success({
+        title: 'Produto atualizado',
+        description: 'Produto foi atualizado com sucesso!',
+      });
+      return updatedProduct;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar produto';
+      toaster.error({
+        title: 'Erro ao atualizar produto',
+        description: errorMessage,
+      });
+      throw err;
+    }
+  }, []);
+
+  /**
+   * Wrapper para deletar produto
+   */
+  const handleDeleteProduct = useCallback(async (productId: string): Promise<void> => {
+    try {
+      await productsService.delete(productId);
+      setProducts(prev => prev.filter(product => product.id !== productId));
+      toaster.success({
+        title: 'Produto deletado',
+        description: 'Produto foi deletado com sucesso!',
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao deletar produto';
+      toaster.error({
+        title: 'Erro ao deletar produto',
+        description: errorMessage,
+      });
+      throw err;
+    }
+  }, []);
+
+  return {
+    products,
+    isLoading,
+    error,
+    refetch,
+    createProduct: handleCreateProduct,
+    updateProduct: handleUpdateProduct,
+    deleteProduct: handleDeleteProduct,
+  };
+};
 ```
 
 ---
@@ -3388,6 +3752,207 @@ export const deleteProduto = async (id: string): Promise<void> => {
     throw new Error(errorData.message || 'Erro ao deletar produto');
   }
 };
+```
+
+---
+
+
+## 📝 `src/features/produtos/services/productsService.ts`
+
+```typescript
+/**
+ * Service para gerenciar produtos
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
+import { fetchWithFormData, fetchWithAuth } from '@/utils/fetchHelpers';
+
+/**
+ * Erro customizado para operações de produtos
+ */
+class ProductServiceError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public details?: unknown
+  ) {
+    super(message);
+    this.name = 'ProductServiceError';
+  }
+}
+
+/**
+ * Cria FormData a partir de CreateProductDto ou UpdateProductDto
+ */
+const createFormData = (
+  data: Partial<CreateProductDto | UpdateProductDto>
+): FormData => {
+  const formData = new FormData();
+
+  // Adiciona campos de texto
+  if (data.name !== undefined) formData.append('name', data.name);
+  if (data.description !== undefined) formData.append('description', data.description);
+  if (data.categoryId !== undefined) formData.append('categoryId', data.categoryId);
+
+  // Adiciona campo active apenas se existir (UpdateProductDto)
+  if ('active' in data && data.active !== undefined) {
+    formData.append('active', data.active.toString());
+  }
+
+  // Converte preço para string se for número
+  if (data.price !== undefined) {
+    const priceStr = typeof data.price === 'number' ? data.price.toString() : data.price;
+    formData.append('price', priceStr);
+  }
+
+  // Adiciona arquivo de imagem
+  if (data.image) {
+    formData.append('image', data.image);
+  }
+
+  return formData;
+};
+
+/**
+ * Busca todos os produtos
+ */
+export const getAllProducts = async (): Promise<Product[]> => {
+  try {
+    return await fetchWithAuth('/products');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FetchError') {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao buscar produtos', 500, error);
+  }
+};
+
+/**
+ * Busca produtos por categoria
+ */
+export const getProductsByCategory = async (
+  categoryId: string
+): Promise<Product[]> => {
+  try {
+    return await fetchWithAuth(`/products?categoryId=${encodeURIComponent(categoryId)}`);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FetchError') {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao buscar produtos por categoria', 500, error);
+  }
+};
+
+/**
+ * Busca produto por ID
+ */
+export const getProductById = async (productId: string): Promise<Product> => {
+  try {
+    return await fetchWithAuth(`/products/${productId}`);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FetchError') {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao buscar produto', 500, error);
+  }
+};
+
+/**
+ * Cria um novo produto
+ */
+export const createProduct = async (
+  data: CreateProductDto
+): Promise<Product> => {
+  try {
+    const formData = createFormData(data);
+    return await fetchWithFormData('/products', formData, 'POST');
+  } catch (error) {
+    if (error instanceof ProductServiceError) {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao criar produto', 500, error);
+  }
+};
+
+/**
+ * Atualiza um produto
+ */
+export const updateProduct = async (
+  productId: string,
+  data: UpdateProductDto
+): Promise<Product> => {
+  try {
+    const formData = createFormData(data);
+    return await fetchWithFormData(`/products/${productId}`, formData, 'PATCH');
+  } catch (error) {
+    if (error instanceof ProductServiceError) {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao atualizar produto', 500, error);
+  }
+};
+
+/**
+ * Deleta um produto
+ */
+export const deleteProduct = async (productId: string): Promise<void> => {
+  try {
+    await fetchWithAuth(`/products/${productId}`, { method: 'DELETE' });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FetchError') {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao deletar produto', 500, error);
+  }
+};
+
+/**
+ * Busca produtos com filtros
+ */
+export const getProductsWithFilters = async (filters?: {
+  categoryId?: string;
+  active?: boolean;
+  search?: string;
+}): Promise<Product[]> => {
+  try {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = params.toString();
+    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+
+    return await fetchWithAuth(endpoint);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FetchError') {
+      throw error;
+    }
+    throw new ProductServiceError('Erro ao buscar produtos com filtros', 500, error);
+  }
+};
+
+/**
+ * Exporta todas as funções do service
+ */
+export const productsService = {
+  getAll: getAllProducts,
+  getByCategory: getProductsByCategory,
+  getById: getProductById,
+  create: createProduct,
+  update: updateProduct,
+  delete: deleteProduct,
+  getWithFilters: getProductsWithFilters,
+};
+
+export default productsService;
 ```
 
 ---
@@ -4219,7 +4784,7 @@ export const PizzaFormContainer = ({
   const processSubmit = async (data: PizzaFormOutputData) => {
     const dataToSend: CreatePizzaWithImageData = {
       ...data,
-      image: data.image?.[0],
+      image: data.image,
     };
     await onSuccess(dataToSend, pizzaToEdit?.id);
   };
@@ -4562,7 +5127,7 @@ export const PizzaForm = ({
   // Criar um objeto pizza mockado para o preview
   const previewPizza = useMemo(() => {
     const preco = parseFloat(String(watchedValues.preco || "0"));
-    const hasNewImage = watchedValues.image?.[0];
+    const hasNewImage = watchedValues.image;
     const existingImage = pizzaToEdit?.image;
 
     return {
@@ -4571,8 +5136,8 @@ export const PizzaForm = ({
       descricao:
         watchedValues.descricao || "Descrição da pizza aparecerá aqui...",
       preco: isNaN(preco) ? 0 : preco,
-      image: hasNewImage
-        ? URL.createObjectURL(watchedValues.image[0])
+      image: hasNewImage && watchedValues.image
+        ? URL.createObjectURL(watchedValues.image)
         : existingImage || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -9328,6 +9893,436 @@ export const getGoogleSignInUrl = (): string => {
 ---
 
 
+## 📝 `src/features/orders/hooks/useOrders.ts`
+
+```typescript
+/**
+ * Hook para gerenciar estado de pedidos
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+import { useState, useCallback, useEffect } from 'react';
+import type { Order, OrderFilters } from '@/types/order';
+import { ordersService } from '../services/ordersService';
+import { toaster } from '@/components/ui/toaster';
+
+interface UseOrdersOptions {
+  /**
+   * Se deve buscar automaticamente na montagem
+   */
+  autoFetch?: boolean;
+
+  /**
+   * Filtros para busca
+   */
+  filters?: OrderFilters;
+
+  /**
+   * Se deve buscar pedidos de admin (todos os pedidos)
+   */
+  adminMode?: boolean;
+}
+
+interface UseOrdersReturn {
+  orders: Order[];
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+  createOrder: typeof ordersService.create;
+  updateOrderStatus: typeof ordersService.updateStatus;
+}
+
+/**
+ * Hook para gerenciar lista de pedidos
+ */
+export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
+  const { autoFetch = true, filters, adminMode = false } = options;
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Busca pedidos
+   */
+  const fetchOrders = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const data = adminMode
+        ? await ordersService.getWithFilters(filters)
+        : await ordersService.getMy(filters);
+
+      setOrders(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar pedidos';
+      setError(errorMessage);
+      toaster.error({
+        title: 'Erro ao buscar pedidos',
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filters, adminMode]);
+
+  /**
+   * Refetch manual
+   */
+  const refetch = useCallback(async () => {
+    await fetchOrders();
+  }, [fetchOrders]);
+
+  /**
+   * Busca automática na montagem
+   */
+  useEffect(() => {
+    if (autoFetch) {
+      fetchOrders();
+    }
+  }, [autoFetch, fetchOrders]);
+
+  /**
+   * Wrapper para criar pedido
+   */
+  const handleCreateOrder = useCallback(async (data: Parameters<typeof ordersService.create>[0]) => {
+    try {
+      const newOrder = await ordersService.create(data);
+      setOrders(prev => [newOrder, ...prev]);
+      toaster.success({
+        title: 'Pedido criado',
+        description: 'Seu pedido foi criado com sucesso!',
+      });
+      return newOrder;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar pedido';
+      toaster.error({
+        title: 'Erro ao criar pedido',
+        description: errorMessage,
+      });
+      throw err;
+    }
+  }, []);
+
+  /**
+   * Wrapper para atualizar status
+   */
+  const handleUpdateOrderStatus = useCallback(async (orderId: number, status: string) => {
+    try {
+      const updatedOrder = await ordersService.updateStatus(orderId, status);
+      setOrders(prev =>
+        prev.map(order =>
+          order.id === orderId ? updatedOrder : order
+        )
+      );
+      toaster.success({
+        title: 'Status atualizado',
+        description: 'Status do pedido foi atualizado com sucesso!',
+      });
+      return updatedOrder;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar status';
+      toaster.error({
+        title: 'Erro ao atualizar status',
+        description: errorMessage,
+      });
+      throw err;
+    }
+  }, []);
+
+  return {
+    orders,
+    isLoading,
+    error,
+    refetch,
+    createOrder: handleCreateOrder,
+    updateOrderStatus: handleUpdateOrderStatus,
+  };
+};
+```
+
+---
+
+
+## 📝 `src/features/orders/services/ordersService.ts`
+
+```typescript
+/**
+ * Service para gerenciar pedidos (orders)
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+import type {
+  Order,
+  CreateOrderDto,
+  AddOrderItemDto,
+  UpdateOrderItemQuantityDto,
+  CancelOrderItemDto,
+  OrderFilters,
+  OrderItem,
+} from '@/types/order';
+import { getAuthToken } from '@/utils/cookies';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+/**
+ * Erro customizado para operações de pedidos
+ */
+class OrderServiceError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public details?: unknown
+  ) {
+    super(message);
+    this.name = 'OrderServiceError';
+  }
+}
+
+/**
+ * Helper para fazer requisições autenticadas
+ */
+const fetchWithAuth = async (
+  endpoint: string,
+  options?: RequestInit
+): Promise<Response> => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new OrderServiceError('Usuário não autenticado', 401);
+  }
+
+  const url = `${API_URL}${endpoint}`;
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    let errorMessage = 'Erro ao processar requisição';
+    let details;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+      details = errorData;
+    } catch {
+      // Se não conseguir parsear JSON, usa mensagem genérica
+    }
+
+    throw new OrderServiceError(errorMessage, response.status, details);
+  }
+
+  return response;
+};
+
+/**
+ * Helper para tratar erros da API
+ */
+
+/**
+ * Cria um novo pedido
+ */
+export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
+  try {
+    const response = await fetchWithAuth('/orders', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao criar pedido', 500, error);
+  }
+};
+
+/**
+ * Busca todos os pedidos do usuário logado
+ */
+export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
+  try {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = params.toString();
+    const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetchWithAuth(endpoint);
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao buscar pedidos', 500, error);
+  }
+};
+
+/**
+ * Busca pedido por ID
+ */
+export const getOrderById = async (orderId: number): Promise<Order> => {
+  try {
+    const response = await fetchWithAuth(`/orders/${orderId}`);
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao buscar pedido', 500, error);
+  }
+};
+
+/**
+ * Adiciona item a um pedido existente
+ */
+export const addItemToOrder = async (
+  orderId: number,
+  item: AddOrderItemDto
+): Promise<OrderItem> => {
+  try {
+    const response = await fetchWithAuth(`/orders/${orderId}/items`, {
+      method: 'POST',
+      body: JSON.stringify(item),
+    });
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao adicionar item', 500, error);
+  }
+};
+
+/**
+ * Atualiza quantidade de um item do pedido
+ */
+export const updateItemQuantity = async (
+  orderId: number,
+  itemId: string,
+  data: UpdateOrderItemQuantityDto
+): Promise<OrderItem> => {
+  try {
+    const response = await fetchWithAuth(
+      `/orders/${orderId}/items/${itemId}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }
+    );
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao atualizar quantidade', 500, error);
+  }
+};
+
+/**
+ * Cancela um item do pedido
+ */
+export const cancelOrderItem = async (
+  orderId: number,
+  itemId: string,
+  data: CancelOrderItemDto
+): Promise<void> => {
+  try {
+    await fetchWithAuth(`/orders/${orderId}/items/${itemId}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao cancelar item', 500, error);
+  }
+};
+
+/**
+ * Busca pedidos com filtros (admin/staff)
+ */
+export const getOrdersWithFilters = async (filters?: OrderFilters): Promise<Order[]> => {
+  try {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = params.toString();
+    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetchWithAuth(endpoint);
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao buscar pedidos com filtros', 500, error);
+  }
+};
+
+/**
+ * Atualiza status do pedido (admin/staff)
+ */
+export const updateOrderStatus = async (
+  orderId: number,
+  status: string
+): Promise<Order> => {
+  try {
+    const response = await fetchWithAuth(`/orders/${orderId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+    return response.json();
+  } catch (error) {
+    if (error instanceof OrderServiceError) {
+      throw error;
+    }
+    throw new OrderServiceError('Erro ao atualizar status', 500, error);
+  }
+};
+
+/**
+ * Exporta todas as funções do service
+ */
+export const ordersService = {
+  create: createOrder,
+  getMy: getMyOrders,
+  getById: getOrderById,
+  addItem: addItemToOrder,
+  updateItemQuantity,
+  cancelItem: cancelOrderItem,
+  getWithFilters: getOrdersWithFilters,
+  updateStatus: updateOrderStatus,
+};
+
+export default ordersService;
+```
+
+---
+
+
 ## 📝 `src/features/profile/components/EditProfileModal.tsx`
 
 ```tsx
@@ -10982,31 +11977,29 @@ export const deleteEndereco = async (enderecoId: number): Promise<void> => {
 "use client";
 
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
-import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
-import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
+import { useProducts } from "@/features/produtos/hooks/useProducts";
+import { ProductCard } from "@/features/produtos/components/ProductCard";
 import { PizzaLoading } from "@/components/ui";
 import { useCart } from "@/features/cart/context/CartContext";
 import { toaster } from "@/components/ui/toaster";
+import type { Product } from "@/types/product";
 
 /**
  * Página do Cardápio.
  * Agora utiliza o hook centralizado 'usePizzas' para buscar e exibir os dados.
  */
 export default function CardapioPage() {
-  const { pizzas, isLoading, error } = usePizzas();
+  const { products, isLoading, error } = useProducts();
   const { addToCart } = useCart();
 
-  // Função para adicionar pizza ao carrinho
-  const handleAddToCart = (pizzaId: number) => {
-    const pizza = pizzas.find((p) => p.id === pizzaId);
-    if (pizza) {
-      addToCart(pizza);
-      toaster.create({
-        title: "Pizza adicionada!",
-        description: `${pizza.nome} foi adicionada ao carrinho.`,
-        type: "success",
-      });
-    }
+  // Função para adicionar produto ao carrinho
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toaster.create({
+      title: "Produto adicionado!",
+      description: `${product.name} foi adicionado ao carrinho.`,
+      type: "success",
+    });
   };
 
   if (isLoading) {
@@ -11031,10 +12024,10 @@ export default function CardapioPage() {
         }}
         gap={8}
       >
-        {pizzas.map((pizza) => (
-          <PizzaCard
-            key={pizza.id}
-            pizza={pizza}
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
             onAddToCart={handleAddToCart}
           />
         ))}
@@ -12797,7 +13790,7 @@ export function PizzaText({
 ```tsx
 "use client";
 
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
@@ -13644,7 +14637,7 @@ export function PizzaCard({
 ```tsx
 "use client";
 
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import { PizzaText } from "./PizzaText";
 
@@ -13993,19 +14986,20 @@ export const PizzaSpinner = ({ size = 24 }: PizzaSpinnerProps) => {
  * Facilita importações e mantém organização
  */
 
-export { PizzaButton } from "./PizzaButton";
-export { PizzaCard } from "./PizzaCard";
-export { PizzaBadge } from "./PizzaBadge";
-export { PizzaText } from "./PizzaText";
-export { PizzaInput } from "./PizzaInput";
-export { PizzaTextarea } from "./PizzaTextarea";
-export { PizzaLoading } from "./PizzaLoading";
-export { PizzaSpinner } from "./PizzaSpinner";
-export { PizzaFileInput } from "./PizzaFileInput";
-export { PizzaSelect } from "./PizzaSelect";
-export { PizzaCheckbox } from "./PizzaCheckbox";
-export { AppModal } from "./AppModal";
-export * from "./PizzaFormPresentation";
+export { PizzaButton } from './PizzaButton';
+export { PizzaCard } from './PizzaCard';
+export { PizzaBadge } from './PizzaBadge';
+export { PizzaText } from './PizzaText';
+export { PizzaInput } from './PizzaInput';
+export { PizzaTextarea } from './PizzaTextarea';
+export { PizzaLoading } from './PizzaLoading';
+export { PizzaSpinner } from './PizzaSpinner';
+export { PizzaFileInput } from './PizzaFileInput';
+export { PizzaSelect } from './PizzaSelect';
+export { PizzaCheckbox } from './PizzaCheckbox';
+export { AppModal } from './AppModal';
+export { PizzaFormPresentation } from './PizzaFormPresentation';
+export { toaster } from './toaster';
 ```
 
 ---
@@ -14614,17 +15608,17 @@ export type CreatePizzaWithImageData = Omit<PizzaFormOutputData, "image"> & {
 ## 📝 `src/types/cart.ts`
 
 ```typescript
-import { Pizza } from ".";
+import { Product } from "./product";
 
 
 /**
  * @interface CartItem
  * @description Interface para um item dentro do carrinho de compras.
- * @property {Pizza} pizza - O objeto completo da pizza.
- * @property {number} quantity - A quantidade desta pizza no carrinho.
+ * @property {Product} product - O objeto completo do produto.
+ * @property {number} quantity - A quantidade deste produto no carrinho.
  */
 export interface CartItem {
-  pizza: Pizza;
+  product: Product;
   quantity: number;
 }
 
@@ -14640,6 +15634,197 @@ export interface Cart {
   totalItems: number;
   totalPrice: number;
 }
+```
+
+---
+
+
+## 📝 `src/types/order.ts`
+
+```typescript
+/**
+ * Tipos para o sistema de pedidos moderno
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+/**
+ * Tipo de pedido
+ */
+export type OrderType = 'DELIVERY' | 'DINE_IN';
+
+/**
+ * Status do pedido
+ */
+export type OrderStatus =
+  | 'PENDENTE'       // Aguardando confirmação
+  | 'EM_PREPARO'     // Em preparação
+  | 'A_CAMINHO'      // A caminho (delivery)
+  | 'PRONTO'         // Pronto para retirada (dine-in)
+  | 'ENTREGUE'       // Entregue
+  | 'CANCELADO';     // Cancelado
+
+/**
+ * Status do item do pedido
+ */
+export type OrderItemStatus =
+  | 'PENDING'        // Aguardando confirmação
+  | 'CONFIRMED'      // Confirmado
+  | 'PREPARING'      // Em preparação
+  | 'READY'          // Pronto
+  | 'CANCELLED';     // Cancelado
+
+/**
+ * Item de um pedido
+ */
+export interface OrderItem {
+  id: string;
+  productId: string;
+  product: {
+    id: string;
+    name: string;
+    price: string;
+    imageUrl?: string;
+  };
+  quantity: number;
+  price: string;           // Preço unitário no momento do pedido
+  subtotal: string;        // quantity * price
+  status: OrderItemStatus;
+  notes?: string;
+  cancelReason?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/**
+ * Pedido completo
+ */
+export interface Order {
+  id: number;
+  type: OrderType;
+  status: OrderStatus;
+  total: string;           // Total calculado
+  deliveryFee?: string;    // Taxa de entrega (se aplicável)
+  userId?: number;
+  addressId?: number;
+  sessionId?: string;      // Para pedidos DINE_IN
+  items: OrderItem[];
+  canModify: boolean;      // Se ainda pode modificar itens
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/**
+ * DTO para criar pedido
+ */
+export interface CreateOrderDto {
+  type: OrderType;
+  addressId?: number;      // Obrigatório para DELIVERY
+  sessionId?: string;      // Obrigatório para DINE_IN
+  items: {
+    productId: string;
+    quantity: number;
+    notes?: string;
+  }[];
+  observations?: string;
+}
+
+/**
+ * DTO para adicionar item ao pedido
+ */
+export interface AddOrderItemDto {
+  productId: string;
+  quantity: number;
+  notes?: string;
+}
+
+/**
+ * DTO para atualizar quantidade do item
+ */
+export interface UpdateOrderItemQuantityDto {
+  quantity: number;
+}
+
+/**
+ * DTO para cancelar item
+ */
+export interface CancelOrderItemDto {
+  reason: string;
+}
+
+/**
+ * DTO para filtros de busca de pedidos
+ */
+export interface OrderFilters {
+  status?: OrderStatus;
+  type?: OrderType;
+  userId?: number;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+/**
+ * Helper para calcular total do pedido
+ */
+export const calculateOrderTotal = (items: OrderItem[]): number => {
+  return items.reduce((sum, item) => {
+    const subtotal = parseFloat(item.subtotal);
+    return sum + (isNaN(subtotal) ? 0 : subtotal);
+  }, 0);
+};
+
+/**
+ * Helper para verificar se pedido pode ser modificado
+ */
+export const canModifyOrder = (order: Order): boolean => {
+  return order.canModify &&
+         (order.status === 'PENDENTE' || order.status === 'EM_PREPARO');
+};
+
+/**
+ * Helper para verificar se pedido é delivery
+ */
+export const isDeliveryOrder = (order: Order): boolean => {
+  return order.type === 'DELIVERY';
+};
+
+/**
+ * Helper para verificar se pedido é dine-in
+ */
+export const isDineInOrder = (order: Order): boolean => {
+  return order.type === 'DINE_IN';
+};
+
+/**
+ * Helper para obter status display do pedido
+ */
+export const getOrderStatusDisplay = (status: OrderStatus): { label: string; colorScheme: string } => {
+  const statusMap: Record<OrderStatus, { label: string; colorScheme: string }> = {
+    PENDENTE: { label: 'Pendente', colorScheme: 'gray' },
+    EM_PREPARO: { label: 'Em Preparo', colorScheme: 'yellow' },
+    A_CAMINHO: { label: 'A Caminho', colorScheme: 'blue' },
+    PRONTO: { label: 'Pronto', colorScheme: 'green' },
+    ENTREGUE: { label: 'Entregue', colorScheme: 'green' },
+    CANCELADO: { label: 'Cancelado', colorScheme: 'red' },
+  };
+
+  return statusMap[status] || { label: status, colorScheme: 'gray' };
+};
+
+/**
+ * Helper para obter status display do item
+ */
+export const getOrderItemStatusDisplay = (status: OrderItemStatus): { label: string; colorScheme: string } => {
+  const statusMap: Record<OrderItemStatus, { label: string; colorScheme: string }> = {
+    PENDING: { label: 'Pendente', colorScheme: 'gray' },
+    CONFIRMED: { label: 'Confirmado', colorScheme: 'blue' },
+    PREPARING: { label: 'Preparando', colorScheme: 'yellow' },
+    READY: { label: 'Pronto', colorScheme: 'green' },
+    CANCELLED: { label: 'Cancelado', colorScheme: 'red' },
+  };
+
+  return statusMap[status] || { label: status, colorScheme: 'gray' };
+};
 ```
 
 ---
@@ -14874,6 +16059,107 @@ export interface Entregador {
 ---
 
 
+## 📝 `src/types/product.ts`
+
+```typescript
+/**
+ * Tipos para o sistema de produtos (substitui pizzas)
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+/**
+ * Produto do catálogo
+ */
+export interface Product {
+  id: string;              // UUID do backend
+  name: string;
+  description?: string;
+  price: string;           // Decimal como string (backend)
+  imageUrl?: string;
+  categoryId: string;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  active: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/**
+ * Categoria de produtos
+ */
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/**
+ * DTO para criação de produto
+ */
+export interface CreateProductDto {
+  name: string;
+  description?: string;
+  price: number;           // Será convertido para string no backend
+  categoryId: string;
+  image?: File;
+}
+
+/**
+ * DTO para atualização de produto
+ */
+export interface UpdateProductDto {
+  name?: string;
+  description?: string;
+  price?: number;          // Será convertido para string no backend
+  categoryId?: string;
+  active?: boolean;
+  image?: File;
+}
+
+/**
+ * Helper para converter Product.price (string) para number
+ */
+export const parseProductPrice = (priceString: string): number => {
+  const price = parseFloat(priceString);
+  if (isNaN(price)) {
+    throw new Error(`Preço inválido: ${priceString}`);
+  }
+  return price;
+};
+
+/**
+ * Helper para formatar número como price string
+ */
+export const formatProductPrice = (priceNumber: number): string => {
+  return priceNumber.toFixed(2);
+};
+
+/**
+ * Helper para validar se produto está ativo
+ */
+export const isProductActive = (product: Product): boolean => {
+  return product.active;
+};
+
+/**
+ * Helper para obter URL da imagem do produto
+ */
+export const getProductImageUrl = (product: Product): string | null => {
+  return product.imageUrl || null;
+};
+```
+
+---
+
+
 ## 📝 `src/types/upload.ts`
 
 ```typescript
@@ -14959,28 +16245,28 @@ export interface DashboardStats {
 // Exporta todos os tipos relacionados a pizza
 // export * from "./pizza"; // Removido porque o módulo não existe
 
-// Exporta todos os tipos relacionados a pedidos
-export * from "./pedidos";
+// Exporta todos os tipos do sistema
 
-// Exporta todos os tipos relacionados ao carrinho de compras
-export * from "./cart";
+// Auth
+export * from './users';
 
-// Exporta todos os tipos relacionados a usuarios
+// Products (substitui pizzas)
+export * from './product';
+export * from './categoria';
 
-export * from "./pizzas";
+// Orders (substitui pedidos)
+export * from './order';
 
-// Exporta todos os tipos relacionados a pedidos
-export * from "./pedidos";
+// Others
+export * from './endereco';
+export * from './entregador';
+export * from './mesa';
+export * from './upload';
+export * from './cart';
 
-// Exporta todos os tipos relacionados a usuarios e endereços
-export * from "./endereco"; // <<< ADICIONADO
-export * from "./entregador"; // <<< ADICIONADO
-
-// Exporta tipos de categorias, produtos, mesas e upload
-export * from "./categoria";
-export * from "./produto";
-export * from "./mesa";
-export * from "./upload";
+// DEPRECATED - Manter por compatibilidade temporária
+// export * from './pizzas';  // ⚠️ Remover após migração
+// export * from './pedidos'; // ⚠️ Remover após migração
 ```
 
 ---
@@ -14989,48 +16275,113 @@ export * from "./upload";
 ## 📝 `src/utils/validation.ts`
 
 ```typescript
-import { z } from "zod";
+/**
+ * Schemas de validação com Zod
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import { z } from 'zod';
+import { FILE_SIZE_LIMITS, ACCEPTED_IMAGE_TYPES, VALIDATION_RULES } from '@/constants/validation';
 
+/**
+ * Schema para validação de imagem
+ */
+const imageSchema = z
+  .instanceof(File, { message: 'Arquivo inválido' })
+  .refine(
+    (file) => file.size <= FILE_SIZE_LIMITS.IMAGE,
+    `Tamanho máximo de 5MB.`
+  )
+  .refine(
+    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type as typeof ACCEPTED_IMAGE_TYPES[number]),
+    'Apenas formatos .jpg, .jpeg, .png e .webp são suportados.'
+  );
+
+/**
+ * Schema para formulário de produto
+ */
+export const productFormSchema = z.object({
+  name: z
+    .string()
+    .min(VALIDATION_RULES.PRODUCT_NAME.MIN_LENGTH, { message: 'O nome deve ter no mínimo 3 caracteres.' })
+    .max(VALIDATION_RULES.PRODUCT_NAME.MAX_LENGTH, { message: 'O nome deve ter no máximo 100 caracteres.' }),
+  description: z
+    .string()
+    .min(VALIDATION_RULES.PRODUCT_DESCRIPTION.MIN_LENGTH, { message: 'A descrição deve ter no mínimo 10 caracteres.' })
+    .max(VALIDATION_RULES.PRODUCT_DESCRIPTION.MAX_LENGTH, { message: 'A descrição deve ter no máximo 500 caracteres.' }),
+  price: z.coerce
+    .number()
+    .refine((val) => !isNaN(val), {
+      message: 'O preço deve ser um número válido.',
+    })
+    .min(VALIDATION_RULES.PRODUCT_PRICE.MIN, {
+      message: 'O preço deve ser maior que R$ 0,00.',
+    })
+    .max(VALIDATION_RULES.PRODUCT_PRICE.MAX, {
+      message: 'O preço deve ser menor que R$ 999.999,99.',
+    }),
+  categoryId: z
+    .string()
+    .min(1, { message: 'Categoria é obrigatória.' }),
+  image: imageSchema.optional(),
+});
+
+/**
+ * Tipo inferido do schema de produto
+ */
+export type ProductFormData = z.infer<typeof productFormSchema>;
+
+/**
+ * Schema para formulário de pedido
+ */
+export const orderFormSchema = z.object({
+  type: z.enum(['DELIVERY', 'DINE_IN']),
+  addressId: z.number().optional(),
+  sessionId: z.string().optional(),
+  items: z.array(
+    z.object({
+      productId: z.string().min(1, 'Produto é obrigatório'),
+      quantity: z.number().min(1, 'Quantidade deve ser maior que 0'),
+      notes: z.string().optional(),
+    })
+  ).min(1, 'Pedido deve ter pelo menos um item'),
+  observations: z.string().max(500, 'Máximo de 500 caracteres').optional(),
+});
+
+/**
+ * Tipo inferido do schema de pedido
+ */
+export type OrderFormData = z.infer<typeof orderFormSchema>;
+
+/**
+ * Schema legado para compatibilidade (remover após migração)
+ */
 export const pizzaFormSchema = z.object({
   nome: z
     .string()
-    .min(3, { message: "O nome deve ter no mínimo 3 caracteres." }),
+    .min(3, { message: 'O nome deve ter no mínimo 3 caracteres.' }),
   descricao: z
     .string()
-    .min(10, { message: "A descrição deve ter no mínimo 10 caracteres." }),
-
-  // --- CORREÇÃO FINAL AQUI ---
+    .min(10, { message: 'A descrição deve ter no mínimo 10 caracteres.' }),
   preco: z.coerce
-    .number() // 1. Tenta converter a entrada para número (ex: "abc" vira NaN)
+    .number()
     .refine((val) => !isNaN(val), {
-      // 2. Valida se a conversão resultou em um número válido (não NaN)
-      message: "O preço deve ser um número válido.",
+      message: 'O preço deve ser um número válido.',
     })
     .min(0.01, {
-      // 3. Aplica a regra de negócio apenas se for um número
-      message: "O preço deve ser maior que R$ 0,00.",
+      message: 'O preço deve ser maior que R$ 0,00.',
     }),
-  // -------------------------
-
   image: z
-    .any()
+    .instanceof(File)
     .optional()
     .refine(
-      (files) => !files || !files[0] || files[0].size <= MAX_FILE_SIZE,
+      (file) => !file || file.size <= FILE_SIZE_LIMITS.IMAGE,
       `Tamanho máximo de 5MB.`
     )
     .refine(
-      (files) =>
-        !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files[0].type),
-      "Apenas formatos .jpg, .jpeg, .png e .webp são suportados."
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type as typeof ACCEPTED_IMAGE_TYPES[number]),
+      'Apenas formatos .jpg, .jpeg, .png e .webp são suportados.'
     ),
 });
 
@@ -15098,6 +16449,138 @@ export const getAuthToken = (): string | undefined => {
  */
 export const deleteCookie = (): void => {
   Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
+};
+```
+
+---
+
+
+## 📝 `src/utils/fetchHelpers.ts`
+
+```typescript
+/**
+ * Helpers reutilizáveis para fetch
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+import { getAuthToken } from './cookies';
+
+/**
+ * Erro customizado para requisições
+ */
+export class FetchError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public details?: unknown
+  ) {
+    super(message);
+    this.name = 'FetchError';
+  }
+}
+
+/**
+ * Headers padrão para requisições JSON
+ */
+export const getJsonHeaders = (): HeadersInit => {
+  const token = getAuthToken();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+/**
+ * Headers para FormData (sem Content-Type)
+ */
+export const getFormDataHeaders = (): HeadersInit => {
+  const token = getAuthToken();
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+/**
+ * Trata erros da API
+ */
+export const handleFetchError = async (response: Response): Promise<never> => {
+  let message = 'Erro ao processar requisição';
+  let details: unknown;
+
+  try {
+    const errorData = await response.json();
+    message = errorData.message || message;
+    details = errorData;
+  } catch {
+    // Se não conseguir parsear JSON, usa mensagem genérica
+  }
+
+  throw new FetchError(message, response.status, details);
+};
+
+/**
+ * Faz requisição autenticada com JSON
+ */
+export const fetchWithAuth = async <T = unknown>(
+  url: string,
+  options?: RequestInit
+): Promise<T> => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new FetchError('Usuário não autenticado', 401);
+  }
+
+  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const response = await fetch(fullUrl, {
+    ...options,
+    headers: {
+      ...getJsonHeaders(),
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    await handleFetchError(response);
+  }
+
+  return response.json();
+};
+
+/**
+ * Faz requisição autenticada com FormData
+ */
+export const fetchWithFormData = async <T = unknown>(
+  url: string,
+  formData: FormData,
+  method: 'POST' | 'PATCH' = 'POST'
+): Promise<T> => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new FetchError('Usuário não autenticado', 401);
+  }
+
+  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}${url}`;
+  const response = await fetch(fullUrl, {
+    method,
+    headers: getFormDataHeaders(),
+    body: formData,
+  });
+
+  if (!response.ok) {
+    await handleFetchError(response);
+  }
+
+  return response.json();
 };
 ```
 
@@ -15279,6 +16762,96 @@ export type TranslationKeys =
   | `menu.${keyof typeof ptBR.menu}`
   | `admin.${keyof typeof ptBR.admin}`
   | `validation.${keyof typeof ptBR.validation}`;
+```
+
+---
+
+
+## 📝 `src/constants/validation.ts`
+
+```typescript
+/**
+ * Constantes de validação
+ * @version 1.0.0
+ * @since 28/12/2025
+ */
+
+/**
+ * Limites de tamanho de arquivo
+ */
+export const FILE_SIZE_LIMITS = {
+  IMAGE: 5 * 1024 * 1024, // 5MB
+  DOCUMENT: 10 * 1024 * 1024, // 10MB
+} as const;
+
+/**
+ * Tipos de arquivo aceitos
+ */
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+] as const;
+
+/**
+ * Tipos MIME aceitos para imagens
+ */
+export const ACCEPTED_IMAGE_MIME_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+] as const;
+
+/**
+ * Extensões de arquivo aceitas
+ */
+export const ACCEPTED_IMAGE_EXTENSIONS = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+] as const;
+
+/**
+ * Constantes de validação de formulários
+ */
+export const VALIDATION_RULES = {
+  PRODUCT_NAME: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 100,
+  },
+  PRODUCT_DESCRIPTION: {
+    MIN_LENGTH: 10,
+    MAX_LENGTH: 500,
+  },
+  PRODUCT_PRICE: {
+    MIN: 0.01,
+    MAX: 999999.99,
+  },
+  ORDER_OBSERVATIONS: {
+    MAX_LENGTH: 500,
+  },
+  ORDER_ITEM_QUANTITY: {
+    MIN: 1,
+    MAX: 99,
+  },
+} as const;
+
+/**
+ * Mensagens de erro padronizadas
+ */
+export const ERROR_MESSAGES = {
+  REQUIRED: 'Campo obrigatório',
+  INVALID_FORMAT: 'Formato inválido',
+  FILE_TOO_LARGE: 'Arquivo muito grande',
+  UNSUPPORTED_FILE_TYPE: 'Tipo de arquivo não suportado',
+  NETWORK_ERROR: 'Erro de conexão',
+  UNAUTHORIZED: 'Não autorizado',
+  NOT_FOUND: 'Não encontrado',
+  SERVER_ERROR: 'Erro interno do servidor',
+} as const;
 ```
 
 ---
@@ -15564,9 +17137,9 @@ export const pizzaExpressSystem = createSystem(defaultConfig, config);
 
 | Item | Valor |
 |------|-------|
-| **Gerado em** | 28/12/2025 às 13:08:12 |
-| **Arquivos processados** | 170 |
-| **Tamanho do snapshot** | 396K |
+| **Gerado em** | 28/12/2025 às 14:58:44 |
+| **Arquivos processados** | 179 |
+| **Tamanho do snapshot** | 432K |
 
 ---
 
