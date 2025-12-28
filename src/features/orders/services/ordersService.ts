@@ -100,6 +100,9 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
   try {
     const params = new URLSearchParams();
 
+    // Sempre passa pelo menos um parâmetro para evitar problemas de validação
+    params.append("limit", "100");
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -109,7 +112,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `/orders?${queryString}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -209,6 +212,9 @@ export const getOrdersWithFilters = async (
   try {
     const params = new URLSearchParams();
 
+    // Sempre passa pelo menos um parâmetro para evitar problemas de validação
+    params.append("limit", "100");
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -218,7 +224,7 @@ export const getOrdersWithFilters = async (
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `/orders?${queryString}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();

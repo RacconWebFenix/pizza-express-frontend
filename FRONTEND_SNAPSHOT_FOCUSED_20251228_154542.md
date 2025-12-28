@@ -8421,6 +8421,7 @@ import {
 } from "@/types/mesa";
 import { Order } from "@/types/order";
 import { getAuthToken } from "@/utils/cookies";
+import { API_ENDPOINTS } from "@/constants";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -8452,7 +8453,7 @@ export const getMesas = async (): Promise<Mesa[]> => {
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8477,7 +8478,7 @@ export const getMesaById = async (id: string): Promise<Mesa> => {
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables/${id}`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}/${id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8502,7 +8503,7 @@ export const createMesa = async (data: CreateMesaData): Promise<Mesa> => {
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8528,7 +8529,7 @@ export const abrirSessaoMesa = async (mesaId: string): Promise<SessaoMesa> => {
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/open`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}/${mesaId}/sessions/open`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8555,7 +8556,7 @@ export const getSessaoAtiva = async (
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/active`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}/${mesaId}/sessions/active`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8583,7 +8584,7 @@ export const getSessaoAtiva = async (
 
   // Buscar pedidos relacionados à sessão
   try {
-    const pedidosResponse = await fetch(`${API_URL}/orders`, {
+    const pedidosResponse = await fetch(`${API_URL}${API_ENDPOINTS.PEDIDOS}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -8658,7 +8659,7 @@ export const adicionarPedidoMesa = async (
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/orders`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.PEDIDOS}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8684,7 +8685,7 @@ export const fecharConta = async (mesaId: string): Promise<void> => {
     throw new Error("Usuário não autenticado");
   }
 
-  const response = await fetch(`${API_URL}/tables/${mesaId}/sessions/close`, {
+  const response = await fetch(`${API_URL}${API_ENDPOINTS.MESAS}/${mesaId}/sessions/close`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -8990,8 +8991,8 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
       setError(null);
 
       const data = adminMode
-        ? await ordersService.getWithFilters(filters)
-        : await ordersService.getMy(filters);
+        ? await ordersService.getWithFilters(filters || {})
+        : await ordersService.getMy(filters || {});
 
       setOrders(data);
     } catch (err) {
@@ -9110,6 +9111,7 @@ import type {
   OrderItem,
 } from "@/types/order";
 import { getAuthToken } from "@/utils/cookies";
+import { API_ENDPOINTS } from "@/constants";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -9176,7 +9178,7 @@ const fetchWithAuth = async (
  */
 export const createOrder = async (data: CreateOrderDto): Promise<Order> => {
   try {
-    const response = await fetchWithAuth("/orders", {
+    const response = await fetchWithAuth(API_ENDPOINTS.PEDIDOS, {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -9196,6 +9198,9 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
   try {
     const params = new URLSearchParams();
 
+    // Sempre passa pelo menos um parâmetro para evitar problemas de validação
+    params.append("limit", "100");
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -9205,7 +9210,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `${API_ENDPOINTS.PEDIDOS}${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -9222,7 +9227,7 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
  */
 export const getOrderById = async (orderId: number): Promise<Order> => {
   try {
-    const response = await fetchWithAuth(`/orders/${orderId}`);
+    const response = await fetchWithAuth(`${API_ENDPOINTS.PEDIDOS}/${orderId}`);
     return response.json();
   } catch (error) {
     if (error instanceof OrderServiceError) {
@@ -9240,7 +9245,7 @@ export const addItemToOrder = async (
   item: AddOrderItemDto
 ): Promise<OrderItem> => {
   try {
-    const response = await fetchWithAuth(`/orders/${orderId}/items`, {
+    const response = await fetchWithAuth(`${API_ENDPOINTS.PEDIDOS}/${orderId}/items`, {
       method: "POST",
       body: JSON.stringify(item),
     });
@@ -9262,7 +9267,7 @@ export const updateItemQuantity = async (
   data: UpdateOrderItemQuantityDto
 ): Promise<OrderItem> => {
   try {
-    const response = await fetchWithAuth(`/orders/${orderId}/items/${itemId}`, {
+    const response = await fetchWithAuth(`${API_ENDPOINTS.PEDIDOS}/${orderId}/items/${itemId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -9284,7 +9289,7 @@ export const cancelOrderItem = async (
   data: CancelOrderItemDto
 ): Promise<void> => {
   try {
-    await fetchWithAuth(`/orders/${orderId}/items/${itemId}/cancel`, {
+    await fetchWithAuth(`${API_ENDPOINTS.PEDIDOS}/${orderId}/items/${itemId}/cancel`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -9305,6 +9310,9 @@ export const getOrdersWithFilters = async (
   try {
     const params = new URLSearchParams();
 
+    // Sempre passa pelo menos um parâmetro para evitar problemas de validação
+    params.append("limit", "100");
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -9314,7 +9322,7 @@ export const getOrdersWithFilters = async (
     }
 
     const queryString = params.toString();
-    const endpoint = `/orders/admin${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `${API_ENDPOINTS.PEDIDOS}?${queryString}`;
 
     const response = await fetchWithAuth(endpoint);
     return response.json();
@@ -9338,7 +9346,7 @@ export const updateOrderStatus = async (
   status: string
 ): Promise<Order> => {
   try {
-    const response = await fetchWithAuth(`/orders/${orderId}/status`, {
+    const response = await fetchWithAuth(`${API_ENDPOINTS.PEDIDOS}/${orderId}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
     });
@@ -15918,12 +15926,13 @@ export const CARDAPIO_CONSTANTS = {
 export const API_ENDPOINTS = {
   BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
   PIZZAS: "/pizzas",
+  PEDIDOS: "/orders",
+  MESAS: "/tables",
   AUTH: {
     LOGIN: "/auth/login",
     ME: "/me",
     LOGOUT: "/auth/logout",
   },
-  PEDIDOS: "/pedidos",
   USERS: "/users",
 } as const;
 
@@ -16110,7 +16119,7 @@ export const pizzaExpressSystem = createSystem(defaultConfig, config);
 
 | Item | Valor |
 |------|-------|
-| **Gerado em** | 28/12/2025 às 15:17:15 |
+| **Gerado em** | 28/12/2025 às 15:45:42 |
 | **Arquivos processados** | 168 |
 | **Tamanho do snapshot** | 400K |
 

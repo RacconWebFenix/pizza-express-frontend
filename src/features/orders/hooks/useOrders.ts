@@ -54,8 +54,8 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
       setError(null);
 
       const data = adminMode
-        ? await ordersService.getWithFilters(filters)
-        : await ordersService.getMy(filters);
+        ? await ordersService.getWithFilters(filters || {})
+        : await ordersService.getMy(filters || {});
 
       setOrders(data);
     } catch (err) {
