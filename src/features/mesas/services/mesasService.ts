@@ -243,6 +243,11 @@ export const adicionarPedidoMesa = async (
     throw new Error("Usuário não autenticado");
   }
 
+  console.log(
+    "📤 mesasService - Payload sendo enviado:",
+    JSON.stringify(data, null, 2)
+  );
+
   const response = await fetch(`${API_URL}/orders`, {
     method: "POST",
     headers: {
@@ -253,13 +258,20 @@ export const adicionarPedidoMesa = async (
   });
 
   if (!response.ok) {
-    const errorData = await response
-      .json()
-      .catch(() => ({ message: "Erro ao adicionar pedido" }));
-    throw new Error(errorData.message || "Erro ao adicionar pedido à mesa");
+    let errorMessage = "Erro ao adicionar pedido à mesa";
+    try {
+      const errorData = await response.json();
+      console.error("❌ Resposta de erro do backend:", errorData);
+      errorMessage = errorData.message || errorData.error || errorMessage;
+    } catch (parseError) {
+      console.error("❌ Erro ao fazer parse da resposta de erro:", parseError);
+    }
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log("✅ Pedido criado com sucesso:", result);
+  return result;
 };
 
 // Fechar conta (billing)

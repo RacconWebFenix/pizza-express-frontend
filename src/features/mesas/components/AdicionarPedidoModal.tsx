@@ -16,9 +16,10 @@ import {
 import { AppModal } from "@/components/ui";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { PizzaButton } from "@/components/ui";
+import { toaster } from "@/components/ui/toaster";
 import { useMesas } from "../hooks/useMesas";
 import { useProdutos } from "../../produtos/hooks/useProdutos";
-import { Mesa } from "@/types/mesa";
+import { Mesa, AdicionarPedidoMesaData } from "@/types/mesa";
 import { Produto } from "@/types/produto";
 
 const pedidoSchema = z.object({
@@ -31,6 +32,7 @@ interface AdicionarPedidoModalProps {
   isOpen: boolean;
   onClose: () => void;
   mesa: Mesa | null;
+  sessionId?: string; // ✅ NOVA PROP
   onPedidoAdicionado: () => void;
 }
 
@@ -48,6 +50,7 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
   isOpen,
   onClose,
   mesa,
+  sessionId, // ✅ RECEBER sessionId
   onPedidoAdicionado,
 }) => {
   const { adicionarPedido } = useMesas();
@@ -114,22 +117,45 @@ export const AdicionarPedidoModal: React.FC<AdicionarPedidoModalProps> = ({
   const onSubmit = async (data: PedidoFormData) => {
     if (!mesa || itensPedido.length === 0) return;
 
+    // ✅ VALIDAÇÃO CORRIGIDA
+    if (!sessionId) {
+      toaster.create({
+        title: "Mesa não aberta",
+        description: "Abra a mesa antes de adicionar pedidos.",
+        type: "warning",
+      });
+      return;
+    }
+
     try {
-      const pedidoData = {
+      const pedidoData: AdicionarPedidoMesaData = {
         type: "DINE_IN" as const,
+        sessionId: sessionId, // ✅ USAR sessionId da prop
         items: itensPedido.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
         })),
-        tableId: mesa.id,
-        observations: data.observacoes,
+        observacoes: data.observacoes, // ✅ CORRETO (português)
       };
 
       await adicionarPedido(pedidoData);
+
+      toaster.create({
+        title: "Pedido adicionado!",
+        description: `${itensPedido.length} itens adicionados à Mesa ${mesa.number}`,
+        type: "success",
+      });
+
       onPedidoAdicionado();
       handleClose();
     } catch (error) {
       console.error("Erro ao adicionar pedido:", error);
+
+      toaster.create({
+        title: "Erro ao criar pedido",
+        description: error instanceof Error ? error.message : "Tente novamente",
+        type: "error",
+      });
     }
   };
 

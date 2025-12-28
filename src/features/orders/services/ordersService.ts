@@ -127,15 +127,19 @@ export const getMyOrders = async (filters?: OrderFilters): Promise<Order[]> => {
 /**
  * Busca pedidos de delivery (para Kanban)
  */
-export const getDeliveryOrders = async (filters?: Omit<OrderFilters, 'type'>): Promise<Order[]> => {
-  return getOrdersWithFilters({ ...filters, type: 'DELIVERY' });
+export const getDeliveryOrders = async (
+  filters?: Omit<OrderFilters, "type">
+): Promise<Order[]> => {
+  return getOrdersWithFilters({ ...filters, type: "DELIVERY" });
 };
 
 /**
  * Busca pedidos de mesa (dine-in)
  */
-export const getDineInOrders = async (filters?: Omit<OrderFilters, 'type'>): Promise<Order[]> => {
-  return getOrdersWithFilters({ ...filters, type: 'DINE_IN' });
+export const getDineInOrders = async (
+  filters?: Omit<OrderFilters, "type">
+): Promise<Order[]> => {
+  return getOrdersWithFilters({ ...filters, type: "DINE_IN" });
 };
 
 /**

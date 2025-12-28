@@ -9,9 +9,9 @@ export interface Mesa {
 }
 
 export enum MesaStatus {
-  AVAILABLE = 'AVAILABLE',
-  OCCUPIED = 'OCCUPIED',
-  RESERVED = 'RESERVED'
+  AVAILABLE = "AVAILABLE",
+  OCCUPIED = "OCCUPIED",
+  RESERVED = "RESERVED",
 }
 
 export interface SessaoMesa {
@@ -19,7 +19,7 @@ export interface SessaoMesa {
   mesaId: string;
   pedidos: PedidoMesa[];
   total: number;
-  status: 'ATIVA' | 'FECHADA';
+  status: "ATIVA" | "FECHADA";
   criadoEm: string;
   fechadoEm?: string;
 }
@@ -50,13 +50,13 @@ export interface AbrirSessaoData {
 }
 
 export interface AdicionarPedidoMesaData {
-  type: 'DINE_IN';
+  type: "DINE_IN";
+  sessionId: string; // ✅ CORRETO (não tableId)
   items: Array<{
     productId: string;
     quantity: number;
   }>;
-  tableId: string;
-  observations?: string;
+  observacoes?: string; // ✅ CORRETO (português, não observations)
 }
 
 export interface FecharContaData {

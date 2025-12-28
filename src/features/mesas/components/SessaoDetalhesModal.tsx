@@ -237,6 +237,7 @@ export const SessaoDetalhesModal: React.FC<SessaoDetalhesModalProps> = ({
         isOpen={isPedidoOpen}
         onClose={onPedidoClose}
         mesa={mesa}
+        sessionId={sessao?.id} // ✅ ADICIONAR PROP
         onPedidoAdicionado={handlePedidoAdicionado}
       />
 

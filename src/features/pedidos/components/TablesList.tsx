@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   VStack,
@@ -22,7 +22,7 @@ import { Order } from "@/types/order";
 export const TablesList: React.FC = () => {
   const { orders, isLoading } = useOrders({
     adminMode: true,
-    orderType: 'DINE_IN',
+    orderType: "DINE_IN",
   });
 
   // Agrupar pedidos por mesa
@@ -47,9 +47,7 @@ export const TablesList: React.FC = () => {
 
       {Object.keys(ordersByTable).length === 0 ? (
         <Box textAlign="center" py={8}>
-          <Text color="text.secondary">
-            Nenhum pedido de mesa encontrado
-          </Text>
+          <Text color="text.secondary">Nenhum pedido de mesa encontrado</Text>
         </Box>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
@@ -59,13 +57,14 @@ export const TablesList: React.FC = () => {
                 <HStack justify="space-between">
                   <Heading size="md">Mesa {tableNumber}</Heading>
                   <Badge colorScheme="blue">
-                    {tableOrders.length} pedido{tableOrders.length !== 1 ? 's' : ''}
+                    {tableOrders.length} pedido
+                    {tableOrders.length !== 1 ? "s" : ""}
                   </Badge>
                 </HStack>
               </Card.Header>
               <Card.Body>
                 <VStack gap={3} align="stretch">
-                  {tableOrders.map(order => (
+                  {tableOrders.map((order) => (
                     <Box
                       key={order.id}
                       p={3}
@@ -77,10 +76,13 @@ export const TablesList: React.FC = () => {
                         <Text fontWeight="bold">Pedido #{order.id}</Text>
                         <Badge
                           colorScheme={
-                            order.status === 'PENDENTE' ? 'gray' :
-                            order.status === 'EM_PREPARO' ? 'yellow' :
-                            order.status === 'PRONTO' ? 'green' :
-                            'red'
+                            order.status === "PENDENTE"
+                              ? "gray"
+                              : order.status === "EM_PREPARO"
+                              ? "yellow"
+                              : order.status === "PRONTO"
+                              ? "green"
+                              : "red"
                           }
                         >
                           {order.status}
@@ -88,11 +90,11 @@ export const TablesList: React.FC = () => {
                       </HStack>
 
                       <Text fontSize="sm" color="text.secondary" mb={2}>
-                        👤 {order.user?.nome || 'Cliente'}
+                        👤 {order.user?.nome || "Cliente"}
                       </Text>
 
                       <VStack gap={1} align="stretch" mb={2}>
-                        {order.items.map(item => (
+                        {order.items.map((item) => (
                           <Text key={item.id} fontSize="sm">
                             {item.quantity}x {item.product.name}
                           </Text>

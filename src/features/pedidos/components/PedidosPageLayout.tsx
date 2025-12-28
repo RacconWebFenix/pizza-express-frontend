@@ -37,7 +37,7 @@ export const PedidosPageLayout = () => {
   // Usa o hook unificado com filtro para delivery quando admin
   const ordersHook = useOrders({
     adminMode: canViewAllOrders(),
-    orderType: canViewAllOrders() ? 'DELIVERY' : undefined,
+    orderType: canViewAllOrders() ? "DELIVERY" : undefined,
   });
 
   const { orders, isLoading } = ordersHook;

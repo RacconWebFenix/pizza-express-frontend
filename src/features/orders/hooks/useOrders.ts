@@ -28,7 +28,7 @@ interface UseOrdersOptions {
   /**
    * Tipo específico de pedido para filtrar
    */
-  orderType?: 'DELIVERY' | 'DINE_IN';
+  orderType?: "DELIVERY" | "DINE_IN";
 }
 
 interface UseOrdersReturn {
@@ -60,9 +60,9 @@ export const useOrders = (options: UseOrdersOptions = {}): UseOrdersReturn => {
 
       let data: Order[];
 
-      if (orderType === 'DELIVERY') {
+      if (orderType === "DELIVERY") {
         data = await ordersService.getDelivery(filters || {});
-      } else if (orderType === 'DINE_IN') {
+      } else if (orderType === "DINE_IN") {
         data = await ordersService.getDineIn(filters || {});
       } else {
         // Fallback para comportamento anterior
