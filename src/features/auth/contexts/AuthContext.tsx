@@ -50,8 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           router.push(redirectPath);
         }
         return true;
-      } catch (error) {
-        console.warn("Token inválido detectado, limpando sessão:", error);
+      } catch {
         setUser(null);
         deleteCookie();
         return false;
@@ -70,7 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // 2. Usa o token para autenticar e buscar os dados do usuário
       return await handleAuthentication(access_token, true);
     } catch (error) {
-      console.error("Falha no login:", error);
       setIsLoading(false);
       // Propaga o erro para que a página de login possa exibi-lo
       throw error;

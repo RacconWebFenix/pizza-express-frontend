@@ -1,8 +1,9 @@
 import { getAuthToken } from "@/utils/cookies";
 import type { Endereco } from "@/types/endereco";
 import { getMyProfile } from "./profileService";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
+const API_URL = API_BASE_URL;
 
 /**
  * Interface para criação de endereço

@@ -1,7 +1,8 @@
 import { User } from "@/types/users";
 import { getAuthToken } from "@/utils/cookies";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
+const API_URL = API_BASE_URL;
 
 /**
  * Busca os dados do perfil do usuário logado.

@@ -1,7 +1,8 @@
 import { Produto, CreateProdutoData, UpdateProdutoData } from '@/types/produto';
 import { getAuthToken } from '@/utils/cookies';
+import { API_BASE_URL } from '@/config/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = API_BASE_URL;
 
 // Listar todos os produtos
 export const getProdutos = async (): Promise<Produto[]> => {

@@ -1,7 +1,8 @@
 import { Categoria, CreateCategoriaData, UpdateCategoriaData } from '@/types/categoria';
 import { getAuthToken } from '@/utils/cookies';
+import { API_BASE_URL } from '@/config/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = API_BASE_URL;
 
 // Listar todas as categorias
 export const getCategorias = async (): Promise<Categoria[]> => {

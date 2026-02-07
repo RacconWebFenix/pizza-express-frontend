@@ -1,7 +1,8 @@
 import { Pedido, StatusPedido } from "@/types/pedidos";
 import { getAuthToken } from "@/utils/cookies";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = API_BASE_URL;
 
 // DTO para a criação de um pedido
 interface CreatePedidoPayload {

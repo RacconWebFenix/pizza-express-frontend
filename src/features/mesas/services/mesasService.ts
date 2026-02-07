@@ -6,8 +6,9 @@ import {
 } from "@/types/mesa";
 import { Pedido } from "@/types/pedidos";
 import { getAuthToken } from "@/utils/cookies";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = API_BASE_URL;
 
 // Tipos para dados da API
 interface ApiPedidoItem {
@@ -195,10 +196,10 @@ export const getSessaoAtiva = async (
           quantity: item.quantity,
           product: item.product
             ? {
-                id: item.product.id,
-                name: item.product.name,
-                price: parseFloat(item.product.price || item.price || "0"),
-              }
+              id: item.product.id,
+              name: item.product.name,
+              price: parseFloat(item.product.price || item.price || "0"),
+            }
             : undefined,
         })),
         observacoes: pedido.observacoes || "",
@@ -220,8 +221,8 @@ export const getSessaoAtiva = async (
         total: totalSessao,
       };
     }
-  } catch (error) {
-    console.warn("Erro ao buscar pedidos da sessão:", error);
+  } catch {
+    // Retornar sessão sem pedidos se houver erro
   }
 
   // Retornar sessão sem pedidos se houver erro

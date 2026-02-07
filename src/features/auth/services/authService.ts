@@ -1,8 +1,9 @@
 // src/features/auth/services/authService.ts
 
 import { User } from "@/types/users";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
+const API_URL = API_BASE_URL;
 
 interface LoginCredentials {
   email: string;
@@ -28,9 +29,8 @@ export const loginUser = async (
       const errorData = await response.json();
       errorMessage =
         errorData?.message || errorData?.error || "Credenciais inválidas.";
-    } catch (parseError) {
-      console.warn("Não foi possível parsear resposta de erro:", parseError);
-      // Mantém a mensagem padrão
+    } catch {
+      // Mantém a mensagem padrão se não conseguir parsear
     }
 
     throw new Error(errorMessage);

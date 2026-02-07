@@ -10,7 +10,8 @@ import {
   useDisclosure,
   IconButton,
   SimpleGrid,
-  Avatar,
+  AvatarRoot,
+  AvatarFallback,
   Button,
 } from "@chakra-ui/react";
 import { FaEdit, FaTrash, FaMotorcycle } from "react-icons/fa";
@@ -20,6 +21,7 @@ import { EntregadorFormModal } from "./EntregadorFormModal";
 import { Entregador } from "@/types/entregador";
 
 export const EntregadoresList: React.FC = () => {
+
   const { entregadores, isLoading, error, remove } = useEntregadores();
   const {
     open: isFormOpen,
@@ -128,11 +130,11 @@ export const EntregadoresList: React.FC = () => {
               <VStack align="stretch" gap={3}>
                 {/* Avatar e Nome */}
                 <HStack gap={3}>
-                  <Avatar.Root size="lg">
-                    <Avatar.Fallback>
+                  <AvatarRoot size="lg">
+                    <AvatarFallback>
                       <FaMotorcycle />
-                    </Avatar.Fallback>
-                  </Avatar.Root>
+                    </AvatarFallback>
+                  </AvatarRoot>
                   <Box flex={1}>
                     <HStack justify="space-between" align="start">
                       <Box flex={1}>

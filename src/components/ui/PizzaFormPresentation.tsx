@@ -5,7 +5,8 @@ import { PizzaInput, PizzaTextarea, PizzaFileInput, PizzaText } from ".";
 
 interface PizzaFormPresentationProps {
   formData: { nome: string; descricao: string; preco: string };
-  errors: { [key: string]: string | undefined };
+  errors: Record<string, string | undefined>;
+  activeStep: number;
   imagePreview: string | null;
   isLoading: boolean;
   apiError: string | null;

@@ -1,7 +1,8 @@
 import { CreatePizzaWithImageData, Pizza } from "@/types/pizzas";
 import { getAuthToken } from "@/utils/cookies";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = API_BASE_URL;
 
 // Helper para criar o cabeçalho de autorização (CORRIGIDO)
 const getAuthHeaders = () => {

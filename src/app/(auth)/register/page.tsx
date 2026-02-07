@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PizzaButton, PizzaInput, PizzaLoading } from "@/components/ui";
 import { FaSignInAlt } from "react-icons/fa";
+import { API_BASE_URL } from "@/config/api";
 
 interface FormErrors {
   email?: string;
@@ -84,13 +85,13 @@ const RegisterPage = () => {
 
   const handleInputChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      let value = e.target.value;
-      if (field === "telefone") value = formatPhoneNumber(value);
-      setFormData({ ...formData, [field]: value });
-      if (errors[field as keyof FormErrors])
-        setErrors({ ...errors, [field]: undefined });
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        if (field === "telefone") value = formatPhoneNumber(value);
+        setFormData({ ...formData, [field]: value });
+        if (errors[field as keyof FormErrors])
+          setErrors({ ...errors, [field]: undefined });
+      };
 
   const handleSubmit = async (e: React.FormEvent) => {
     // ... (sua lógica de submit continua a mesma)
@@ -101,7 +102,7 @@ const RegisterPage = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        `${API_BASE_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

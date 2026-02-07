@@ -1,6 +1,6 @@
 "use client";
 
-import { Text, Menu } from "@chakra-ui/react";
+import { MenuItemGroup, MenuItemGroupLabel, MenuItem, MenuItemText, Box } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
 interface AdminMenuItem {
@@ -16,17 +16,21 @@ export function AdminMenuItems({ items }: AdminMenuItemsProps) {
   const router = useRouter();
 
   return (
-    <Menu.ItemGroup title="Administração">
+    <MenuItemGroup>
+      <MenuItemGroupLabel>Administração</MenuItemGroupLabel>
       {items.map((item) => (
-        <Menu.Item
-          key={item.href}
-          value={item.href}
-          onClick={() => router.push(item.href)}
-          _hover={{ bg: "gray.700", cursor: "pointer" }}
-        >
-          <Text>{item.label}</Text>
-        </Menu.Item>
+        <MenuItem key={item.href} value={item.href}>
+          <Box
+            onClick={() => router.push(item.href)}
+            _hover={{ bg: "gray.700", cursor: "pointer" }}
+            w="full"
+            display="flex"
+            alignItems="center"
+          >
+            <MenuItemText>{item.label}</MenuItemText>
+          </Box>
+        </MenuItem>
       ))}
-    </Menu.ItemGroup>
+    </MenuItemGroup>
   );
 }

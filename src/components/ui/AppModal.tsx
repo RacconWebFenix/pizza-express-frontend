@@ -1,6 +1,18 @@
 "use client";
 
-import { Box, Button, Dialog, Portal } from "@chakra-ui/react";
+import {
+  Button,
+  DialogRoot,
+  DialogBackdrop,
+  DialogPositioner,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogCloseTrigger,
+  DialogBody,
+  Portal,
+  Box,
+} from "@chakra-ui/react";
 import { X } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -22,18 +34,16 @@ export const AppModal = ({
   children,
 }: AppModalProps) => {
   return (
-    <Dialog.Root
+    <DialogRoot
       open={isOpen}
       onOpenChange={(details) => !details.open && onClose()}
     >
       <Portal>
-        <Box
-          as={Dialog.Backdrop}
-          bg="blackAlpha.600"
-          backdropFilter="blur(2px)"
-        />
-        <Dialog.Positioner>
-          <Dialog.Content
+        <Box bg="blackAlpha.600" backdropFilter="blur(2px)">
+          <DialogBackdrop />
+        </Box>
+        <DialogPositioner>
+          <Box
             bg="white"
             _dark={{ bg: "gray.800" }}
             borderRadius="xl"
@@ -42,37 +52,39 @@ export const AppModal = ({
             w="full"
             maxH="90vh"
             overflowY="auto"
-            p={0}
           >
-            <Dialog.Header
-              borderBottomWidth="1px"
-              borderColor="gray.200"
-              _dark={{ borderColor: "gray.600" }}
-              p={4}
-            >
-              <Dialog.Title color="gray.800" _dark={{ color: "white" }}>
-                {title}
-              </Dialog.Title>
-              <Dialog.CloseTrigger
-                position="absolute"
-                top="12px"
-                right="12px"
-                asChild
+            <DialogContent>
+              <Box
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+                _dark={{ borderColor: "gray.600" }}
+                p={4}
               >
-                <Button
-                  as="button"
-                  variant="ghost"
-                  size="sm"
-                  aria-label="Close"
-                >
-                  <X size={20} color="currentColor" />
-                </Button>
-              </Dialog.CloseTrigger>
-            </Dialog.Header>
-            <Dialog.Body p={6}>{children}</Dialog.Body>
-          </Dialog.Content>
-        </Dialog.Positioner>
+                <DialogHeader>
+                  <Box color="gray.800" _dark={{ color: "white" }}>
+                    <DialogTitle>
+                      {title}
+                    </DialogTitle>
+                  </Box>
+                  <Box position="absolute" top="12px" right="12px">
+                    <DialogCloseTrigger asChild>
+                      <Button
+                        as="button"
+                        variant="ghost"
+                        size="sm"
+                        aria-label="Close"
+                      >
+                        <X size={20} color="currentColor" />
+                      </Button>
+                    </DialogCloseTrigger>
+                  </Box>
+                </DialogHeader>
+              </Box>
+              <DialogBody p={6}>{children}</DialogBody>
+            </DialogContent>
+          </Box>
+        </DialogPositioner>
       </Portal>
-    </Dialog.Root>
+    </DialogRoot>
   );
 };

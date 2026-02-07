@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import ptBR from "@/locales/pt-BR.json";
+import { isPlainObject } from "@/utils/type-guards";
 
 type TranslationKey = string;
 type TranslationParams = Record<string, string | number>;
@@ -24,8 +25,8 @@ export const useTranslation = () => {
 
     // Navega pelo objeto de tradução
     for (const k of keys) {
-      if (value && typeof value === "object" && k in value) {
-        value = (value as Record<string, unknown>)[k];
+      if (isPlainObject(value) && k in value) {
+        value = value[k];
       } else {
         // Retorna a chave original se não encontrar a tradução
         console.warn(`Translation key not found: ${key}`);
@@ -52,7 +53,7 @@ export const useTranslation = () => {
 /**
  * Tipo para as chaves de tradução disponíveis
  */
-export type TranslationKeys = 
+export type TranslationKeys =
   | `common.${keyof typeof ptBR.common}`
   | `auth.${keyof typeof ptBR.auth}`
   | `cart.${keyof typeof ptBR.cart}`

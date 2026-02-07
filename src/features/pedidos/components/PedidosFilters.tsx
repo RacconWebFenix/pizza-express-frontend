@@ -49,6 +49,8 @@ const statusConfig: Record<
   },
 };
 
+
+
 export const PedidosFilters = ({
   statusFilters,
   clienteFilter,
@@ -66,14 +68,7 @@ export const PedidosFilters = ({
   };
 
   const handleSelectAllStatuses = () => {
-    const allStatuses = [
-      "PENDENTE",
-      "EM_PREPARO",
-      "A_CAMINHO",
-      "ENTREGUE",
-      "CANCELADO",
-    ] as unknown as StatusPedido[];
-    onStatusChange(allStatuses);
+    onStatusChange(Object.values(StatusPedido));
   };
 
   const handleClearFilters = () => {
@@ -106,7 +101,7 @@ export const PedidosFilters = ({
           Status
         </label>
         <HStack gap={2} flexWrap="wrap">
-          {(Object.keys(statusConfig) as StatusPedido[]).map((status) => {
+          {Object.values(StatusPedido).map((status) => {
             const isSelected = statusFilters.includes(status);
             const config = statusConfig[status];
             return (
@@ -153,43 +148,42 @@ export const PedidosFilters = ({
       </Box>
 
       <Flex gap={4} flexWrap="wrap" align="flex-end">
+        {/* Filtro por Número do Pedido */}
+        <Box minW="120px">
+          <label style={{ fontSize: "0.875rem", color: "#757575" }}>
+            Pedido #
+          </label>
+          <Input
+            placeholder="Nº do pedido"
+            value={pedidoFilter}
+            onChange={(e) => onPedidoChange(e.target.value)}
+            mt={1}
+            size="sm"
+            type="number"
+            bg="background.primary"
+            borderColor="background.tertiary"
+            color="text.primary"
+            _placeholder={{ color: "text.secondary" }}
+          />
+        </Box>
 
-      {/* Filtro por Número do Pedido */}
-      <Box minW="120px">
-        <label style={{ fontSize: "0.875rem", color: "#757575" }}>
-          Pedido #
-        </label>
-        <Input
-          placeholder="Nº do pedido"
-          value={pedidoFilter}
-          onChange={(e) => onPedidoChange(e.target.value)}
-          mt={1}
-          size="sm"
-          type="number"
-          bg="background.primary"
-          borderColor="background.tertiary"
-          color="text.primary"
-          _placeholder={{ color: "text.secondary" }}
-        />
-      </Box>
-
-      {/* Filtro por Nome do Cliente */}
-      <Box flex={1} minW="200px">
-        <label style={{ fontSize: "0.875rem", color: "#757575" }}>
-          Cliente
-        </label>
-        <Input
-          placeholder="Digite o nome do cliente..."
-          value={clienteFilter}
-          onChange={(e) => onClienteChange(e.target.value)}
-          mt={1}
-          size="sm"
-          bg="background.primary"
-          borderColor="background.tertiary"
-          color="text.primary"
-          _placeholder={{ color: "text.secondary" }}
-        />
-      </Box>
+        {/* Filtro por Nome do Cliente */}
+        <Box flex={1} minW="200px">
+          <label style={{ fontSize: "0.875rem", color: "#757575" }}>
+            Cliente
+          </label>
+          <Input
+            placeholder="Digite o nome do cliente..."
+            value={clienteFilter}
+            onChange={(e) => onClienteChange(e.target.value)}
+            mt={1}
+            size="sm"
+            bg="background.primary"
+            borderColor="background.tertiary"
+            color="text.primary"
+            _placeholder={{ color: "text.secondary" }}
+          />
+        </Box>
 
         {hasActiveFilters && (
           <Button

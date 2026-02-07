@@ -7,7 +7,9 @@ import {
   VStack,
   HStack,
   Flex,
-  Avatar,
+  AvatarRoot,
+  AvatarImage,
+  AvatarFallback,
   Grid,
   GridItem,
   Badge,
@@ -35,6 +37,7 @@ import type { Endereco } from "@/types/endereco";
  * Ele usa o hook 'useProfile' para buscar e exibir os dados.
  */
 export const ProfilePageLayout = () => {
+
   const { user, isLoading, error, refetch } = useProfile();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEnderecoModalOpen, setIsEnderecoModalOpen] = useState(false);
@@ -164,17 +167,25 @@ export const ProfilePageLayout = () => {
             p={6}
           >
             <VStack align="center" gap={4}>
-              <Avatar.Root size="2xl">
-                <Avatar.Image src={user.avatar || undefined} alt={user.nome} />
-                <Avatar.Fallback
+              <AvatarRoot size="2xl">
+                <AvatarImage src={user.avatar || undefined} alt={user.nome} />
+                <Box
                   bg="brand.primary"
                   color="white"
                   fontSize="2xl"
                   fontWeight="bold"
+                  borderRadius="full"
+                  w="full"
+                  h="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
                 >
-                  {user.nome.charAt(0).toUpperCase()}
-                </Avatar.Fallback>
-              </Avatar.Root>
+                  <AvatarFallback>
+                    {user.nome.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Box>
+              </AvatarRoot>
 
               <VStack align="center" gap={2}>
                 <Heading size="lg" color="white" textAlign="center">

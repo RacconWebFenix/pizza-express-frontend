@@ -12,8 +12,16 @@ import {
   Spacer,
   Button,
   Text,
-  Avatar,
-  Menu,
+  MenuRoot,
+  MenuTrigger,
+  MenuPositioner,
+  MenuContent,
+  MenuItem,
+  MenuSeparator,
+  MenuArrow,
+  AvatarRoot,
+  AvatarImage,
+  AvatarFallback,
 } from "@chakra-ui/react";
 import {
   FaBars,
@@ -37,6 +45,8 @@ export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const { isStaff, isCliente, isAdmin } = usePermissions();
   const router = useRouter();
+
+  // use named imports directly
 
   // Itens de navegação dinâmicos baseado nas permissões
   const getNavItems = () => [
@@ -161,19 +171,32 @@ export function Header() {
           {isCliente() && <CartWidget />}
 
           {isAuthenticated ? (
-            <Menu.Root>
-              <Menu.Trigger asChild>
+            <MenuRoot>
+              <MenuTrigger asChild>
                 <Button variant="ghost" _hover={{ bg: "whiteAlpha.200" }} p={2}>
                   <HStack gap={2}>
-                    <Avatar.Root size="sm">
-                      <Avatar.Image
+                    <AvatarRoot size="sm">
+                      <AvatarImage
                         src={user?.avatar || undefined}
                         alt={user?.nome || ""}
                       />
-                      <Avatar.Fallback>
-                        {user?.nome?.charAt(0) || "U"}
-                      </Avatar.Fallback>
-                    </Avatar.Root>
+                      <Box
+                        bg="brand.primary"
+                        color="white"
+                        fontSize="xl"
+                        fontWeight="bold"
+                        borderRadius="full"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <AvatarFallback>
+                          {user?.nome?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Box>
+                    </AvatarRoot>
                     <Text
                       display={{ base: "none", md: "block" }}
                       color="whiteAlpha.800"
@@ -184,39 +207,55 @@ export function Header() {
                     <FaChevronDown size={12} />
                   </HStack>
                 </Button>
-              </Menu.Trigger>
-              <Menu.Positioner>
-                <Menu.Content bg="gray.800" borderColor="gray.700" minW="200px">
-                  <Menu.Item
-                    value="profile"
-                    onClick={() => router.push("/profile")}
-                    _hover={{ bg: "gray.700", cursor: "pointer" }}
-                  >
-                    <HStack gap={2}>
-                      <FaUser />
-                      <Text>Meu Perfil</Text>
-                    </HStack>
-                  </Menu.Item>
+              </MenuTrigger>
+              <MenuPositioner>
+                <Box bg="gray.800" borderColor="gray.700" minW="200px" borderWidth="1px" borderRadius="md">
+                  <MenuContent>
+                    <MenuItem value="profile">
+                      <Box
+                        onClick={() => router.push("/profile")}
+                        _hover={{ bg: "gray.700", cursor: "pointer" }}
+                        w="full"
+                        display="flex"
+                        alignItems="center"
+                        p={2}
+                      >
+                        <HStack gap={2}>
+                          <FaUser />
+                          <Text>Meu Perfil</Text>
+                        </HStack>
+                      </Box>
+                    </MenuItem>
 
-                  {/* Menu Admin */}
-                  {isAdmin() && (
-                    <>
-                      <Menu.Separator />
-                      <AdminMenuItems items={accessibleAdminNavItems} />
-                    </>
-                  )}
+                    {/* Menu Admin */}
+                    {isAdmin() && (
+                      <>
+                        <MenuSeparator />
+                        <AdminMenuItems items={accessibleAdminNavItems} />
+                      </>
+                    )}
 
-                  <Menu.Separator />
-                  <Menu.Item value="logout" onClick={logout} _hover={{ bg: "gray.700", cursor: "pointer" }}>
-                    <HStack gap={2} color="red.400">
-                      <FaSignOutAlt />
-                      <Text>Sair</Text>
-                    </HStack>
-                  </Menu.Item>
-                  <Menu.Arrow />
-                </Menu.Content>
-              </Menu.Positioner>
-            </Menu.Root>
+                    <MenuSeparator />
+                    <MenuItem value="logout">
+                      <Box
+                        onClick={logout}
+                        _hover={{ bg: "gray.700", cursor: "pointer" }}
+                        w="full"
+                        display="flex"
+                        alignItems="center"
+                        p={2}
+                      >
+                        <HStack gap={2} color="red.400">
+                          <FaSignOutAlt />
+                          <Text>Sair</Text>
+                        </HStack>
+                      </Box>
+                    </MenuItem>
+                    <MenuArrow />
+                  </MenuContent>
+                </Box>
+              </MenuPositioner>
+            </MenuRoot>
           ) : (
             <Link href="/login" passHref>
               <PizzaButton as="a" colorScheme="orange" size="sm">
@@ -227,73 +266,75 @@ export function Header() {
         </Flex>
       </Flex>
 
-      {open ? (
-        <Box pb={4} display={{ md: "none" }}>
-          <Stack as="nav" gap={4}>
-            {accessibleNavItems.map((navItem) => (
-              <MobileNavItem
-                key={navItem.label}
-                href={navItem.href}
-                label={navItem.label}
-                onClick={onClose}
-              />
-            ))}
-            {isAuthenticated && (
-              <>
-                <Button
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  color="white"
-                  _hover={{ bg: "gray.700", cursor: "pointer" }}
-                  onClick={() => {
-                    router.push("/profile");
-                    onClose();
-                  }}
-                >
-                  Meu Perfil
-                </Button>
+      {
+        open ? (
+          <Box pb={4} display={{ md: "none" }}>
+            <Stack as="nav" gap={4}>
+              {accessibleNavItems.map((navItem) => (
+                <MobileNavItem
+                  key={navItem.label}
+                  href={navItem.href}
+                  label={navItem.label}
+                  onClick={onClose}
+                />
+              ))}
+              {isAuthenticated && (
+                <>
+                  <Button
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    color="white"
+                    _hover={{ bg: "gray.700", cursor: "pointer" }}
+                    onClick={() => {
+                      router.push("/profile");
+                      onClose();
+                    }}
+                  >
+                    Meu Perfil
+                  </Button>
 
-                {/* Menu Admin Mobile */}
-                {isAdmin() && (
-                  <>
-                    <Text fontSize="sm" color="gray.400" px={4} py={2}>
-                      Administração
-                    </Text>
-                    {accessibleAdminNavItems.map((item) => (
-                      <Button
-                        key={item.href}
-                        variant="ghost"
-                        justifyContent="flex-start"
-                        color="white"
-                        onClick={() => {
-                          router.push(item.href);
-                          onClose();
-                        }}
-                      >
-                        {item.label}
-                      </Button>
-                    ))}
-                  </>
-                )}
+                  {/* Menu Admin Mobile */}
+                  {isAdmin() && (
+                    <>
+                      <Text fontSize="sm" color="gray.400" px={4} py={2}>
+                        Administração
+                      </Text>
+                      {accessibleAdminNavItems.map((item) => (
+                        <Button
+                          key={item.href}
+                          variant="ghost"
+                          justifyContent="flex-start"
+                          color="white"
+                          onClick={() => {
+                            router.push(item.href);
+                            onClose();
+                          }}
+                        >
+                          {item.label}
+                        </Button>
+                      ))}
+                    </>
+                  )}
 
-                <PizzaButton
-                  variant="outline"
-                  colorScheme="red"
-                  justifyContent="flex-start"
-                  icon={FaSignOutAlt}
-                  _hover={{ bg: "gray.700", cursor: "pointer" }}
-                  onClick={() => {
-                    logout();
-                    onClose();
-                  }}
-                >
-                  Sair
-                </PizzaButton>
-              </>
-            )}
-          </Stack>
-        </Box>
-      ) : null}
-    </Box>
+                  <PizzaButton
+                    variant="outline"
+                    colorScheme="red"
+                    justifyContent="flex-start"
+                    icon={FaSignOutAlt}
+                    _hover={{ bg: "gray.700", cursor: "pointer" }}
+                    onClick={() => {
+                      logout();
+                      onClose();
+                    }}
+                  >
+                    Sair
+                  </PizzaButton>
+                </>
+              )}
+            </Stack>
+          </Box>
+        ) : null
+      }
+    </Box >
   );
 }

@@ -1,7 +1,8 @@
 import { UploadResult, FileValidationResult } from "@/types/upload";
 import { getAuthToken } from "@/utils/cookies";
+import { API_BASE_URL } from "@/config/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = API_BASE_URL;
 
 // Validar arquivo
 export const validateFile = (
@@ -70,7 +71,6 @@ export const uploadPizzaImage = async (
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Erro no upload:", error);
     throw error;
   }
 };
@@ -112,7 +112,6 @@ export const uploadFile = async (
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Erro no upload:", error);
     throw error;
   }
 };

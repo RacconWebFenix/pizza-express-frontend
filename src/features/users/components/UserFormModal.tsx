@@ -11,7 +11,6 @@ import {
   VStack,
   HStack,
   Button,
-  Text,
 } from "@chakra-ui/react";
 import { User } from "@/types/users";
 import { PizzaInput, PizzaButton, AppModal, PizzaSelect } from "@/components/ui";

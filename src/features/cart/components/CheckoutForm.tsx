@@ -8,7 +8,13 @@ import {
   Text,
   Heading,
   Separator,
-  Dialog,
+  DialogRoot,
+  DialogBackdrop,
+  DialogPositioner,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogBody,
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
@@ -24,6 +30,7 @@ interface CheckoutFormProps {
 }
 
 export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
+
   const { cart, clearCart } = useCart();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -213,24 +220,26 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
       />
 
       {/* Modal de Pagamento */}
-      <Dialog.Root
+      <DialogRoot
         open={isPaymentModalOpen}
         onOpenChange={(details) => setIsPaymentModalOpen(details.open)}
       >
-        <Dialog.Backdrop />
-        <Dialog.Content>
-          <Dialog.Header>
-            <Dialog.Title>Pagamento</Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Body style={{ pointerEvents: "auto" }}>
-            <CreditCardForm
-              amount={Math.round(cart.totalPrice * 100)} // Converter para centavos
-              onSuccess={handlePaymentSuccess}
-              onCancel={handlePaymentCancel}
-            />
-          </Dialog.Body>
-        </Dialog.Content>
-      </Dialog.Root>
+        <DialogBackdrop />
+        <DialogPositioner>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Pagamento</DialogTitle>
+            </DialogHeader>
+            <DialogBody style={{ pointerEvents: "auto" }}>
+              <CreditCardForm
+                amount={Math.round(cart.totalPrice * 100)} // Converter para centavos
+                onSuccess={handlePaymentSuccess}
+                onCancel={handlePaymentCancel}
+              />
+            </DialogBody>
+          </DialogContent>
+        </DialogPositioner>
+      </DialogRoot>
     </Box>
   );
 };

@@ -1,6 +1,7 @@
 // URLs da API
+import { API_BASE_URL } from "@/config/api";
 export const API_ENDPOINTS = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+  BASE_URL: API_BASE_URL,
   PIZZAS: "/pizzas",
   AUTH: {
     LOGIN: "/auth/login",
