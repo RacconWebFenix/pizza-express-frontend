@@ -1,21 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-# --- BLOQUEIO DE CUSTO (EXTREMAMENTE IMPORTANTE) ---
 
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-bun.lockb
-.next/
-dist/
-
-.swc/
-coverage/
-
-# Arquivos de sistema e logs
-.DS_Store
-*.log
-.env
-.env.local
 # dependencies
 /node_modules
 /.pnp
@@ -25,9 +9,9 @@ coverage/
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-.env
-# testing
 
+# testing
+/coverage
 
 # next.js
 /.next/
@@ -55,6 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/styled-system
-# Panda CSS (Panda + Chakra)
-styled-system/
