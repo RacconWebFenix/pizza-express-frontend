@@ -1,95 +1,124 @@
 "use client";
 
-import { VStack, HStack, Box, Button } from "@chakra-ui/react";
-import { PizzaInput, PizzaTextarea, PizzaFileInput, PizzaText } from ".";
+import { VStack, HStack, Button, Heading, Box } from "@chakra-ui/react";
+import { FormPresenterProps } from "@/forms/core";
+import { PizzaFormInputData, PizzaFormOutputData } from "@/utils/validation";
+import { PizzaCard } from "@/features/pizzas/components/PizzaCard"; // Correct import for PizzaCard with pizza prop
+import { Pizza } from "@/types/pizzas";
 
-interface PizzaFormPresentationProps {
-  formData: { nome: string; descricao: string; preco: string };
-  errors: Record<string, string | undefined>;
-  activeStep: number;
-  imagePreview: string | null;
-  isLoading: boolean;
-  apiError: string | null;
-  isImageModalOpen: boolean;
-  onInputChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  onImageChange: (file: File | null) => void;
-  onSubmit: (e: React.FormEvent) => void;
-  onImageModalOpen: () => void;
-  onImageModalClose: () => void;
-  onImageRemove: () => void;
+// Import fields from individual files
+import { PizzaTextField } from "@/forms/fields/PizzaTextField";
+import { PizzaTextAreaField } from "@/forms/fields/PizzaTextAreaField";
+import { PizzaMoneyField } from "@/forms/fields/PizzaMoneyField";
+import { PizzaFileField } from "@/forms/fields/PizzaFileField";
+
+interface PizzaFormPresentationProps extends FormPresenterProps<PizzaFormInputData, unknown, PizzaFormOutputData> {
   onCancel: () => void;
+  previewPizza: Pizza;
+  isEditing?: boolean;
 }
 
 export const PizzaFormPresentation = ({
-  formData,
-  errors,
-  imagePreview,
-  isLoading,
-  apiError,
-  onInputChange,
-  onImageChange,
+  form: { control, handleSubmit },
   onSubmit,
-  onImageModalOpen,
-  onImageRemove,
+  isSubmitting,
+  apiError,
   onCancel,
-}: PizzaFormPresentationProps) => (
-  <Box as="form" onSubmit={onSubmit} w="full">
-    <VStack align="stretch">
-      <PizzaFileInput
-        label="Imagem da Pizza *"
-        error={errors.imagem}
-        onChange={onImageChange}
-        preview={imagePreview}
-        onPreviewClick={onImageModalOpen}
-        onRemove={onImageRemove}
-      />
-      <PizzaInput
-        label="Nome da Pizza"
-        name="nome"
-        value={formData.nome}
-        onChange={onInputChange}
-        error={errors.nome}
-        placeholder="Ex: Pizza Margherita"
-      />
-      <PizzaTextarea
-        label="Descrição"
-        name="descricao"
-        value={formData.descricao}
-        onChange={onInputChange}
-        error={errors.descricao}
-        placeholder="Descreva os ingredientes..."
-        rows={4}
-      />
-      <PizzaInput
-        label="Preço (R$)"
-        name="preco"
-        value={formData.preco}
-        onChange={onInputChange}
-        error={errors.preco}
-        placeholder="Ex: 49,90"
-      />
-      {apiError && (
-        <PizzaText variant="danger" fontSize="sm">
-          {apiError}
-        </PizzaText>
-      )}
-      <HStack w="full" justify="space-between" mt={4}>
-        <Button
-          colorPalette="orange"
-          variant="solid"
-          loading={isLoading}
-          disabled={isLoading}
-          type="submit"
-          flex={1}
-        >
-          Salvar Pizza
-        </Button>
-        <Button colorPalette="red" variant="solid" onClick={onCancel} flex={1}>
-          Cancelar
-        </Button>
-      </HStack>
-    </VStack>
-  </Box>
-);
+  previewPizza,
+  isEditing,
+}: PizzaFormPresentationProps) => {
+  return (
+    <Box w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+      <VStack gap={6} align="stretch">
+
+        {/* Preview Section */}
+        <Box>
+          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
+            📱 Preview do Cardápio
+          </Heading>
+          <Box
+            display="flex"
+            justifyContent="center"
+            minH={{ base: "300px", lg: "400px" }}
+            p={4}
+          >
+            <Box w="full" maxW="400px">
+              <PizzaCard
+                pizza={previewPizza}
+                onAddToCart={() => { }}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Form Fields Section */}
+        <Box>
+          <Heading size="lg" color="orange.400" textAlign="center" mb={4}>
+            🛠️ Dados da Pizza
+          </Heading>
+
+          <VStack gap={4} align="stretch">
+            <PizzaTextField<PizzaFormInputData>
+              name="nome"
+              control={control}
+              label="Nome da Pizza *"
+              placeholder="Ex: Pizza Margherita"
+              required
+            />
+
+            <PizzaTextAreaField<PizzaFormInputData>
+              name="descricao"
+              control={control}
+              label="Descrição *"
+              placeholder="Descreva os ingredientes..."
+              required
+              rows={4}
+            />
+
+            <PizzaMoneyField<PizzaFormInputData>
+              name="preco"
+              control={control}
+              label="Preço (R$) *"
+              placeholder="Ex: 49.90"
+              required
+            />
+
+            <PizzaFileField<PizzaFormInputData>
+              name="image"
+              control={control}
+              label="Imagem da Pizza"
+              placeholder="Clique para selecionar ou arraste"
+            />
+
+            {apiError && (
+              <Box color="red.500" fontSize="sm" mt={2}>
+                {apiError}
+              </Box>
+            )}
+
+            <HStack w="full" gap={4} mt={6}>
+              <Button
+                type="submit"
+                loading={isSubmitting}
+                flex={1}
+                colorPalette="orange"
+                variant="solid"
+                disabled={isSubmitting}
+              >
+                {isEditing ? "Atualizar Pizza" : "Salvar Pizza"}
+              </Button>
+              <Button
+                onClick={onCancel}
+                variant="outline"
+                flex={1}
+                colorPalette="gray"
+              >
+                Cancelar
+              </Button>
+            </HStack>
+          </VStack>
+        </Box>
+      </VStack>
+    </Box>
+  );
+};

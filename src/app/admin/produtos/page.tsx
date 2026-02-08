@@ -1,15 +1,7 @@
-"use client";
+import ProdutosClient from "./ProdutosClient";
 
-import { AdminRoute } from "@/components/ProtectedRoute";
-import { Box } from "@chakra-ui/react";
-import { ProdutosList } from "@/features/produtos";
+export const dynamic = "force-dynamic";
 
-export default function AdminProdutosPage() {
-  return (
-    <AdminRoute>
-      <Box p={8}>
-        <ProdutosList />
-      </Box>
-    </AdminRoute>
-  );
+export default function ProdutosPage() {
+  return <ProdutosClient />;
 }

@@ -1,15 +1,7 @@
-"use client";
+import MesasClient from "./MesasClient";
 
-import { AdminRoute } from "@/components/ProtectedRoute";
-import { Box } from "@chakra-ui/react";
-import { DashboardMesas } from "@/features/mesas";
+export const dynamic = "force-dynamic";
 
-export default function AdminMesasPage() {
-  return (
-    <AdminRoute>
-      <Box p={8}>
-        <DashboardMesas />
-      </Box>
-    </AdminRoute>
-  );
+export default function MesasPage() {
+  return <MesasClient />;
 }

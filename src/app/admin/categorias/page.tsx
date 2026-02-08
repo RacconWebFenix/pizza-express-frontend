@@ -1,15 +1,7 @@
-"use client";
+import CategoriasClient from "./CategoriasClient";
 
-import { AdminRoute } from "@/components/ProtectedRoute";
-import { Box } from "@chakra-ui/react";
-import { CategoriasList } from "@/features/categorias";
+export const dynamic = "force-dynamic";
 
-export default function AdminCategoriasPage() {
-  return (
-    <AdminRoute>
-      <Box p={8}>
-        <CategoriasList />
-      </Box>
-    </AdminRoute>
-  );
+export default function CategoriasPage() {
+  return <CategoriasClient />;
 }

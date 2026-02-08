@@ -1,0 +1,63 @@
+"use client";
+
+import { Box, Grid, Heading, Text } from "@chakra-ui/react";
+import { usePizzas } from "@/features/pizzas/hooks/usePizzas";
+import { PizzaCard } from "@/features/pizzas/components/PizzaCard";
+import { PizzaLoading } from "@/components/ui";
+import { useCart } from "@/features/cart/context/CartContext";
+import { toaster } from "@/components/ui/toaster";
+
+/**
+ * Página do Cardápio.
+ * Agora utiliza o hook centralizado 'usePizzas' para buscar e exibir os dados.
+ */
+export default function CardapioPage() {
+  const { pizzas, isLoading, error } = usePizzas();
+  const { addToCart } = useCart();
+
+  // Função para adicionar pizza ao carrinho
+  const handleAddToCart = (pizzaId: number) => {
+    const pizza = pizzas.find((p) => p.id === pizzaId);
+    if (pizza) {
+      addToCart(pizza);
+      toaster.create({
+        title: "Pizza adicionada!",
+        description: `${pizza.nome} foi adicionada ao carrinho.`,
+        type: "success",
+      });
+    }
+  };
+
+  if (isLoading) {
+    return <PizzaLoading message="Carregando nosso delicioso cardápio..." />;
+  }
+
+  if (error) {
+    return <Text color="red.500">Ocorreu um erro: {error}</Text>;
+  }
+
+  return (
+    <Box p={{ base: 4, md: 8 }}>
+      <Heading as="h1" size="2xl" textAlign="center" mb={8}>
+        Nosso Cardápio
+      </Heading>
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "repeat(2, 1fr)",
+          lg: "repeat(3, 1fr)",
+          xl: "repeat(4, 1fr)",
+        }}
+        gap={8}
+      >
+        {pizzas.map((pizza) => (
+          <PizzaCard
+            key={pizza.id}
+            pizza={pizza}
+            onAddToCart={handleAddToCart}
+          />
+        ))}
+      </Grid>
+    </Box>
+  );
+}

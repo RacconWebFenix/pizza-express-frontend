@@ -1,15 +1,7 @@
-"use client";
+import DeliveryPersonsClient from "./DeliveryPersonsClient";
 
-import { AdminRoute } from "@/components/ProtectedRoute";
-import { Box } from "@chakra-ui/react";
-import { EntregadoresList } from "@/features/entregadores";
+export const dynamic = "force-dynamic";
 
-export default function AdminDeliveryPersonsPage() {
-  return (
-    <AdminRoute>
-      <Box p={8}>
-        <EntregadoresList />
-      </Box>
-    </AdminRoute>
-  );
+export default function DeliveryPersonsPage() {
+  return <DeliveryPersonsClient />;
 }

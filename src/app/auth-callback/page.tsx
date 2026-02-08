@@ -4,6 +4,8 @@ import { Flex } from "@chakra-ui/react";
 import AuthCallbackView from "./auth-callback-view";
 import { PizzaLoading } from "@/components/ui";
 
+export const dynamic = "force-dynamic";
+
 // O fallback é a UI de carregamento que o servidor envia.
 // Podemos usar o mesmo componente de loading para uma experiência consistente.
 function LoadingFallback() {

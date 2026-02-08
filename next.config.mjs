@@ -2,7 +2,6 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
   },
-  output: "standalone",
   images: {
     remotePatterns: [
       {
